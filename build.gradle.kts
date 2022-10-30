@@ -3,6 +3,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "2.7.4"
     id("io.spring.dependency-management") version "1.0.14.RELEASE"
+    id("com.epages.restdocs-api-spec") version "0.16.0"
+
     kotlin("jvm") version "1.6.21"
     kotlin("plugin.spring") version "1.6.21"
     kotlin("plugin.jpa") version "1.6.21"
@@ -36,6 +38,7 @@ dependencies {
     testImplementation("com.h2database:h2")
     testImplementation("org.testcontainers:localstack:1.17.3")
     testImplementation("org.testcontainers:junit-jupiter:1.17.3")
+    testImplementation("com.epages:restdocs-api-spec-mockmvc:0.16.0") //2.2
 }
 
 tasks.withType<KotlinCompile> {
@@ -47,4 +50,11 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+openapi3 {
+    title = "Gym service"
+    description = "Gym service api document"
+    version = "0.1.0"
+    format = "yaml"
 }

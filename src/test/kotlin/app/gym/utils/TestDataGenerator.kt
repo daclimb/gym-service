@@ -3,20 +3,40 @@ package app.gym.utils
 import app.gym.api.request.AddGymRequest
 import app.gym.domain.gym.Gym
 import app.gym.domain.image.Image
+import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper
+import com.epages.restdocs.apispec.ResourceDocumentation.resource
+import com.epages.restdocs.apispec.ResourceSnippetParametersBuilder
+import org.springframework.restdocs.operation.preprocess.Preprocessors.*
+import org.springframework.test.web.servlet.ResultActions
 import java.util.*
+
+fun ResultActions.andDocument(
+    identifier: String,
+    builder: ResourceSnippetParametersBuilder.() -> ResourceSnippetParametersBuilder
+) {
+    this.andDo(
+        MockMvcRestDocumentationWrapper
+            .document(
+                identifier,
+                preprocessRequest(prettyPrint()),
+                preprocessResponse(prettyPrint()),
+                resource(
+                    builder(ResourceSnippetParametersBuilder()).build()
+                )
+            )
+    )
+}
 
 class TestDataGenerator {
     companion object {
         fun gym(
             id: Long? = null,
             title: String = "title",
-            price: Int = 10000,
             description: String = "description",
             images: MutableList<Image> = mutableListOf()
         ): Gym {
             val gym = Gym(id)
             gym.title = title
-            gym.price = price
             gym.description = description
             gym.images = images
 

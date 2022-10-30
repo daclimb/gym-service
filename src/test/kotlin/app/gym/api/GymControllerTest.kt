@@ -8,23 +8,33 @@ import app.gym.domain.gym.GymNotFoundException
 import app.gym.domain.gym.GymService
 import app.gym.utils.JsonUtils
 import app.gym.utils.TestDataGenerator
+import app.gym.utils.andDocument
+import com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName
+import com.epages.restdocs.apispec.SimpleType
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.MediaType
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get
+import org.springframework.restdocs.payload.JsonFieldType
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.test.web.servlet.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.nio.file.Files
 import java.util.*
 import kotlin.io.path.toPath
 
-@WebMvcTest
+@WebMvcTest(value = [GymController::class])
+@AutoConfigureRestDocs
 internal class GymControllerTest {
 
     @Autowired
@@ -38,26 +48,32 @@ internal class GymControllerTest {
 
     @Autowired
     private lateinit var gymService: GymService
+
     @Test
-    fun `Should return status code 200 and product details when get product`() {
+    fun `Should return status code 200 and gym details when get gym`() {
         val gym = TestDataGenerator.gym(1L)
+
         every { gymService.getGym(any()) } returns gym
 
-        mvc.get("/api/1")
-            .andExpect {
-                status { isOk() }
-                this.jsonPath("$.id") { value(gym.id) }
-                this.jsonPath("$.title") { value(gym.title) }
-                this.jsonPath("$.price") { value(gym.price) }
-                this.jsonPath("$.description") { value(gym.description) }
-                this.jsonPath("$.images") {
-                    if (gym.images.size > 0) {
-                        value(gym.images)
-                    } else {
-                        doesNotExist()
-                    }
-                }
-            }
+        val result = mvc.perform(get("/api/{gymId}", 1))
+
+        result.andExpect(status().isOk)
+            .andExpect(jsonPath("$.id").value(gym.id))
+            .andExpect(jsonPath("$.title").value(gym.title))
+            .andExpect(jsonPath("$.description").value(gym.description))
+
+        // document
+        result.andDocument("getGym") {
+            pathParameters(
+                parameterWithName("gymId").type(SimpleType.INTEGER).description("Id of the gym")
+            )
+            responseFields(
+                fieldWithPath("id").type(JsonFieldType.NUMBER).description("id of the gym"),
+                fieldWithPath("title").type(JsonFieldType.STRING).description("title of the gym"),
+                fieldWithPath("description").type(JsonFieldType.STRING).description("description of the gym"),
+                fieldWithPath("price").type(JsonFieldType.NUMBER).description("")
+            )
+        }
     }
 
     @ParameterizedTest
