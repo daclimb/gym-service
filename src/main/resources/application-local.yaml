@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/daclimb
+    username: postgres
+    password: 1234
+
+cloud:
+  aws:
+    endpoint: http://127.0.0.1:4566
+    accessKey: access-key
+    secretKey: secret-key
+    region: region
+    bucket: image

@@ -1,0 +1,47 @@
+gym:
+  db:
+    url: <helm-secret>
+    username: <helm-secret>
+    password: <helm-secret>
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${gym.db.url}
+    username: ${gym.db.username}
+    password: ${gym.db.password}
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    url: ${spring.datasource.url}
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+
+
+cloud:
+  aws:
+    bucket: daclimb-gym-images
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    url: /openapi.yaml
+    path: /api-docs
+
+server:
+  port: 80
+
+management:
+  endpoints:
+    web:
+      base-path: /
+
+scheduler:
+  image-deletion:
+    time: 1

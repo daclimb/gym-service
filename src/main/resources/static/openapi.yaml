@@ -1,0 +1,225 @@
+openapi: 3.0.1
+info:
+  version: 1.0.0
+  title: Product API
+  description: Apis to get and manage products
+paths:
+  /api/{id}:
+    get:
+      tags:
+        - Product
+      summary: Get product details
+      operationId: getProduct
+      description: Get product details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetProductResponse"
+    delete:
+      tags:
+        - Product
+      summary: Delete product
+      operationId: deleteProduct
+      description: Delete product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+        '400':
+          description: Failed response
+    put:
+      tags:
+        - Product
+      summary: Update product
+      operationId: updateProduct
+      description: Update product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schema/UpdateProductRequest"
+      responses:
+        '200':
+          description: Successful response
+        '400':
+          description: Failed response
+  /api:
+    get:
+      tags:
+        - Product
+      summary: Get list of all simple products
+      operationId: getSimpleProducts
+      description: Get list of all simple products
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetProductListResponse"
+    post:
+      tags:
+        - Product
+      summary: Add product
+      operationId: addProduct
+      description: Add product
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schema/AddProductRequest"
+      responses:
+        '200':
+          description: Successful response
+  /api/{image}:
+    post:
+      tags:
+        - ProductImage
+      summary: Add image details
+      operationId: addImage
+      description: Add image details
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AddImageResponse"
+
+components:
+  schemas:
+    GetProductResponse:
+      type: object
+      required:
+        - id
+        - title
+        - price
+        - description
+      properties:
+        id:
+          type: integer
+          description: id of product
+          example: 12
+        title:
+          type: string
+          description: title of product
+          example: Elden Ring
+        price:
+          type: integer
+          description: price of product
+          example: 64000
+        description:
+          type: string
+          description: description for product
+          example: This game is awesome!!
+    GetProductListResponse:
+      type: array
+      items:
+        type: object
+        required:
+          - id
+          - title
+          - price
+        properties:
+          id:
+            type: integer
+            description: id of product
+            example: 12
+          title:
+            type: string
+            description: title of product
+            example: Elden Ring
+          price:
+            type: integer
+            description: price of product
+            example: 64000
+    AddProductRequest:
+      type: object
+      required:
+        - title
+        - price
+        - description
+        - imageIds
+      properties:
+        title:
+          type: string
+          description: title of product
+          example: Elden Ring
+        price:
+          type: integer
+          description: price of product
+          example: 64000
+        description:
+          type: string
+          description: description for product
+          example: This game is awesome!!
+        imageIds:
+          type: array
+          items:
+            type: integer
+          description: image id list of product
+          example: [1, 2, 3]
+    UpdateProductRequest:
+      type: object
+      required:
+        - title
+        - price
+        - description
+        - imageIds
+      properties:
+        title:
+          type: string
+          description: title of product
+          example: Elden Ring
+        price:
+          type: integer
+          description: price of product
+          example: 64000
+        description:
+          type: string
+          description: description for product
+          example: This game is awesome!!
+        imageIds:
+          type: array
+          items:
+            type: integer
+          description: image id list of product
+          example: [1, 2, 3]
+    AddImageResponse:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          description: id
+          example: "550e8400-e29b-41d4-a716-446655440000"
+          
