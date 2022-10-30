@@ -38,7 +38,7 @@ dependencies {
     testImplementation("com.h2database:h2")
     testImplementation("org.testcontainers:localstack:1.17.3")
     testImplementation("org.testcontainers:junit-jupiter:1.17.3")
-    testImplementation("com.epages:restdocs-api-spec-mockmvc:0.16.0") //2.2
+    testImplementation("com.epages:restdocs-api-spec-mockmvc:0.16.2") //2.2
 }
 
 tasks.withType<KotlinCompile> {
