@@ -57,4 +57,9 @@ openapi3 {
     description = "Gym service api document"
     version = "0.1.0"
     format = "yaml"
+
+    copy {
+        from("$buildDir/api-spec/openapi3.yaml") // 복제할 yaml 파일 타겟팅
+        into("$projectDir/openapi") // 타겟 디렉토리로 파일 복제
+    }
 }
