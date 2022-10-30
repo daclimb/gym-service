@@ -10,7 +10,7 @@ plugins {
     kotlin("plugin.jpa") version "1.6.21"
 }
 
-group = "app.joybox"
+group = "app.daclimb"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
