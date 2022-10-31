@@ -2,7 +2,8 @@ name: CI
 
 on:
   push:
-    branches: [ "*" ]
+    branches:
+      - *
 
 permissions:
   contents: read
@@ -25,5 +26,5 @@ jobs:
 
     - name: Build with Gradle
       run: -|
-        chmod +x gradlew
+        chmod +x gradlew \
         ./gradlew clean build
