@@ -63,9 +63,10 @@ jobs:
         SLACK_USERNAME: ImageTagBot
         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
-    - name: Send Trigger
-      run: |
-        curl -X POST https://api.github.com/repos/leejh-77/api-docs/dispatches \
-        -H 'Accept: application/vnd.github.v3+json' \
-        -u ${{ secrets.PAT }} \
-        -d '{"event_type": "docs-event", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
+    - name: Repository Dispatch
+      uses: peter-evans/repository-dispatch@v2
+      with:
+        token: ${{ secrets.PAT }}
+        repository: daclimb/api-docs
+        event-type: gen-doc
+        client-payload: '{"repository": "${{ github.repository }}", "ref": "${{ github.ref }}" }'
