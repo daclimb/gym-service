@@ -47,8 +47,8 @@ internal class GymControllerTest {
             .andExpect {
                 status { isOk() }
                 this.jsonPath("$.id") { value(gym.id) }
-                this.jsonPath("$.title") { value(gym.title) }
-                this.jsonPath("$.price") { value(gym.price) }
+                this.jsonPath("$.title") { value(gym.name) }
+                this.jsonPath("$.price") { value(gym.address) }
                 this.jsonPath("$.description") { value(gym.description) }
                 this.jsonPath("$.images") {
                     if (gym.images.size > 0) {

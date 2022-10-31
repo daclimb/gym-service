@@ -5,6 +5,7 @@ import app.gym.domain.image.Image
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDateTime
+import java.util.*
 import javax.persistence.*
 
 @SequenceGenerator(
@@ -18,6 +19,7 @@ import javax.persistence.*
 @Table(name = "gyms")
 @EntityListeners(AuditingEntityListener::class)
 class Gym(id: Long? = null) {
+
     @Id
     @GeneratedValue(
         strategy = GenerationType.SEQUENCE,
@@ -25,11 +27,14 @@ class Gym(id: Long? = null) {
     )
     var id: Long? = id; private set
 
-    @Column(name = "title")
-    var title: String = ""
+    @Column(name = "name")
+    var name: String = ""
 
-    @Column(name = "price")
-    var price: Int = 0
+    @Column(name = "franchise")
+    var franchise: String = ""
+
+    @Column(name = "address")
+    var address: String = ""
 
     @Column(name = "description")
     @Lob
@@ -42,4 +47,16 @@ class Gym(id: Long? = null) {
     @Column(name = "created_at")
     @CreatedDate
     var createdAt: LocalDateTime = LocalDateTime.MIN
+
+    fun update(
+        name: String,
+        address: String,
+        description: String,
+        images: List<Image>
+    ) {
+        this.name = name
+        this.address = address
+        this.description = description
+        this.images = images.toMutableList()
+    }
 }

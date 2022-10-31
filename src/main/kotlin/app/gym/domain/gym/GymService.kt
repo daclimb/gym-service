@@ -38,10 +38,7 @@ class GymService(
         }
 
         val gym = Gym()
-        gym.title = command.title
-        gym.price = command.price
-        gym.description = command.description
-        gym.images = images.toMutableList()
+        gym.update(command.name, command.address, command.description, images)
         gymRepository.save(gym)
     }
 
@@ -73,10 +70,7 @@ class GymService(
             imageRepository.findByUuidIn(imageIds)
         }
 
-        gym.title = command.title
-        gym.price = command.price
-        gym.description = command.description
-        gym.images = images.toMutableList()
+        gym.update(command.name, command.address, command.description, images)
 
         gymRepository.save(gym)
     }

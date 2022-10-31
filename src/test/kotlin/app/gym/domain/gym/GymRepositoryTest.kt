@@ -33,8 +33,8 @@ class GymRepositoryTest {
     fun `Product should have createdAt with not null when getting product`() {
         val id = 1L
         val gym = Gym(id)
-        gym.title = "title"
-        gym.price = 10000
+        gym.name = "name"
+        gym.address = "address"
         gym.description = "description"
 
         gymRepository.saveAndFlush(gym)

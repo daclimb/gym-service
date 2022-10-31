@@ -20,22 +20,22 @@ class GymServiceTest {
     lateinit var gymService: GymService
 
     @Test
-    fun `Should throw ProductNotFoundException when get product with id of not existing product`() {
+    fun `Should throw GymNotFoundException when get gym with id of not existing gym`() {
         every { gymRepository.existsById(any()) } returns false
 
         assertThrows<GymNotFoundException> { gymService.getGym(0L) }
     }
 
     @Test
-    fun `Should throw ProductNotFoundException when update product with id of not existing product`() {
+    fun `Should throw GymNotFoundException when update gym with id of not existing gym`() {
         every { gymRepository.existsById(any()) } returns false
-        val command = UpdateGymCommand(0L, "title", 10000, "description", emptyList())
+        val command = UpdateGymCommand(0L, "name", "address", "description", null, emptyList())
 
         assertThrows<GymNotFoundException> { gymService.updateGym(command) }
     }
 
     @Test
-    fun `Should throw ProductNotFoundException when delete product with id of not existing product`() {
+    fun `Should throw GymNotFoundException when delete gym with id of not existing gym`() {
         every { gymRepository.existsById(any()) } returns false
 
         assertThrows<GymNotFoundException> { gymService.deleteGym(0) }

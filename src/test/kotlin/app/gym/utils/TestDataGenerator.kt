@@ -15,8 +15,8 @@ class TestDataGenerator {
             images: MutableList<Image> = mutableListOf()
         ): Gym {
             val gym = Gym(id)
-            gym.title = title
-            gym.price = price
+            gym.name = title
+            gym.address = price
             gym.description = description
             gym.images = images
 

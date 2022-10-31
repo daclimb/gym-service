@@ -1,4 +1,4 @@
-CREATE TABLE products
+CREATE TABLE gyms
 (
     id          INT PRIMARY KEY,
     title       VARCHAR(255) NOT NULL,
