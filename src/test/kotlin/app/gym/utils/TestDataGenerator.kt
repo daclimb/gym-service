@@ -12,7 +12,7 @@ import java.util.*
 
 fun ResultActions.andDocument(
     identifier: String,
-    builder: ResourceSnippetParametersBuilder.() -> ResourceSnippetParametersBuilder
+    builder: ResourceSnippetParametersBuilder.() -> Unit
 ) {
     this.andDo(
         MockMvcRestDocumentationWrapper
@@ -21,7 +21,7 @@ fun ResultActions.andDocument(
                 preprocessRequest(prettyPrint()),
                 preprocessResponse(prettyPrint()),
                 resource(
-                    builder(ResourceSnippetParametersBuilder()).build()
+                    ResourceSnippetParametersBuilder().apply(builder).build()
                 )
             )
     )

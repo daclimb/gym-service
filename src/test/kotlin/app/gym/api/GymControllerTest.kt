@@ -10,6 +10,7 @@ import app.gym.utils.JsonUtils
 import app.gym.utils.TestDataGenerator
 import app.gym.utils.andDocument
 import com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName
+import com.epages.restdocs.apispec.Schema
 import com.epages.restdocs.apispec.SimpleType
 import io.mockk.every
 import io.mockk.mockk
@@ -67,6 +68,7 @@ internal class GymControllerTest {
             pathParameters(
                 parameterWithName("gymId").type(SimpleType.INTEGER).description("Id of the gym")
             )
+            responseSchema(Schema("GetGymResponse"))
             responseFields(
                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("id of the gym"),
                 fieldWithPath("title").type(JsonFieldType.STRING).description("title of the gym"),

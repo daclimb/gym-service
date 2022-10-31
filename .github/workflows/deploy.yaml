@@ -70,3 +70,14 @@ jobs:
         repository: daclimb/api-docs
         event-type: gen-doc
         client-payload: '{"repository": "${{ github.repository }}", "ref": "${{ github.ref }}" }'
+
+    - name: Pushes test file
+      uses: dmnemec/copy_file_to_another_repo_action@main
+      env:
+        API_TOKEN_GITHUB: ${{ secrets.PAT }}
+      with:
+        source_file: 'openapi/openapi3.yaml'
+        destination_repo: 'daclimb/api-docs'
+        destination_folder: 'gym-service'
+        commit_message: 'Add gym api doc'
+
