@@ -63,14 +63,6 @@ jobs:
         SLACK_USERNAME: ImageTagBot
         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
-    - name: Repository Dispatch
-      uses: peter-evans/repository-dispatch@v2
-      with:
-        token: ${{ secrets.PAT }}
-        repository: daclimb/api-docs
-        event-type: gen-doc
-        client-payload: '{"repository": "${{ github.repository }}", "ref": "${{ github.ref }}" }'
-
     - name: Pushes test file
       uses: dmnemec/copy_file_to_another_repo_action@main
       env:
@@ -79,5 +71,7 @@ jobs:
         source_file: 'openapi/openapi3.yaml'
         destination_repo: 'daclimb/api-docs'
         destination_folder: 'gym-service'
+        user_email: 'appledoughnut42@gmail.com'
+        user_name: 'bot'
         commit_message: 'Add gym api doc'
 

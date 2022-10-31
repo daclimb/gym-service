@@ -26,7 +26,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/api-gymId2032177753'
+                $ref: '#/components/schemas/GetGymResponse'
               examples:
                 getGym:
                   value: |-
@@ -38,7 +38,8 @@ paths:
                     }
 components:
   schemas:
-    api-gymId2032177753:
+    GetGymResponse:
+      title: GetGymResponse
       type: object
       properties:
         price:
