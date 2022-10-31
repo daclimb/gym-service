@@ -23,7 +23,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("com.amazonaws:aws-java-sdk-s3:1.12.307")
-    implementation("org.springdoc:springdoc-openapi-ui:1.6.11")
     implementation("org.flywaydb:flyway-core")
 
     runtimeOnly("org.postgresql:postgresql")
@@ -31,7 +30,6 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.mockk:mockk:1.13.2")

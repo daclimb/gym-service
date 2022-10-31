@@ -27,13 +27,6 @@ cloud:
   aws:
     bucket: daclimb-gym-images
 
-springdoc:
-  api-docs:
-    enabled: false
-  swagger-ui:
-    url: /openapi.yaml
-    path: /api-docs
-
 server:
   port: 80
 
