@@ -1,4 +1,4 @@
-package app.user.config
+package app.gym.config
 
 import mu.KLogger
 import mu.KotlinLogging

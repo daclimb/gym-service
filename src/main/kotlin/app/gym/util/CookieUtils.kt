@@ -1,4 +1,4 @@
-package app.user.util
+package app.gym.util
 
 import javax.servlet.http.Cookie
 

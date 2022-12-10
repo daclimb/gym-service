@@ -1,9 +1,9 @@
-package app.user.api
+package app.gym.api
 
-import app.user.api.request.LoginRequest
-import app.user.domain.member.AdminService
-import app.user.domain.member.EmailOrPasswordNotMatchedException
-import app.user.util.CookieUtils
+import app.gym.api.request.LoginRequest
+import app.gym.domain.member.AdminService
+import app.gym.domain.member.EmailOrPasswordNotMatchedException
+import app.gym.util.CookieUtils
 import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping

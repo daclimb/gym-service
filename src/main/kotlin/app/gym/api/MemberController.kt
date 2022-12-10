@@ -1,10 +1,10 @@
-package app.user.api
+package app.gym.api
 
-import app.user.api.request.LoginRequest
-import app.user.api.request.SignupRequest
-import app.user.api.response.MeResponse
-import app.user.domain.member.*
-import app.user.util.CookieUtils
+import app.gym.api.request.LoginRequest
+import app.gym.api.request.SignupRequest
+import app.gym.api.response.MeResponse
+import app.gym.domain.member.*
+import app.gym.util.CookieUtils
 import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal

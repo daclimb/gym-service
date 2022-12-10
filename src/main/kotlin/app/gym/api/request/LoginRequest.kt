@@ -1,6 +1,6 @@
-package app.user.api.request
+package app.gym.api.request
 
-import app.user.domain.member.LoginCommand
+import app.gym.domain.member.LoginCommand
 
 class LoginRequest(
     val email: String,

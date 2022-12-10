@@ -1,4 +1,4 @@
-//package app.user.config
+//package app.gym.config
 //
 //import org.springdoc.core.SpringDocConfigProperties
 //import org.springdoc.core.SpringDocConfiguration

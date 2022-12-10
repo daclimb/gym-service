@@ -1,4 +1,4 @@
-package app.user.domain.member
+package app.gym.domain.member
 
 class LoginCommand(
     val email: String,

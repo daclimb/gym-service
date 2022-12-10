@@ -1,9 +1,10 @@
-package app.user.config
+package app.gym.config
 
-import app.user.domain.jwt.JwtProvider
+import app.gym.domain.jwt.JwtProvider
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer
 import org.springframework.security.config.http.SessionCreationPolicy
@@ -17,7 +18,7 @@ import java.security.spec.X509EncodedKeySpec
 import java.util.*
 
 
-val PUBLIC_ENDPOINTS = arrayOf("/api/member/signup", "/api/member/login", "/health")
+val PUBLIC_ENDPOINTS = arrayOf("/api/member/signup", "/api/member/login", "/api/gym/","/health")
 
 @Configuration
 class SecurityConfig {
@@ -30,7 +31,9 @@ class SecurityConfig {
 
     @Bean
     fun webSecurityCustomizer(): WebSecurityCustomizer {
-        return WebSecurityCustomizer { it.ignoring().antMatchers(*PUBLIC_ENDPOINTS) }
+        return WebSecurityCustomizer { it.ignoring()
+            .antMatchers(*PUBLIC_ENDPOINTS)
+            .antMatchers(HttpMethod.GET, "/api")}
     }
 
     @Bean
@@ -39,6 +42,7 @@ class SecurityConfig {
             .csrf().disable()
             .authorizeRequests()
             .antMatchers(*PUBLIC_ENDPOINTS).permitAll()
+            .antMatchers(HttpMethod.GET, "/api").permitAll()
 
             .and()
             .sessionManagement()

@@ -1,4 +1,4 @@
-package app.user.domain.member
+package app.gym.domain.member
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContext
@@ -15,5 +15,4 @@ class WithMockUserSecurityContextFactory: WithSecurityContextFactory<WithMockUse
 
         return context
     }
-
 }

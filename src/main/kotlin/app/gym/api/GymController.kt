@@ -18,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile
 class GymController(
     private val gymService: GymService
 ) {
-
     @GetMapping("/{gymId}")
     fun getGym(
         @PathVariable gymId: Long

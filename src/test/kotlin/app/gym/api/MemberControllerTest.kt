@@ -1,9 +1,9 @@
 package app.gym.api
 
-import app.user.api.MemberController
-import app.user.config.SecurityConfig
-import app.user.domain.jwt.JwtProvider
-import app.user.domain.member.*
+import app.gym.api.MemberController
+import app.gym.config.SecurityConfig
+import app.gym.domain.jwt.JwtProvider
+import app.gym.domain.member.*
 import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper
 import com.epages.restdocs.apispec.ResourceDocumentation.resource
 import com.epages.restdocs.apispec.ResourceSnippetParametersBuilder

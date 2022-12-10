@@ -1,8 +1,8 @@
-package app.user.config
+package app.gym.config
 
-import app.user.domain.jwt.InvalidJwtTokenException
-import app.user.domain.jwt.JwtProvider
-import app.user.domain.member.MemberPrincipal
+import app.gym.domain.jwt.InvalidJwtTokenException
+import app.gym.domain.jwt.JwtProvider
+import app.gym.domain.member.MemberPrincipal
 import mu.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken

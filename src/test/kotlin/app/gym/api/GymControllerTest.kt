@@ -3,6 +3,7 @@ package app.gym.api
 import app.gym.api.request.AddGymRequest
 import app.gym.api.request.UpdateGymRequest
 import app.gym.api.response.GetSimpleGymResponse
+import app.gym.config.SecurityConfig
 import app.gym.domain.gym.Gym
 import app.gym.domain.gym.GymNotFoundException
 import app.gym.domain.gym.GymService
@@ -22,12 +23,12 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Import
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.MediaType
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get
 import org.springframework.restdocs.payload.JsonFieldType
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.test.web.servlet.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -36,8 +37,7 @@ import java.util.*
 import kotlin.io.path.toPath
 
 @WebMvcTest(value = [GymController::class])
-//@PreAuthorize("hasRole(MemberRole.Admin)")
-@PreAuthorize("hasRole('ROLE_ADMIN')")
+@Import(SecurityConfig::class)
 @AutoConfigureRestDocs
 internal class GymControllerTest {
 
@@ -56,7 +56,6 @@ internal class GymControllerTest {
     @Test
     fun `Should return status code 200 and gym details when get gym`() {
         val gym = TestDataGenerator.gym(1L)
-
         every { gymService.getGym(any()) } returns gym
 
         val result = mvc.perform(get("/api/{gymId}", 1))

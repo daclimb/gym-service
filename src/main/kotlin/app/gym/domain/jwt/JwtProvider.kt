@@ -1,7 +1,7 @@
-package app.user.domain.jwt
+package app.gym.domain.jwt
 
-import app.user.domain.member.Member
-import app.user.domain.member.MemberRole
+import app.gym.domain.member.Member
+import app.gym.domain.member.MemberRole
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import java.security.KeyPair

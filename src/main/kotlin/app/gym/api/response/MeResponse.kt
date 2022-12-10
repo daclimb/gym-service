@@ -1,6 +1,6 @@
-package app.user.api.response
+package app.gym.api.response
 
-import app.user.domain.member.Member
+import app.gym.domain.member.Member
 
 class MeResponse(
     val name: String,

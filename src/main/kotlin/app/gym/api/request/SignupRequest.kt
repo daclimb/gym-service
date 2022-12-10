@@ -1,6 +1,6 @@
-package app.user.api.request
+package app.gym.api.request
 
-import app.user.domain.member.SignupCommand
+import app.gym.domain.member.SignupCommand
 import org.hibernate.validator.constraints.Length
 import javax.validation.constraints.Email
 
