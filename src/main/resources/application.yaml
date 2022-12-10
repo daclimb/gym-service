@@ -22,7 +22,6 @@ spring:
     user: ${spring.datasource.username}
     password: ${spring.datasource.password}
 
-
 cloud:
   aws:
     bucket: daclimb-gym-images
@@ -38,3 +37,13 @@ management:
 scheduler:
   image-deletion:
     time: 1
+
+
+logging:
+  level:
+    app.gym: DEBUG
+
+jwt:
+  key:
+    private: <helm-secret>
+    public: <helm-secret>

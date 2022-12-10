@@ -22,16 +22,20 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("com.amazonaws:aws-java-sdk-s3:1.12.307")
     implementation("org.flywaydb:flyway-core")
-
-    runtimeOnly("org.postgresql:postgresql")
-
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("io.jsonwebtoken:jjwt:0.9.1")
+    implementation("io.github.microutils:kotlin-logging-jvm:3.0.2")
+
+    runtimeOnly("org.postgresql:postgresql")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.security:spring-security-test")
     testImplementation("io.mockk:mockk:1.13.2")
     testImplementation("com.h2database:h2")
     testImplementation("org.testcontainers:localstack:1.17.3")

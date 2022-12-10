@@ -6,7 +6,7 @@ import app.gym.api.response.GetSimpleGymResponse
 import app.gym.domain.gym.Gym
 import app.gym.domain.gym.GymNotFoundException
 import app.gym.domain.gym.GymService
-import app.gym.utils.JsonUtils
+import app.gym.util.JsonUtils
 import app.gym.utils.TestDataGenerator
 import app.gym.utils.andDocument
 import com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName
@@ -27,6 +27,7 @@ import org.springframework.http.MediaType
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get
 import org.springframework.restdocs.payload.JsonFieldType
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.test.web.servlet.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -35,6 +36,8 @@ import java.util.*
 import kotlin.io.path.toPath
 
 @WebMvcTest(value = [GymController::class])
+//@PreAuthorize("hasRole(MemberRole.Admin)")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 @AutoConfigureRestDocs
 internal class GymControllerTest {
 
