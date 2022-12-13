@@ -16,6 +16,7 @@ class InvalidHeaderException : RuntimeException()
 
 val logger = KotlinLogging.logger { }
 
+//@Component
 class JwtAuthenticationFilter(
     private val jwtProvider: JwtProvider
 ) : OncePerRequestFilter() {

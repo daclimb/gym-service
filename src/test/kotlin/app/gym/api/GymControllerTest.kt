@@ -3,10 +3,12 @@ package app.gym.api
 import app.gym.api.request.AddGymRequest
 import app.gym.api.request.UpdateGymRequest
 import app.gym.api.response.GetSimpleGymResponse
+import app.gym.config.JwtAuthenticationFilter
 import app.gym.config.SecurityConfig
 import app.gym.domain.gym.Gym
 import app.gym.domain.gym.GymNotFoundException
 import app.gym.domain.gym.GymService
+import app.gym.domain.member.WithMockUser
 import app.gym.util.JsonUtils
 import app.gym.utils.TestDataGenerator
 import app.gym.utils.andDocument
@@ -23,6 +25,8 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.FilterType
 import org.springframework.context.annotation.Import
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.MediaType
@@ -36,7 +40,14 @@ import java.nio.file.Files
 import java.util.*
 import kotlin.io.path.toPath
 
-@WebMvcTest(value = [GymController::class])
+@WebMvcTest(
+    controllers = [GymController::class],
+    excludeFilters = [
+        ComponentScan.Filter(
+            classes = [JwtAuthenticationFilter::class],
+            type = FilterType.ASSIGNABLE_TYPE
+        )]
+)
 @Import(SecurityConfig::class)
 @AutoConfigureRestDocs
 internal class GymControllerTest {
@@ -95,17 +106,18 @@ internal class GymControllerTest {
     }
 
     @Test
+    @WithMockUser(userId = 1L)
     fun `Should return status code 201 when add product`() {
         val request = AddGymRequest("title", 10000, "description", emptyList())
         val content = JsonUtils.toJson(request)
         every { gymService.addGym(any()) } returns Unit
 
-        mvc.post("/api") {
+        mvc.post("/api/gym") {
             this.contentType = MediaType.APPLICATION_JSON
             this.content = content
         }.andExpect {
             status { isCreated() }
-        }
+        }.andDo { print() }
     }
 
     @Test

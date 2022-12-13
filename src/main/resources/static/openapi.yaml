@@ -4,7 +4,7 @@ info:
   title: Product API
   description: Apis to get and manage products
 paths:
-  /api/{id}:
+  /api/gym/{id}:
     get:
       tags:
         - Product
@@ -63,7 +63,7 @@ paths:
           description: Successful response
         '400':
           description: Failed response
-  /api:
+  /api/gym:
     get:
       tags:
         - Product
@@ -91,7 +91,7 @@ paths:
       responses:
         '200':
           description: Successful response
-  /api/{image}:
+  /api/gym/{image}:
     post:
       tags:
         - ProductImage
@@ -113,6 +113,51 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AddImageResponse"
+  /api/vendor/signup:
+    post:
+      tags:
+        - Vendor
+      summary: Vendor signup
+      operationId: vendorSignup
+      description: Vendor signup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VendorSignup"
+      responses:
+        '200':
+          description: Successful response
+        '400':
+          description: Failed response
+  /api/vendor/login:
+    post:
+      tags:
+        - Vendor
+      summary: Vendor login
+      operationId: vendorLogin
+      description: Vendor login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VendorLogin"
+      responses:
+        '200':
+          description: Successful response
+        '400':
+          description: Failed response
+  /api/vendor/me:
+    get:
+      tags:
+        - Vendor
+      summary: Get vendor info
+      operationId: vendorMe
+      description: Get vendor info
+      responses:
+        '200':
+          description: Successful response
+
 
 components:
   schemas:

@@ -18,7 +18,7 @@ import java.security.spec.X509EncodedKeySpec
 import java.util.*
 
 
-val PUBLIC_ENDPOINTS = arrayOf("/api/member/signup", "/api/member/login", "/api/gym/","/health")
+val PUBLIC_ENDPOINTS = arrayOf("/api/member/signup", "/api/member/login", "/health")
 
 @Configuration
 class SecurityConfig {
@@ -33,7 +33,8 @@ class SecurityConfig {
     fun webSecurityCustomizer(): WebSecurityCustomizer {
         return WebSecurityCustomizer { it.ignoring()
             .antMatchers(*PUBLIC_ENDPOINTS)
-            .antMatchers(HttpMethod.GET, "/api")}
+            .antMatchers(HttpMethod.GET, "/api/gym", "/api/gym/**")
+        }
     }
 
     @Bean
@@ -41,13 +42,12 @@ class SecurityConfig {
         http
             .csrf().disable()
             .authorizeRequests()
-            .antMatchers(*PUBLIC_ENDPOINTS).permitAll()
-            .antMatchers(HttpMethod.GET, "/api").permitAll()
+            .antMatchers("/api/gym", "/api/gym/**").authenticated()
 
             .and()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-
+//
             .and()
             .addFilterBefore(JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter::class.java)
         return http.build()

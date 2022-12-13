@@ -47,3 +47,7 @@ jwt:
   key:
     private: <helm-secret>
     public: <helm-secret>
+
+admin:
+  email: <helm-secret>
+  password: <helm-secret>

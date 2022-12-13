@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/gym")
 class GymController(
     private val gymService: GymService
 ) {
@@ -39,6 +39,7 @@ class GymController(
 
     @PostMapping
     fun addGym(
+//        @AuthenticationPrincipal principal: MemberPrincipal,
         @RequestBody request: AddGymRequest
     ): ResponseEntity<Any> {
         val command = request.toCommand()

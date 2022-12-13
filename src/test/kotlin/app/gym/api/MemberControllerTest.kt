@@ -1,6 +1,5 @@
 package app.gym.api
 
-import app.gym.api.MemberController
 import app.gym.config.SecurityConfig
 import app.gym.domain.jwt.JwtProvider
 import app.gym.domain.member.*
@@ -35,7 +34,10 @@ import org.springframework.test.web.servlet.result.isEqualTo
 import java.util.stream.Stream
 import javax.servlet.http.Cookie
 
-@WebMvcTest(value = [MemberController::class])
+@WebMvcTest(
+    value = [MemberController::class],
+
+)
 @Import(SecurityConfig::class)
 @AutoConfigureRestDocs
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
