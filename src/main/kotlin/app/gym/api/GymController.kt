@@ -18,13 +18,12 @@ import org.springframework.web.multipart.MultipartFile
 class GymController(
     private val gymService: GymService
 ) {
-
-    @GetMapping("/{id}")
+    @GetMapping("/{gymId}")
     fun getGym(
-        @PathVariable id: Long
+        @PathVariable gymId: Long
     ): ResponseEntity<GetGymResponse> {
         return try {
-            val gym = gymService.getGym(id)
+            val gym = gymService.getGym(gymId)
             ResponseEntity.ok(GetGymResponse.from(gym))
         } catch (e: GymNotFoundException) {
             ResponseEntity.badRequest().build()
@@ -40,6 +39,7 @@ class GymController(
 
     @PostMapping
     fun addGym(
+//        @AuthenticationPrincipal principal: MemberPrincipal,
         @RequestBody request: AddGymRequest
     ): ResponseEntity<Any> {
         val command = request.toCommand()
@@ -47,25 +47,25 @@ class GymController(
         return ResponseEntity.status(HttpStatus.CREATED).build()
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{gymId}")
     fun deleteGym(
-        @PathVariable id: Long
+        @PathVariable gymId: Long
     ): ResponseEntity<Any> {
         return try {
-            gymService.deleteGym(id)
+            gymService.deleteGym(gymId)
             ResponseEntity.ok().build()
         } catch (e: GymNotFoundException) {
             ResponseEntity.badRequest().build()
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{gymId}")
     fun updateGym(
-        @PathVariable id: Long,
+        @PathVariable gymId: Long,
         @RequestBody request: UpdateGymRequest
     ): ResponseEntity<UpdateGymResponse> {
         return try {
-            val command = request.toCommand(id)
+            val command = request.toCommand(gymId)
             gymService.updateGym(command)
             ResponseEntity.ok().build()
         } catch (e: GymNotFoundException) {

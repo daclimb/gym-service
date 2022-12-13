@@ -3,28 +3,53 @@ package app.gym.api
 import app.gym.api.request.AddGymRequest
 import app.gym.api.request.UpdateGymRequest
 import app.gym.api.response.GetSimpleGymResponse
+import app.gym.config.JwtAuthenticationFilter
+import app.gym.config.SecurityConfig
 import app.gym.domain.gym.Gym
 import app.gym.domain.gym.GymNotFoundException
 import app.gym.domain.gym.GymService
-import app.gym.utils.JsonUtils
+import app.gym.domain.member.WithMockUser
+import app.gym.util.JsonUtils
 import app.gym.utils.TestDataGenerator
+import app.gym.utils.andDocument
+import com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName
+import com.epages.restdocs.apispec.Schema
+import com.epages.restdocs.apispec.SimpleType
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.FilterType
+import org.springframework.context.annotation.Import
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.MediaType
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get
+import org.springframework.restdocs.payload.JsonFieldType
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.test.web.servlet.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.nio.file.Files
 import java.util.*
 import kotlin.io.path.toPath
 
-@WebMvcTest
+@WebMvcTest(
+    controllers = [GymController::class],
+    excludeFilters = [
+        ComponentScan.Filter(
+            classes = [JwtAuthenticationFilter::class],
+            type = FilterType.ASSIGNABLE_TYPE
+        )]
+)
+@Import(SecurityConfig::class)
+@AutoConfigureRestDocs
 internal class GymControllerTest {
 
     @Autowired
@@ -38,26 +63,35 @@ internal class GymControllerTest {
 
     @Autowired
     private lateinit var gymService: GymService
+
     @Test
-    fun `Should return status code 200 and product details when get product`() {
+    fun `Should return status code 200 and gym details when get gym`() {
         val gym = TestDataGenerator.gym(1L)
         every { gymService.getGym(any()) } returns gym
 
-        mvc.get("/api/1")
-            .andExpect {
-                status { isOk() }
-                this.jsonPath("$.id") { value(gym.id) }
-                this.jsonPath("$.title") { value(gym.name) }
-                this.jsonPath("$.price") { value(gym.address) }
-                this.jsonPath("$.description") { value(gym.description) }
-                this.jsonPath("$.images") {
-                    if (gym.images.size > 0) {
-                        value(gym.images)
-                    } else {
-                        doesNotExist()
-                    }
-                }
-            }
+        val result = mvc.perform(get("/api/{gymId}", 1))
+
+        result.andExpect(status().isOk)
+            .andExpect(jsonPath("$.id").value(gym.id))
+            .andExpect(jsonPath("$.name").value(gym.name))
+            .andExpect(jsonPath("$.address").value(gym.address))
+            .andExpect(jsonPath("$.description").value(gym.description))
+
+        // document
+        result.andDocument("getGym") {
+            pathParameters(
+                parameterWithName("gymId").type(SimpleType.INTEGER).description("Id of the gym")
+            )
+            responseSchema(Schema("GetGymResponse"))
+            responseFields(
+                fieldWithPath("id").type(JsonFieldType.NUMBER).description("id of the gym"),
+                fieldWithPath("name").type(JsonFieldType.STRING).description("name of the gym"),
+                fieldWithPath("address").type(JsonFieldType.STRING).description("address of the gym"),
+                fieldWithPath("description").type(JsonFieldType.STRING).description("description of the gym"),
+                fieldWithPath("imageIds").type(JsonFieldType.ARRAY).description("image ids of the gym"),
+                fieldWithPath("imageIds[].*").type(JsonFieldType.STRING).description("uuid of the gym image")
+            )
+        }
     }
 
     @ParameterizedTest
@@ -75,17 +109,18 @@ internal class GymControllerTest {
     }
 
     @Test
+    @WithMockUser(userId = 1L)
     fun `Should return status code 201 when add product`() {
-        val request = AddGymRequest("title", 10000, "description", emptyList())
+        val request = AddGymRequest("name", "address", "description", emptyList())
         val content = JsonUtils.toJson(request)
         every { gymService.addGym(any()) } returns Unit
 
-        mvc.post("/api") {
+        mvc.post("/api/gym") {
             this.contentType = MediaType.APPLICATION_JSON
             this.content = content
         }.andExpect {
             status { isCreated() }
-        }
+        }.andDo { print() }
     }
 
     @Test
@@ -101,7 +136,7 @@ internal class GymControllerTest {
 
     @Test
     fun `Should return status code 200 when update product`() {
-        val request = UpdateGymRequest("title", 10000, "description", emptyList())
+        val request = UpdateGymRequest("name", "address", "description", emptyList())
         val content = JsonUtils.toJson(request)
         every { gymService.updateGym(any()) } returns Unit
 
@@ -115,7 +150,7 @@ internal class GymControllerTest {
 
     @Test
     fun `Should return status code 400 when update product with id of not existing product`() {
-        val request = UpdateGymRequest("title", 10000, "description", emptyList())
+        val request = UpdateGymRequest("name", "address", "description", emptyList())
         val content = JsonUtils.toJson(request)
         every { gymService.updateGym(any()) } throws GymNotFoundException()
 

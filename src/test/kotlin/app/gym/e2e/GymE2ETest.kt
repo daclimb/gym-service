@@ -1,8 +1,8 @@
 package app.gym.e2e
 
 import app.gym.api.request.UpdateGymRequest
-import app.gym.api.response.AddImageResponse
 import app.gym.api.response.AddGymResponse
+import app.gym.api.response.AddImageResponse
 import app.gym.api.response.GetGymResponse
 import app.gym.api.response.GetSimpleGymResponse
 import app.gym.config.AWSTestConfig
@@ -125,7 +125,7 @@ class GymE2ETest {
 
         val id = getSimpleGymResponses.body!![0].id
 
-        val request = UpdateGymRequest("title", 10000, "description", emptyList())
+        val request = UpdateGymRequest("name", "address", "description", emptyList())
 
         val httpEntity = HttpEntity(request)
         template.exchange("/api/$id", HttpMethod.PUT, httpEntity, Any::class.java)

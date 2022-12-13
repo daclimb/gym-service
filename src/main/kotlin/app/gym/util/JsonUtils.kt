@@ -1,4 +1,4 @@
-package app.gym.utils
+package app.gym.util
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper

@@ -22,17 +22,9 @@ spring:
     user: ${spring.datasource.username}
     password: ${spring.datasource.password}
 
-
 cloud:
   aws:
     bucket: daclimb-gym-images
-
-springdoc:
-  api-docs:
-    enabled: false
-  swagger-ui:
-    url: /openapi.yaml
-    path: /api-docs
 
 server:
   port: 80
@@ -45,3 +37,17 @@ management:
 scheduler:
   image-deletion:
     time: 1
+
+
+logging:
+  level:
+    app.gym: DEBUG
+
+jwt:
+  key:
+    private: <helm-secret>
+    public: <helm-secret>
+
+admin:
+  email: <helm-secret>
+  password: <helm-secret>

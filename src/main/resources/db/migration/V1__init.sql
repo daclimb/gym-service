@@ -1,8 +1,8 @@
 CREATE TABLE gyms
 (
     id          INT PRIMARY KEY,
-    title       VARCHAR(255) NOT NULL,
-    price       INT          NOT NULL,
+    name        VARCHAR(255) NOT NULL,
+    address     VARCHAR(255) NOT NULL,
     description TEXT         NOT NULL,
     created_at  TIMESTAMP    NOT NULL
 );
@@ -16,3 +16,14 @@ CREATE TABLE product_images
     product_id INT,
     created_at TIMESTAMP    NOT NULL
 )
+
+CREATE TABLE members
+(
+    id          SERIAL primary key,
+    email       VARCHAR(127) NOT NULL UNIQUE,
+    password    VARCHAR(127) NOT NULL,
+    name        VARCHAR(255) NOT NULL,
+    description TEXT,
+    created_at  TIMESTAMP    NOT NULL,
+    modified_at TIMESTAMP    NOT NULL
+);
