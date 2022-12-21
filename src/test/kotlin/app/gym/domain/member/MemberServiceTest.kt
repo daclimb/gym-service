@@ -1,6 +1,6 @@
 package app.gym.domain.member
 
-import app.gym.domain.jwt.JwtProvider
+import app.gym.config.JwtProvider
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK

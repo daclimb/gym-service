@@ -2,13 +2,11 @@ package app.gym.api
 
 import app.gym.api.request.AddGymRequest
 import app.gym.api.request.UpdateGymRequest
-import app.gym.api.response.GetSimpleGymResponse
 import app.gym.config.JwtAuthenticationFilter
 import app.gym.config.SecurityConfig
-import app.gym.domain.gym.Gym
 import app.gym.domain.gym.GymNotFoundException
 import app.gym.domain.gym.GymService
-import app.gym.domain.member.WithMockUser
+import app.gym.domain.member.WithMockMember
 import app.gym.util.JsonUtils
 import app.gym.utils.TestDataGenerator
 import app.gym.utils.andDocument
@@ -69,7 +67,7 @@ internal class GymControllerTest {
         val gym = TestDataGenerator.gym(1L)
         every { gymService.getGym(any()) } returns gym
 
-        val result = mvc.perform(get("/api/{gymId}", 1))
+        val result = mvc.perform(get("/api/gym/{gymId}", 1))
 
         result.andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(gym.id))
@@ -88,20 +86,19 @@ internal class GymControllerTest {
                 fieldWithPath("name").type(JsonFieldType.STRING).description("name of the gym"),
                 fieldWithPath("address").type(JsonFieldType.STRING).description("address of the gym"),
                 fieldWithPath("description").type(JsonFieldType.STRING).description("description of the gym"),
-                fieldWithPath("imageIds").type(JsonFieldType.ARRAY).description("image ids of the gym"),
-                fieldWithPath("imageIds[].*").type(JsonFieldType.STRING).description("uuid of the gym image")
+                fieldWithPath("images").type(JsonFieldType.ARRAY).description("image ids of the gym")
             )
         }
     }
 
     @ParameterizedTest
     @ValueSource(longs = [0L, 3L])
-    fun `Should return status code 200 when get all simple products`(length: Long) {
-        val products = TestDataGenerator.gyms(length)
+    fun `Should return status code 200 when get all simple gyms`(length: Long) {
+        val gyms = TestDataGenerator.gyms(length)
 
-        every { gymService.getGyms() } returns products
+        every { gymService.getGyms() } returns gyms
 
-        mvc.get("/api")
+        mvc.get("/api/gym")
             .andExpect {
                 status { isOk() }
                 jsonPath("$.length()") { value(length) }
@@ -109,8 +106,8 @@ internal class GymControllerTest {
     }
 
     @Test
-    @WithMockUser(userId = 1L)
-    fun `Should return status code 201 when add product`() {
+    @WithMockMember(memberId = 1L)
+    fun `Should return status code 201 when add gym`() {
         val request = AddGymRequest("name", "address", "description", emptyList())
         val content = JsonUtils.toJson(request)
         every { gymService.addGym(any()) } returns Unit
@@ -124,23 +121,22 @@ internal class GymControllerTest {
     }
 
     @Test
-    fun `Should return status code 400 when delete product with id of not existing product`() {
+    fun `Should return status code 400 when delete gym with id of not existing gym`() {
 
         every { gymService.deleteGym(any()) } throws GymNotFoundException()
-
-        mvc.delete("/api/1")
+        mvc.delete("/api/gym/1")
             .andExpect {
                 status { isBadRequest() }
             }
     }
 
     @Test
-    fun `Should return status code 200 when update product`() {
+    fun `Should return status code 200 when update gym`() {
         val request = UpdateGymRequest("name", "address", "description", emptyList())
         val content = JsonUtils.toJson(request)
         every { gymService.updateGym(any()) } returns Unit
 
-        mvc.put("/api/1") {
+        mvc.put("/api/gym/1") {
             this.contentType = MediaType.APPLICATION_JSON
             this.content = content
         }.andExpect {
@@ -149,12 +145,12 @@ internal class GymControllerTest {
     }
 
     @Test
-    fun `Should return status code 400 when update product with id of not existing product`() {
+    fun `Should return status code 400 when update gym with id of not existing gym`() {
         val request = UpdateGymRequest("name", "address", "description", emptyList())
         val content = JsonUtils.toJson(request)
         every { gymService.updateGym(any()) } throws GymNotFoundException()
 
-        mvc.put("/api/1") {
+        mvc.put("/api/gym/1") {
             this.contentType = MediaType.APPLICATION_JSON
             this.content = content
         }.andExpect {
@@ -163,7 +159,8 @@ internal class GymControllerTest {
     }
 
     @Test
-    fun addImage() {
+//    @WithMockMember(memberId = 1L, memberRole = MemberRole.Admin)
+    fun `Should return status code 201 when add image`() {
         val imageResource = ClassPathResource("images/pooh.png")
         val file = Files.readAllBytes(imageResource.uri.toPath())
 
@@ -171,19 +168,11 @@ internal class GymControllerTest {
 
         every { gymService.addImage(any()) } returns uuid
 
-        mvc.multipart("/api/image") {
+        mvc.multipart("/api/gym/image") {
             this.file("image", file)
         }.andExpect {
             status { isCreated() }
             content { jsonPath("$.id") { this.value(uuid.toString()) } }
-        }
-    }
-
-    @Test
-    fun mapTest() {
-        val gyms = emptyList<Gym>()
-        val gymResponseList = gyms.map {
-            GetSimpleGymResponse.from(it)
         }
     }
 }

@@ -1,7 +1,8 @@
 package app.gym.api
 
+import app.gym.config.JwtAuthenticationProvider
+import app.gym.config.JwtAuthenticationToken
 import app.gym.config.SecurityConfig
-import app.gym.domain.jwt.JwtProvider
 import app.gym.domain.member.*
 import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper
 import com.epages.restdocs.apispec.ResourceDocumentation.resource
@@ -26,6 +27,8 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.pos
 import org.springframework.restdocs.operation.preprocess.Preprocessors.*
 import org.springframework.restdocs.payload.JsonFieldType
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.core.GrantedAuthority
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
@@ -37,7 +40,7 @@ import javax.servlet.http.Cookie
 @WebMvcTest(
     value = [MemberController::class],
 
-)
+    )
 @Import(SecurityConfig::class)
 @AutoConfigureRestDocs
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -46,21 +49,20 @@ internal class MemberControllerTest {
     @Autowired
     lateinit var mvc: MockMvc
 
-
     @TestConfiguration
     class Config {
         @Bean
-        fun jwtProvider() = mockk<JwtProvider>()
+        fun authenticationManager() = mockk<AuthenticationManager>()
 
         @Bean
-        fun userService(jwtProvider: JwtProvider) = mockk<MemberService>()
+        fun userService(jwtAuthenticationProvider: JwtAuthenticationProvider) = mockk<MemberService>()
     }
 
     @Autowired
     private lateinit var memberService: MemberService
 
     @Autowired
-    private lateinit var jwtProvider: JwtProvider
+    private lateinit var authenticationManager: org.springframework.security.authentication.AuthenticationManager
 
     @ParameterizedTest
     @MethodSource("emailProvider")
@@ -241,20 +243,21 @@ internal class MemberControllerTest {
     }
 
     @Test
-    @WithMockUser(userId = 1L)
     fun `Should return 200 and member info when get me`() {
         val email = "valid@email.com"
         val password = "password"
         val name = "name"
+        val role = MemberRole.Member
         val member = Member(email, password, name)
-        val token = "JWT token"
-
+        val tokenString = "valid_token"
+        val requestToken = JwtAuthenticationToken(tokenString)
         val memberId = 1L
-
-        every { jwtProvider.parseMemberId(token) } returns memberId
+        val authenticatedToken =
+            JwtAuthenticationToken(MemberPrincipal(memberId), null, listOf(GrantedAuthority { role.value }))
+        every {authenticationManager.authenticate(requestToken) } returns authenticatedToken
         every { memberService.getMember(memberId) } returns member
 
-        val cookie = Cookie("jwt", token)
+        val cookie = Cookie("jwt", tokenString)
 
         cookie.maxAge = 24 * 60 * 60
 
@@ -272,7 +275,7 @@ internal class MemberControllerTest {
             .andDo { print() }
     }
 
-    fun passwordProvider(): Stream<Arguments> {
+    private fun passwordProvider(): Stream<Arguments> {
         return Stream.of(
             Arguments.of(null, HttpStatus.BAD_REQUEST),
             Arguments.of("1", HttpStatus.BAD_REQUEST),

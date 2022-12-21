@@ -30,6 +30,7 @@ class Gym(id: Long? = null) {
     @Column(name = "name")
     var name: String = ""
 
+    @Transient // TODO
     @Column(name = "franchise")
     var franchise: String = ""
 

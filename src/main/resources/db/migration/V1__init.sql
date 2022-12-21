@@ -4,18 +4,19 @@ CREATE TABLE gyms
     name        VARCHAR(255) NOT NULL,
     address     VARCHAR(255) NOT NULL,
     description TEXT         NOT NULL,
+    role        VARCHAR(16)  NOT NULL,
     created_at  TIMESTAMP    NOT NULL
 );
 
-CREATE SEQUENCE PRODUCTS_SEQ START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE GYMS_SEQ START WITH 1 INCREMENT BY 1;
 
-CREATE TABLE product_images
+CREATE TABLE gym_images
 (
     id         VARCHAR(36) PRIMARY KEY,
     name       VARCHAR(255) NOT NULL,
-    product_id INT,
+    gym_id     INT,
     created_at TIMESTAMP    NOT NULL
-)
+);
 
 CREATE TABLE members
 (

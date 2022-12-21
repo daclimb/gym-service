@@ -29,7 +29,7 @@ class GymServiceTest {
     @Test
     fun `Should throw GymNotFoundException when update gym with id of not existing gym`() {
         every { gymRepository.existsById(any()) } returns false
-        val command = UpdateGymCommand(0L, "name", "address", "description", null, emptyList())
+        val command = UpdateGymCommand(0L, "name", "address", "description", emptyList())
 
         assertThrows<GymNotFoundException> { gymService.updateGym(command) }
     }

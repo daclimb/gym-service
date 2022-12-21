@@ -51,42 +51,42 @@ class GymE2ETest {
     }
 
     @Test
-    fun `Should return status code 201 when add product`() {
+    fun `Should return status code 201 when add gym`() {
         val request = TestDataGenerator.addGymRequest()
-        val response = template.postForEntity("/api", request, AddGymResponse::class.java)
+        val response = template.postForEntity("/api/gym", request, AddGymResponse::class.java)
 
         assertEquals(HttpStatus.CREATED, response.statusCode)
     }
 
     @Test
-    fun `Should return status code 200 when delete product`() {
-        val addProductRequest = TestDataGenerator.addGymRequest()
-        template.postForEntity("/api", addProductRequest, AddGymResponse::class.java)
+    fun `Should return status code 200 when delete gym`() {
+        val addGymRequest = TestDataGenerator.addGymRequest()
+        template.postForEntity("/api/gym", addGymRequest, AddGymResponse::class.java)
 
         val getSimpleGymResponses: ResponseEntity<Array<GetSimpleGymResponse>> =
-            template.getForEntity("/api", Array<GetSimpleGymResponse>::class)
+            template.getForEntity("/api/gym", Array<GetSimpleGymResponse>::class)
 
         val id = getSimpleGymResponses.body!![0].id
 
-        val response = template.exchange("/api/$id", HttpMethod.DELETE, null, Any::class.java)
+        val response = template.exchange("/api/gym/$id", HttpMethod.DELETE, null, Any::class.java)
 
         assertEquals(HttpStatus.OK, response.statusCode)
     }
 
     @Test
-    fun `Should return status code 400 when delete not existing product`() {
-        val response = template.exchange("/api/93485713495", HttpMethod.DELETE, null, Any::class.java)
+    fun `Should return status code 400 when delete not existing gym`() {
+        val response = template.exchange("/api/gym/93485713495", HttpMethod.DELETE, null, Any::class.java)
         assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
     }
 
     @Test
-    fun `Should return status code 200 and simple products list when get simple products`() {
-        val addProductRequest = TestDataGenerator.addGymRequest()
-        template.postForEntity("/api", addProductRequest, AddGymResponse::class.java)
+    fun `Should return status code 200 and simple gym list when get simple gym list`() {
+        val addGymRequest = TestDataGenerator.addGymRequest()
+        template.postForEntity("/api", addGymRequest, AddGymResponse::class.java)
 
         val responses =
             template.exchange(
-                "/api",
+                "/api/gym",
                 HttpMethod.GET,
                 null,
                 object : ParameterizedTypeReference<List<GetSimpleGymResponse>>() {})
@@ -94,31 +94,31 @@ class GymE2ETest {
     }
 
     @Test
-    fun `Should return status code 200 and product details when get product`() {
-        val addProductRequest = TestDataGenerator.addGymRequest()
-        template.postForEntity("/api", addProductRequest, AddGymResponse::class.java)
+    fun `Should return status code 200 and gym details when get gym`() {
+        val addGymRequest = TestDataGenerator.addGymRequest()
+        template.postForEntity("/api/gym", addGymRequest, AddGymResponse::class.java)
 
         val getSimpleGymResponses =
             template.exchange(
-                "/api",
+                "/api/gym",
                 HttpMethod.GET,
                 null,
                 object : ParameterizedTypeReference<List<GetSimpleGymResponse>>() {})
         val id = getSimpleGymResponses.body!![0].id
 
         val getGymResponse: ResponseEntity<GetGymResponse> =
-            template.getForEntity("/api/$id", GetGymResponse::class.java)
+            template.getForEntity("/api/gym/$id", GetGymResponse::class.java)
         assertEquals(HttpStatus.OK, getGymResponse.statusCode)
     }
 
     @Test
-    fun `Should return status code 200 when update product`() {
-        val addProductRequest = TestDataGenerator.addGymRequest()
-        template.postForEntity("/api", addProductRequest, AddGymResponse::class.java)
+    fun `Should return status code 200 when update gym`() {
+        val addGymRequest = TestDataGenerator.addGymRequest()
+        template.postForEntity("/api/gym", addGymRequest, AddGymResponse::class.java)
 
         val getSimpleGymResponses =
             template.exchange(
-                "/api",
+                "/api/gym",
                 HttpMethod.GET,
                 null,
                 object : ParameterizedTypeReference<List<GetSimpleGymResponse>>() {})
@@ -128,11 +128,11 @@ class GymE2ETest {
         val request = UpdateGymRequest("name", "address", "description", emptyList())
 
         val httpEntity = HttpEntity(request)
-        template.exchange("/api/$id", HttpMethod.PUT, httpEntity, Any::class.java)
+        template.exchange("/api/gym/$id", HttpMethod.PUT, httpEntity, Any::class.java)
     }
 
     @Test
-    fun `Should return status code 201 and uuid when adding product image`() {
+    fun `Should return status code 201 and uuid when adding gym image`() {
         val imageResource = ClassPathResource("images/pooh.png")
         val file = FileSystemResource(imageResource.uri.toPath())
 
@@ -143,7 +143,7 @@ class GymE2ETest {
         headers.contentType = MediaType.MULTIPART_FORM_DATA
 
         val httpEntity = HttpEntity<MultiValueMap<String, Any>>(body, headers)
-        val response = template.postForEntity("/api/image", httpEntity, AddImageResponse::class.java)
+        val response = template.postForEntity("/api/gym/image", httpEntity, AddImageResponse::class.java)
 
         assertEquals(HttpStatus.CREATED, response.statusCode)
         assertNotNull(response.body)
@@ -152,4 +152,3 @@ class GymE2ETest {
         assertNotNull(uuid)
     }
 }
-

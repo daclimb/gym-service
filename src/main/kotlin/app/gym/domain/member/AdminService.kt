@@ -1,6 +1,6 @@
 package app.gym.domain.member
 
-import app.gym.domain.jwt.JwtProvider
+import app.gym.config.JwtProvider
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 

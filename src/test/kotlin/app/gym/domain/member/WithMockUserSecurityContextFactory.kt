@@ -1,17 +1,22 @@
 package app.gym.domain.member
 
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import app.gym.config.JwtAuthenticationToken
+import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.test.context.support.WithSecurityContextFactory
 
-class WithMockUserSecurityContextFactory: WithSecurityContextFactory<WithMockUser> {
-    override fun createSecurityContext(mockUser: WithMockUser): SecurityContext {
+class WithMockUserSecurityContextFactory : WithSecurityContextFactory<WithMockMember> {
+    override fun createSecurityContext(mockMember: WithMockMember): SecurityContext {
         val context = SecurityContextHolder.getContext()
 
-        val memberPrincipal = MemberPrincipal(mockUser.userId)
-        val authenticationToken = UsernamePasswordAuthenticationToken(memberPrincipal, null)
-        context.authentication = authenticationToken
+        val memberPrincipal = MemberPrincipal(mockMember.memberId)
+        val jwtAuthenticationToken = JwtAuthenticationToken(
+            memberPrincipal, null,
+            listOf(GrantedAuthority { mockMember.memberRole.value })
+        )
+
+        context.authentication = jwtAuthenticationToken
 
         return context
     }

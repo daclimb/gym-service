@@ -34,7 +34,7 @@ class TestDataGenerator {
             name: String = "name",
             address: String = "address",
             description: String = "description",
-            images: MutableList<Image> = mutableListOf()
+            images: MutableList<Image> = mutableListOf(Image.create(UUID.randomUUID(), "image"))
         ): Gym {
             val gym = Gym(id)
             gym.name = name

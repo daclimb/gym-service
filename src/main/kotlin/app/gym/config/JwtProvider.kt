@@ -1,6 +1,7 @@
-package app.gym.domain.jwt
+package app.gym.config
 
 import app.gym.domain.member.Member
+import app.gym.domain.member.MemberPrincipal
 import app.gym.domain.member.MemberRole
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
@@ -18,7 +19,7 @@ class JwtProvider(
         return Jwts.builder()
             .setExpiration(Date(millis))
             .claim("memberId", member.id.toString())
-            .claim("role", MemberRole.Member)
+            .claim("role", member.role)
             .signWith(SignatureAlgorithm.RS256, keyPair.private)
             .compact()
     }
@@ -33,14 +34,16 @@ class JwtProvider(
             .compact()
     }
 
-    fun parseMemberId(token: String): Long {
+    fun parseMemberPrincipal(token: String): MemberPrincipal {
         return try {
             val claimsJwt = Jwts.parser()
                 .setSigningKey(keyPair.public)
                 .parseClaimsJws(token)
 
-            val memberIdString: String = claimsJwt.body["memberId"] as String
-            memberIdString.toLong()
+            val memberId = (claimsJwt.body["memberId"] as String).toLong()
+//            val memberRole: MemberRole = claimsJwt.body["role"] as MemberRole
+
+            MemberPrincipal(memberId)
         } catch (e: Exception) {
             throw InvalidJwtTokenException()
         }

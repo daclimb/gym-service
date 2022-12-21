@@ -1,55 +1,54 @@
 package app.gym.config
 
-import app.gym.domain.jwt.JwtProvider
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import java.security.KeyFactory
 import java.security.KeyPair
 import java.security.spec.PKCS8EncodedKeySpec
 import java.security.spec.X509EncodedKeySpec
 import java.util.*
 
-
-val PUBLIC_ENDPOINTS = arrayOf("/api/member/signup", "/api/member/login", "/health")
-
 @Configuration
-class SecurityConfig {
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+class SecurityConfig(val authenticationConfiguration: AuthenticationConfiguration) {
 
     @Bean
     fun passwordEncoder() = BCryptPasswordEncoder()
 
     @Bean
-    fun jwtProvider(keyPair: KeyPair) = JwtProvider(keyPair)
+    fun jwtAuthenticationProvider(keyPair: KeyPair) = JwtAuthenticationProvider(keyPair)
 
     @Bean
     fun webSecurityCustomizer(): WebSecurityCustomizer {
-        return WebSecurityCustomizer { it.ignoring()
-            .antMatchers(*PUBLIC_ENDPOINTS)
-            .antMatchers(HttpMethod.GET, "/api/gym", "/api/gym/**")
+        return WebSecurityCustomizer {
+            it.ignoring()
+                .antMatchers(*PUBLIC_ENDPOINTS)
         }
     }
 
     @Bean
-    fun securityFilterChain(http: HttpSecurity, jwtProvider: JwtProvider): SecurityFilterChain {
+    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .csrf().disable()
+
             .authorizeRequests()
-            .antMatchers("/api/gym", "/api/gym/**").authenticated()
+            .antMatchers(HttpMethod.GET, "/api/gym", "/api/gym/**").permitAll()
+//            .anyRequest().authenticated()
 
             .and()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//
-            .and()
-            .addFilterBefore(JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter::class.java)
+
         return http.build()
     }
 
@@ -71,5 +70,10 @@ class SecurityConfig {
         val privateKey = keyFactory.generatePrivate(privateKeySpec)
 
         return KeyPair(publicKey, privateKey)
+    }
+
+    @Bean
+    fun authenticationManager(): AuthenticationManager {
+        return authenticationConfiguration.authenticationManager
     }
 }

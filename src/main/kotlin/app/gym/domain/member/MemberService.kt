@@ -1,6 +1,6 @@
 package app.gym.domain.member
 
-import app.gym.domain.jwt.JwtProvider
+import app.gym.config.JwtProvider
 import mu.KotlinLogging
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service

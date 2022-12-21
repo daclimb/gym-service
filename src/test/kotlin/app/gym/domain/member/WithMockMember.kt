@@ -4,6 +4,7 @@ import org.springframework.security.test.context.support.WithSecurityContext
 
 @Retention(AnnotationRetention.RUNTIME)
 @WithSecurityContext(factory = WithMockUserSecurityContextFactory::class)
-annotation class WithMockUser(
-    val userId: Long
+annotation class WithMockMember(
+    val memberId: Long,
+    val memberRole: MemberRole = MemberRole.Member
 )

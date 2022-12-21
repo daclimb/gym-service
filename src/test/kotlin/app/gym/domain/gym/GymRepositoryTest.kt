@@ -30,7 +30,7 @@ class GymRepositoryTest {
     }
 
     @Test
-    fun `Product should have createdAt with not null when getting product`() {
+    fun `Gym should have createdAt with not null when getting gym`() {
         val id = 1L
         val gym = Gym(id)
         gym.name = "name"
@@ -39,9 +39,9 @@ class GymRepositoryTest {
 
         gymRepository.saveAndFlush(gym)
 
-        val getProduct = gymRepository.findById(id).get()
+        val getGym = gymRepository.findById(id).get()
 
-        assertNotEquals(LocalDateTime.MIN, getProduct.createdAt)
+        assertNotEquals(LocalDateTime.MIN, getGym.createdAt)
     }
 
     @Test
@@ -52,8 +52,8 @@ class GymRepositoryTest {
 
         imageRepository.saveAndFlush(image)
 
-        val getProduct = imageRepository.findById(uuid).get()
+        val getGym = imageRepository.findById(uuid).get()
 
-        assertNotEquals(LocalDateTime.MIN, getProduct.createdAt)
+        assertNotEquals(LocalDateTime.MIN, getGym.createdAt)
     }
 }
