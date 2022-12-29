@@ -35,7 +35,7 @@ class ImageStorageTest {
     }
 
     @Test
-    fun `Should return same image keys when delete images`() {
+    fun `Should not throw any exception when delete images`() {
         val imageResource = ClassPathResource("images/pooh.png")
         val file = FileSystemResource(imageResource.uri.toPath())
 

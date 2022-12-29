@@ -1,4 +1,4 @@
-package app.gym.api
+package app.gym.api.controller
 
 import app.gym.api.request.LoginRequest
 import app.gym.api.request.SignupRequest
@@ -40,10 +40,8 @@ class MemberController(
         val command = request.toCommand()
         return try {
             val token = memberService.login(command)
-
             val cookie = CookieUtils.create(token)
             response.addCookie(cookie)
-
             ResponseEntity.ok().build()
         } catch (e: MemberNotFoundException) {
             logger.info { "Login failed" }

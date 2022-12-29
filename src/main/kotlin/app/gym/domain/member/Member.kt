@@ -31,6 +31,10 @@ class Member(
     @Column(name = "description")
     var description: String? = null; private set
 
+    @Column(name = "role")
+    var role: MemberRole = MemberRole.Member; private set
+
+    @Transient // TODO
     @Column(name = "logo_url")
     var logoUrl: String? = null; private set
 
@@ -41,5 +45,4 @@ class Member(
     @Column(name = "modified_at")
     @LastModifiedDate
     var modifiedAt: LocalDateTime = LocalDateTime.MIN; private set
-
 }

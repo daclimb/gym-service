@@ -165,19 +165,19 @@ components:
       type: object
       required:
         - id
-        - title
-        - price
+        - name
+        - address
         - description
       properties:
         id:
           type: integer
           description: id of product
           example: 12
-        title:
+        name:
           type: string
           description: title of product
           example: Elden Ring
-        price:
+        address:
           type: integer
           description: price of product
           example: 64000

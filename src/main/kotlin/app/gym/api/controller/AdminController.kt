@@ -1,4 +1,4 @@
-package app.gym.api
+package app.gym.api.controller
 
 import app.gym.api.request.LoginRequest
 import app.gym.domain.member.AdminService

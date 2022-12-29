@@ -3,8 +3,10 @@ package app.gym.domain.gym
 
 import app.gym.domain.image.Image
 import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.LocalDateTime
+import java.util.*
 import javax.persistence.*
 
 @SequenceGenerator(
@@ -18,6 +20,7 @@ import javax.persistence.*
 @Table(name = "gyms")
 @EntityListeners(AuditingEntityListener::class)
 class Gym(id: Long? = null) {
+
     @Id
     @GeneratedValue(
         strategy = GenerationType.SEQUENCE,
@@ -25,21 +28,51 @@ class Gym(id: Long? = null) {
     )
     var id: Long? = id; private set
 
-    @Column(name = "title")
-    var title: String = ""
+    @Column(name = "name")
+    var name: String = ""; private set
 
-    @Column(name = "price")
-    var price: Int = 0
+    @Transient // TODO
+    @Column(name = "franchise")
+    var franchise: String = ""; private set
+
+    @Column(name = "address")
+    var address: String = ""; private set
 
     @Column(name = "description")
     @Lob
-    var description: String = ""
+    var description: String = ""; private set
 
     @Column(name = "images")
     @OneToMany(mappedBy = "gym")
-    var images: MutableList<Image> = mutableListOf()
+    var images: MutableList<Image> = mutableListOf(); private set
+
+    @Column(name = "latitude")
+    var latitude: Double = 0.0; private set
+
+    @Column(name = "longitude")
+    var longitude: Double = 0.0; private set
 
     @Column(name = "created_at")
     @CreatedDate
-    var createdAt: LocalDateTime = LocalDateTime.MIN
+    var createdAt: LocalDateTime = LocalDateTime.MIN; private set
+
+    @Column(name = "modified_at")
+    @LastModifiedDate
+    var modifiedAt: LocalDateTime = LocalDateTime.MIN; private set
+
+    fun update(
+        name: String,
+        address: String,
+        description: String,
+        images: List<Image>,
+        latitude: Double,
+        longitude: Double
+    ) {
+        this.name = name
+        this.address = address
+        this.description = description
+        this.images = images.toMutableList()
+        this.latitude = latitude
+        this.longitude = longitude
+    }
 }

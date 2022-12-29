@@ -4,14 +4,15 @@ import app.gym.domain.gym.UpdateGymCommand
 import java.util.*
 
 class UpdateGymRequest(
-    val title: String,
-    val price: Int,
+    val name: String,
+    val address: String,
     val description: String,
-    val imageIds: List<UUID>
+    val imageIds: List<UUID>,
+    val latitude: Double,
+    val longitude: Double
 ) {
     fun toCommand(id: Long): UpdateGymCommand {
-        return UpdateGymCommand(id, title, price, description, imageIds)
-
+        return UpdateGymCommand(id, name, address, description, imageIds, latitude, longitude)
     }
 
 }
