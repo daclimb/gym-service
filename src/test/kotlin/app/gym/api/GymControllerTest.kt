@@ -90,7 +90,9 @@ internal class GymControllerTest {
                 fieldWithPath("name").type(JsonFieldType.STRING).description("name of the gym"),
                 fieldWithPath("address").type(JsonFieldType.STRING).description("address of the gym"),
                 fieldWithPath("description").type(JsonFieldType.STRING).description("description of the gym"),
-                fieldWithPath("imageIds").type(JsonFieldType.ARRAY).description("image ids of the gym")
+                fieldWithPath("imageIds").type(JsonFieldType.ARRAY).description("image ids of the gym"),
+                fieldWithPath("latitude").type(JsonFieldType.NUMBER).description("latitude of the gym"),
+                fieldWithPath("longitude").type(JsonFieldType.NUMBER).description("longitude of the gym")
             )
         }
     }
@@ -124,7 +126,7 @@ internal class GymControllerTest {
     @Test
     @WithMockMember(memberRole = MemberRole.Admin)
     fun `Should return status code 201 when add gym`() {
-        val request = AddGymRequest("name", "address", "description", emptyList())
+        val request = AddGymRequest("name", "address", "description", emptyList(), 0.0, 0.0)
         val content = JsonUtils.toJson(request)
         every { gymService.addGym(any()) } returns 1L
 
@@ -141,7 +143,9 @@ internal class GymControllerTest {
                 fieldWithPath("name").type(JsonFieldType.STRING).description("name of the gym"),
                 fieldWithPath("address").type(JsonFieldType.STRING).description("address of the gym"),
                 fieldWithPath("description").type(JsonFieldType.STRING).description("description of the gym"),
-                fieldWithPath("imageIds").type(JsonFieldType.ARRAY).description("image ids of the gym")
+                fieldWithPath("imageIds").type(JsonFieldType.ARRAY).description("image ids of the gym"),
+                fieldWithPath("latitude").type(JsonFieldType.NUMBER).description("latitude of the gym"),
+                fieldWithPath("longitude").type(JsonFieldType.NUMBER).description("longitude of the gym")
             )
             responseSchema(Schema("AddGymResponse"))
             responseFields(
@@ -159,7 +163,7 @@ internal class GymControllerTest {
 
     @Test
     fun `Should return status code 200 when update gym`() {
-        val request = UpdateGymRequest("name", "address", "description", emptyList())
+        val request = UpdateGymRequest("name", "address", "description", emptyList(), 0.0, 0.0)
         val content = JsonUtils.toJson(request)
         every { gymService.updateGym(any()) } returns Unit
 
@@ -167,7 +171,9 @@ internal class GymControllerTest {
             put("/api/gym/{gymId}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
-        ).andExpect(status().isOk)
+        )
+
+        result.andExpect(status().isOk)
 
         result.andDocument("UpdateGym") {
             pathParameters(
@@ -178,14 +184,16 @@ internal class GymControllerTest {
                 fieldWithPath("name").type(JsonFieldType.STRING).description("name of the gym"),
                 fieldWithPath("address").type(JsonFieldType.STRING).description("address of the gym"),
                 fieldWithPath("description").type(JsonFieldType.STRING).description("description of the gym"),
-                fieldWithPath("imageIds").type(JsonFieldType.ARRAY).description("image ids of the gym")
+                fieldWithPath("imageIds").type(JsonFieldType.ARRAY).description("image ids of the gym"),
+                fieldWithPath("latitude").type(JsonFieldType.NUMBER).description("latitude of the gym"),
+                fieldWithPath("longitude").type(JsonFieldType.NUMBER).description("longitude of the gym")
             )
         }
     }
 
     @Test
     fun `Should return status code 400 when update gym with id of not existing gym`() {
-        val request = UpdateGymRequest("name", "address", "description", emptyList())
+        val request = UpdateGymRequest("name", "address", "description", emptyList(), 0.0, 0.0)
         val content = JsonUtils.toJson(request)
         every { gymService.updateGym(any()) } throws GymNotFoundException()
 

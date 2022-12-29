@@ -8,7 +8,9 @@ data class GetGymResponse(
     val name: String,
     val address: String,
     val description: String?,
-    val imageIds: List<UUID>
+    val imageIds: List<UUID>,
+    val latitude: Double,
+    val longitude: Double
 ) {
     companion object {
         fun from(gym: Gym): GetGymResponse {
@@ -17,9 +19,9 @@ data class GetGymResponse(
                 gym.name,
                 gym.address,
                 gym.description,
-                gym.images.map {
-                    it.id!!
-                }
+                gym.images.map { it.id!! },
+                gym.latitude,
+                gym.longitude
             )
         }
     }
