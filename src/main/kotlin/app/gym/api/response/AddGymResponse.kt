@@ -1,5 +1,7 @@
 package app.gym.api.response
 
-class AddGymResponse {
+class AddGymResponse(
+    val gymId: Long
+) {
 
 }

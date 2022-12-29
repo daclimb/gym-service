@@ -1,14 +1,14 @@
 package app.gym.api
 
+import app.gym.api.controller.GymController
 import app.gym.api.request.AddGymRequest
 import app.gym.api.request.UpdateGymRequest
-import app.gym.api.response.GetSimpleGymResponse
-import app.gym.config.JwtAuthenticationFilter
 import app.gym.config.SecurityConfig
-import app.gym.domain.gym.Gym
 import app.gym.domain.gym.GymNotFoundException
 import app.gym.domain.gym.GymService
-import app.gym.domain.member.WithMockUser
+import app.gym.domain.member.MemberRole
+import app.gym.domain.member.WithMockMember
+import app.gym.jwt.JwtAuthenticationFilter
 import app.gym.util.JsonUtils
 import app.gym.utils.TestDataGenerator
 import app.gym.utils.andDocument
@@ -30,9 +30,11 @@ import org.springframework.context.annotation.FilterType
 import org.springframework.context.annotation.Import
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.MediaType
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*
 import org.springframework.restdocs.payload.JsonFieldType
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.request.RequestDocumentation.partWithName
+import org.springframework.restdocs.request.RequestDocumentation.requestParts
 import org.springframework.test.web.servlet.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -69,98 +71,133 @@ internal class GymControllerTest {
         val gym = TestDataGenerator.gym(1L)
         every { gymService.getGym(any()) } returns gym
 
-        val result = mvc.perform(get("/api/{gymId}", 1))
+        val result = mvc.perform(get("/api/gym/{gymId}", 1))
 
         result.andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(gym.id))
-            .andExpect(jsonPath("$.title").value(gym.title))
+            .andExpect(jsonPath("$.name").value(gym.name))
+            .andExpect(jsonPath("$.address").value(gym.address))
             .andExpect(jsonPath("$.description").value(gym.description))
 
         // document
-        result.andDocument("getGym") {
+        result.andDocument("GetGym") {
             pathParameters(
                 parameterWithName("gymId").type(SimpleType.INTEGER).description("Id of the gym")
             )
             responseSchema(Schema("GetGymResponse"))
             responseFields(
                 fieldWithPath("id").type(JsonFieldType.NUMBER).description("id of the gym"),
-                fieldWithPath("title").type(JsonFieldType.STRING).description("title of the gym"),
+                fieldWithPath("name").type(JsonFieldType.STRING).description("name of the gym"),
+                fieldWithPath("address").type(JsonFieldType.STRING).description("address of the gym"),
                 fieldWithPath("description").type(JsonFieldType.STRING).description("description of the gym"),
-                fieldWithPath("price").type(JsonFieldType.NUMBER).description("")
+                fieldWithPath("imageIds").type(JsonFieldType.ARRAY).description("image ids of the gym")
             )
         }
     }
 
     @ParameterizedTest
     @ValueSource(longs = [0L, 3L])
-    fun `Should return status code 200 when get all simple products`(length: Long) {
-        val products = TestDataGenerator.gyms(length)
+    fun `Should return status code 200 when get all simple gyms`(length: Long) {
+        val gyms = TestDataGenerator.gyms(length)
 
-        every { gymService.getGyms() } returns products
+        every { gymService.getGyms() } returns gyms
 
-        mvc.get("/api")
-            .andExpect {
-                status { isOk() }
-                jsonPath("$.length()") { value(length) }
+        val result = mvc.perform(get("/api/gym"))
+
+
+        result.andExpect(status().isOk)
+            .andExpect(jsonPath("$.length()").value(length))
+
+        if (length == 3L) {
+            result.andDocument("GetGymList") {
+                responseSchema(Schema("GetGymListResponse"))
+                responseFields(
+                    fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("id of the gym"),
+                    fieldWithPath("[].name").type(JsonFieldType.STRING).description("name of the gym"),
+                    fieldWithPath("[].address").type(JsonFieldType.STRING).description("address of the gym"),
+                    fieldWithPath("[].thumbnail").type(JsonFieldType.STRING).description("thumbnail uuid of the gym"),
+                )
             }
+        }
     }
 
     @Test
-    @WithMockUser(userId = 1L)
-    fun `Should return status code 201 when add product`() {
-        val request = AddGymRequest("title", 10000, "description", emptyList())
+    @WithMockMember(memberRole = MemberRole.Admin)
+    fun `Should return status code 201 when add gym`() {
+        val request = AddGymRequest("name", "address", "description", emptyList())
         val content = JsonUtils.toJson(request)
-        every { gymService.addGym(any()) } returns Unit
+        every { gymService.addGym(any()) } returns 1L
 
-        mvc.post("/api/gym") {
-            this.contentType = MediaType.APPLICATION_JSON
-            this.content = content
-        }.andExpect {
-            status { isCreated() }
-        }.andDo { print() }
+        var result = mvc.perform(
+            post("/api/gym")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+        )
+
+        result.andExpect(status().isCreated)
+        result.andDocument("AddGym") {
+            requestSchema(Schema("AddGymRequest"))
+            requestFields(
+                fieldWithPath("name").type(JsonFieldType.STRING).description("name of the gym"),
+                fieldWithPath("address").type(JsonFieldType.STRING).description("address of the gym"),
+                fieldWithPath("description").type(JsonFieldType.STRING).description("description of the gym"),
+                fieldWithPath("imageIds").type(JsonFieldType.ARRAY).description("image ids of the gym")
+            )
+            responseSchema(Schema("AddGymResponse"))
+            responseFields(
+                fieldWithPath("gymId").type(JsonFieldType.NUMBER).description("id of the created gym")
+            )
+        }
     }
 
     @Test
-    fun `Should return status code 400 when delete product with id of not existing product`() {
-
+    fun `Should return status code 400 when delete gym with id of not existing gym`() {
         every { gymService.deleteGym(any()) } throws GymNotFoundException()
-
-        mvc.delete("/api/1")
-            .andExpect {
-                status { isBadRequest() }
-            }
+        mvc.perform(delete("/api/gym/1"))
+            .andExpect(status().isBadRequest)
     }
 
     @Test
-    fun `Should return status code 200 when update product`() {
-        val request = UpdateGymRequest("title", 10000, "description", emptyList())
+    fun `Should return status code 200 when update gym`() {
+        val request = UpdateGymRequest("name", "address", "description", emptyList())
         val content = JsonUtils.toJson(request)
         every { gymService.updateGym(any()) } returns Unit
 
-        mvc.put("/api/1") {
-            this.contentType = MediaType.APPLICATION_JSON
-            this.content = content
-        }.andExpect {
-            status { isOk() }
+        val result = mvc.perform(
+            put("/api/gym/{gymId}", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+        ).andExpect(status().isOk)
+
+        result.andDocument("UpdateGym") {
+            pathParameters(
+                parameterWithName("gymId").type(SimpleType.INTEGER).description("id of the gym")
+            )
+            requestSchema(Schema("UpdateGymRequest"))
+            requestFields(
+                fieldWithPath("name").type(JsonFieldType.STRING).description("name of the gym"),
+                fieldWithPath("address").type(JsonFieldType.STRING).description("address of the gym"),
+                fieldWithPath("description").type(JsonFieldType.STRING).description("description of the gym"),
+                fieldWithPath("imageIds").type(JsonFieldType.ARRAY).description("image ids of the gym")
+            )
         }
     }
 
     @Test
-    fun `Should return status code 400 when update product with id of not existing product`() {
-        val request = UpdateGymRequest("title", 10000, "description", emptyList())
+    fun `Should return status code 400 when update gym with id of not existing gym`() {
+        val request = UpdateGymRequest("name", "address", "description", emptyList())
         val content = JsonUtils.toJson(request)
         every { gymService.updateGym(any()) } throws GymNotFoundException()
 
-        mvc.put("/api/1") {
-            this.contentType = MediaType.APPLICATION_JSON
-            this.content = content
-        }.andExpect {
-            status { isBadRequest() }
-        }
+        mvc.perform(
+            put("/api/gym/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(content)
+        ).andExpect(status().isBadRequest)
     }
 
     @Test
-    fun addImage() {
+    fun `Should return status code 201 when add image`() {
         val imageResource = ClassPathResource("images/pooh.png")
         val file = Files.readAllBytes(imageResource.uri.toPath())
 
@@ -168,19 +205,21 @@ internal class GymControllerTest {
 
         every { gymService.addImage(any()) } returns uuid
 
-        mvc.multipart("/api/image") {
-            this.file("image", file)
-        }.andExpect {
-            status { isCreated() }
-            content { jsonPath("$.id") { this.value(uuid.toString()) } }
-        }
-    }
+        val result = mvc.perform(
+            multipart("/api/gym/image")
+                .file("image", file)
+        )
+            .andExpect(status().isCreated)
+            .andExpect(jsonPath("$.id").value(uuid.toString()))
 
-    @Test
-    fun mapTest() {
-        val gyms = emptyList<Gym>()
-        val gymResponseList = gyms.map {
-            GetSimpleGymResponse.from(it)
+        result.andDocument("AddImageImage") {
+            requestParts(
+                partWithName("image").description("gym image")
+            )
+            responseSchema(Schema("AddImageResponse"))
+            responseFields(
+                fieldWithPath("id").type(JsonFieldType.STRING).description("uuid of the image")
+            )
         }
     }
 }

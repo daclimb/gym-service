@@ -32,8 +32,8 @@ paths:
                   value: |-
                     {
                       "id" : 1,
-                      "title" : "title",
-                      "price" : 0,
+                      "name" : "name",
+                      "address" : "address",
                       "description" : "description"
                     }
 components:
@@ -53,4 +53,4 @@ components:
           description: id of the gym
         title:
           type: string
-          description: title of the gym
+          description: name of the gym

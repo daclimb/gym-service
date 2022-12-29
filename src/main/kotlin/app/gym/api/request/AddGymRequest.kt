@@ -4,12 +4,12 @@ import app.gym.domain.gym.AddGymCommand
 import java.util.*
 
 data class AddGymRequest(
-    val title: String,
-    val price: Int,
+    val name: String,
+    val address: String,
     val description: String,
     val imageIds: List<UUID>
 ) {
     fun toCommand(): AddGymCommand {
-        return AddGymCommand(title, price, description, imageIds)
+        return AddGymCommand(name, address, description, imageIds)
     }
 }
