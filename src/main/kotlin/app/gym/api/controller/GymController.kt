@@ -1,11 +1,8 @@
-package app.gym.api
+package app.gym.api.controller
 
 import app.gym.api.request.AddGymRequest
 import app.gym.api.request.UpdateGymRequest
-import app.gym.api.response.AddImageResponse
-import app.gym.api.response.GetGymResponse
-import app.gym.api.response.GetSimpleGymResponse
-import app.gym.api.response.UpdateGymResponse
+import app.gym.api.response.*
 import app.gym.domain.gym.GymNotFoundException
 import app.gym.domain.gym.GymService
 import org.springframework.http.HttpStatus
@@ -39,13 +36,13 @@ class GymController(
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_MEMBER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     fun addGym(
         @RequestBody request: AddGymRequest
     ): ResponseEntity<Any> {
         val command = request.toCommand()
-        gymService.addGym(command)
-        return ResponseEntity.status(HttpStatus.CREATED).build()
+        val gymId = gymService.addGym(command)
+        return ResponseEntity.status(HttpStatus.CREATED).body(AddGymResponse(gymId))
     }
 
     @DeleteMapping("/{gymId}")

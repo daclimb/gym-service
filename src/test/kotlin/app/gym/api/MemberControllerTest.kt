@@ -1,12 +1,12 @@
 package app.gym.api
 
-import app.gym.config.JwtAuthenticationProvider
-import app.gym.config.JwtAuthenticationToken
+import app.gym.api.controller.MemberController
 import app.gym.config.SecurityConfig
 import app.gym.domain.member.*
-import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper
-import com.epages.restdocs.apispec.ResourceDocumentation.resource
-import com.epages.restdocs.apispec.ResourceSnippetParametersBuilder
+import app.gym.jwt.JwtAuthenticationProvider
+import app.gym.jwt.JwtAuthenticationToken
+import app.gym.utils.andDocument
+import com.epages.restdocs.apispec.Schema
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.mockk.every
 import io.mockk.mockk
@@ -23,6 +23,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post
 import org.springframework.restdocs.operation.preprocess.Preprocessors.*
 import org.springframework.restdocs.payload.JsonFieldType
@@ -30,17 +31,12 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.get
-import org.springframework.test.web.servlet.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.test.web.servlet.result.isEqualTo
 import java.util.stream.Stream
 import javax.servlet.http.Cookie
 
-@WebMvcTest(
-    value = [MemberController::class],
-
-    )
+@WebMvcTest(value = [MemberController::class])
 @Import(SecurityConfig::class)
 @AutoConfigureRestDocs
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -90,27 +86,18 @@ internal class MemberControllerTest {
             .andExpect(
                 status().isEqualTo(expectedStatusCode.value())
             )
-            .andDo(
-                MockMvcRestDocumentationWrapper.document(
-                    "signup",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint()),
-                    resource(
-                        ResourceSnippetParametersBuilder()
-                            .requestFields(
-                                fieldWithPath("email").type(JsonFieldType.STRING).description("email"),
-                                fieldWithPath("password").type(JsonFieldType.STRING).description("password"),
-                                fieldWithPath("name").type(JsonFieldType.STRING).description("name")
-                            ).build()
-                    )
-
+            .andDocument("Signup") {
+                requestSchema(Schema("SignupRequest"))
+                requestFields(
+                    fieldWithPath("email").type(JsonFieldType.STRING).description("email"),
+                    fieldWithPath("password").type(JsonFieldType.STRING).description("password"),
+                    fieldWithPath("name").type(JsonFieldType.STRING).description("name")
                 )
-            )
+            }
     }
 
     private fun emailProvider(): Stream<Arguments> {
         return Stream.of(
-//            Arguments.of(null, HttpStatus.BAD_REQUEST),
             Arguments.of("invalid_email", HttpStatus.BAD_REQUEST),
             Arguments.of("valid@email.com", HttpStatus.OK)
         )
@@ -132,12 +119,12 @@ internal class MemberControllerTest {
 
         val mapper = jacksonObjectMapper()
 
-        mvc.post("/api/member/signup") {
-            contentType = MediaType.APPLICATION_JSON
-            content = mapper.writeValueAsString(request)
-        }.andExpect {
-            status { isEqualTo(expectedStatusCode.value()) }
-        }
+        mvc.perform(
+            post("/api/member/signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(request))
+        )
+            .andExpect(status().isEqualTo(expectedStatusCode.value()))
     }
 
     @ParameterizedTest
@@ -156,12 +143,12 @@ internal class MemberControllerTest {
 
         val mapper = jacksonObjectMapper()
 
-        mvc.post("/api/member/signup") {
-            contentType = MediaType.APPLICATION_JSON
-            content = mapper.writeValueAsString(request)
-        }.andExpect {
-            status { isEqualTo(expectedStatusCode.value()) }
-        }
+        mvc.perform(
+            post("/api/member/signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(request))
+        )
+            .andExpect(status().isEqualTo(expectedStatusCode.value()))
     }
 
     @Test
@@ -176,12 +163,12 @@ internal class MemberControllerTest {
 
         every { memberService.signup(any()) } throws DuplicatedEmailException()
 
-        mvc.post("/api/member/signup") {
-            contentType = MediaType.APPLICATION_JSON
-            content = mapper.writeValueAsString(request)
-        }.andExpect {
-            status { isBadRequest() }
-        }
+        mvc.perform(
+            post("/api/member/signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(request))
+        )
+            .andExpect(status().isBadRequest)
     }
 
     @Test
@@ -195,12 +182,12 @@ internal class MemberControllerTest {
 
         every { memberService.login(any()) } throws MemberNotFoundException()
 
-        mvc.post("/api/member/login") {
-            contentType = MediaType.APPLICATION_JSON
-            content = mapper.writeValueAsString(request)
-        }.andExpect {
-            status { isBadRequest() }
-        }
+        mvc.perform(
+            post("/api/member/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(request))
+        )
+            .andExpect(status().isBadRequest)
     }
 
     @Test
@@ -214,12 +201,12 @@ internal class MemberControllerTest {
 
         every { memberService.login(any()) } throws PasswordNotMatchedException()
 
-        mvc.post("/api/member/login") {
-            contentType = MediaType.APPLICATION_JSON
-            content = mapper.writeValueAsString(request)
-        }.andExpect {
-            status { isBadRequest() }
-        }
+        mvc.perform(
+            post("/api/member/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(request))
+        )
+            .andExpect(status().isBadRequest)
     }
 
     @Test
@@ -233,12 +220,20 @@ internal class MemberControllerTest {
 
         every { memberService.login(any()) } returns token
 
-        mvc.post("/api/member/login") {
-            contentType = MediaType.APPLICATION_JSON
-            content = mapper.writeValueAsString(request)
-        }.andExpect {
-            status { isOk() }
-            cookie { value("jwt", token) }
+        val result = mvc.perform(
+            post("/api/member/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(request))
+        )
+            .andExpect(status().isOk)
+            .andExpect(cookie().value("jwt", token))
+
+        result.andDocument("Login") {
+            requestSchema(Schema("LoginRequest"))
+            requestFields(
+                fieldWithPath("email").type(JsonFieldType.STRING).description("email address"),
+                fieldWithPath("password").type(JsonFieldType.STRING).description("password")
+            )
         }
     }
 
@@ -254,7 +249,7 @@ internal class MemberControllerTest {
         val memberId = 1L
         val authenticatedToken =
             JwtAuthenticationToken(MemberPrincipal(memberId), null, listOf(GrantedAuthority { role.value }))
-        every {authenticationManager.authenticate(requestToken) } returns authenticatedToken
+        every { authenticationManager.authenticate(requestToken) } returns authenticatedToken
         every { memberService.getMember(memberId) } returns member
 
         val cookie = Cookie("jwt", tokenString)
@@ -264,15 +259,21 @@ internal class MemberControllerTest {
         cookie.secure = true
         cookie.isHttpOnly = true
 
-        mvc.get("/api/member/me") {
-            cookie(cookie)
+        val result = mvc.perform(
+            get("/api/member/me")
+                .cookie(cookie)
+        )
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.name").value(member.name))
+//            .andExpect(jsonPath("$.logoUrl").value(member.logoUrl))
+
+        result.andDocument("Me") {
+            responseSchema(Schema("MeRequest"))
+            responseFields(
+                fieldWithPath("name").type(JsonFieldType.STRING).description("name of the member")
+//                fieldWithPath("logoUrl").type(JsonFieldType.STRING).description("logo url of the member")
+            )
         }
-            .andExpect {
-                status { isOk() }
-                jsonPath("$.name") { value(member.name) }
-                jsonPath("$.logoUrl") { value(member.logoUrl) }
-            }
-            .andDo { print() }
     }
 
     private fun passwordProvider(): Stream<Arguments> {

@@ -1,4 +1,4 @@
-package app.gym.config
+package app.gym.jwt
 
 import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.core.GrantedAuthority

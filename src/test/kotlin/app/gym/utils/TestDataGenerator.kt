@@ -3,29 +3,7 @@ package app.gym.utils
 import app.gym.api.request.AddGymRequest
 import app.gym.domain.gym.Gym
 import app.gym.domain.image.Image
-import com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper
-import com.epages.restdocs.apispec.ResourceDocumentation.resource
-import com.epages.restdocs.apispec.ResourceSnippetParametersBuilder
-import org.springframework.restdocs.operation.preprocess.Preprocessors.*
-import org.springframework.test.web.servlet.ResultActions
 import java.util.*
-
-fun ResultActions.andDocument(
-    identifier: String,
-    builder: ResourceSnippetParametersBuilder.() -> Unit
-) {
-    this.andDo(
-        MockMvcRestDocumentationWrapper
-            .document(
-                identifier,
-                preprocessRequest(prettyPrint()),
-                preprocessResponse(prettyPrint()),
-                resource(
-                    ResourceSnippetParametersBuilder().apply(builder).build()
-                )
-            )
-    )
-}
 
 class TestDataGenerator {
     companion object {

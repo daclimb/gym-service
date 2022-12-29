@@ -1,9 +1,9 @@
 package app.gym.config
 
+import app.gym.jwt.JwtAuthenticationProvider
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
@@ -30,10 +30,7 @@ class SecurityConfig(val authenticationConfiguration: AuthenticationConfiguratio
 
     @Bean
     fun webSecurityCustomizer(): WebSecurityCustomizer {
-        return WebSecurityCustomizer {
-            it.ignoring()
-                .antMatchers(*PUBLIC_ENDPOINTS)
-        }
+        return WebSecurityCustomizer {}
     }
 
     @Bean
@@ -41,11 +38,6 @@ class SecurityConfig(val authenticationConfiguration: AuthenticationConfiguratio
         http
             .csrf().disable()
 
-            .authorizeRequests()
-            .antMatchers(HttpMethod.GET, "/api/gym", "/api/gym/**").permitAll()
-//            .anyRequest().authenticated()
-
-            .and()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 

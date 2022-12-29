@@ -1,6 +1,6 @@
 package app.gym.domain.member
 
-import app.gym.config.JwtProvider
+import app.gym.jwt.JwtTokenGenerator
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -24,7 +24,7 @@ internal class MemberServiceTest {
     lateinit var passwordEncoder: PasswordEncoder
 
     @MockK
-    lateinit var jwtProvider: JwtProvider
+    lateinit var jwtTokenGenerator: JwtTokenGenerator
 
     @InjectMockKs
     lateinit var memberService: MemberService
@@ -72,7 +72,7 @@ internal class MemberServiceTest {
         val member = Member(email, encodedPassword, name)
         every { memberRepository.findByEmail(command.email) } returns member
         every { passwordEncoder.matches(password, encodedPassword) } returns true
-        every { jwtProvider.generateJwtToken(member)} returns token
+        every { jwtTokenGenerator.generateJwtToken(member)} returns token
 
         assertEquals(token, memberService.login(command))
     }

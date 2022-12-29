@@ -1,16 +1,15 @@
-package app.gym.config
+package app.gym.jwt
 
 import app.gym.domain.member.Member
-import app.gym.domain.member.MemberPrincipal
 import app.gym.domain.member.MemberRole
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
+import org.springframework.stereotype.Component
 import java.security.KeyPair
 import java.util.*
 
-class InvalidJwtTokenException : RuntimeException()
-
-class JwtProvider(
+@Component
+class JwtTokenGenerator(
     private val keyPair: KeyPair
 ) {
     fun generateJwtToken(member: Member): String {
@@ -34,18 +33,4 @@ class JwtProvider(
             .compact()
     }
 
-    fun parseMemberPrincipal(token: String): MemberPrincipal {
-        return try {
-            val claimsJwt = Jwts.parser()
-                .setSigningKey(keyPair.public)
-                .parseClaimsJws(token)
-
-            val memberId = (claimsJwt.body["memberId"] as String).toLong()
-//            val memberRole: MemberRole = claimsJwt.body["role"] as MemberRole
-
-            MemberPrincipal(memberId)
-        } catch (e: Exception) {
-            throw InvalidJwtTokenException()
-        }
-    }
 }

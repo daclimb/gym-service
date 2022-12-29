@@ -29,7 +29,7 @@ class GymService(
         return gymRepository.findAll()
     }
 
-    fun addGym(command: AddGymCommand) {
+    fun addGym(command: AddGymCommand): Long {
         val imageIds = command.imageIds
         val images = if (imageIds.isEmpty()) {
             emptyList()
@@ -39,7 +39,7 @@ class GymService(
 
         val gym = Gym()
         gym.update(command.name, command.address, command.description, images)
-        gymRepository.save(gym)
+        return gymRepository.save(gym).id!!
     }
 
     fun deleteGym(id: Long) {

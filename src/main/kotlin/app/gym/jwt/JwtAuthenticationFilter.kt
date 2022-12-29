@@ -1,10 +1,14 @@
-package app.gym.config
+package app.gym.jwt
 
+import app.gym.config.PUBLIC_ENDPOINTS
+import app.gym.config.PUBLIC_ENDPOINTS_GET
 import mu.KotlinLogging
+import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
+import org.springframework.util.AntPathMatcher
 import org.springframework.web.filter.OncePerRequestFilter
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
@@ -44,6 +48,14 @@ class JwtAuthenticationFilter(
     }
 
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
-        return PUBLIC_ENDPOINTS.any { it.equals(request.requestURI, true) }
+        val antPathMatcher = AntPathMatcher()
+        val b = PUBLIC_ENDPOINTS.any { antPathMatcher.match(it, request.requestURI) } ||
+                (request.method == HttpMethod.GET.toString() && PUBLIC_ENDPOINTS_GET.any {
+                    antPathMatcher.match(
+                        it,
+                        request.requestURI
+                    )
+                })
+        return b
     }
 }
