@@ -5,6 +5,7 @@ import java.util.*
 
 data class AddGymRequest(
     val name: String,
+    val franchise: String,
     val address: String,
     val description: String,
     val imageIds: List<UUID>,
@@ -12,6 +13,6 @@ data class AddGymRequest(
     val longitude: Double
 ) {
     fun toCommand(): AddGymCommand {
-        return AddGymCommand(name, address, description, imageIds, latitude, longitude)
+        return AddGymCommand(name, franchise, address, description, imageIds, latitude, longitude)
     }
 }

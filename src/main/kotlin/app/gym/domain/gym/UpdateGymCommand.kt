@@ -4,6 +4,7 @@ import java.util.*
 
 class UpdateGymCommand(
     val id: Long,
+    val franchise: String,
     val name: String,
     val address: String,
     val description: String,

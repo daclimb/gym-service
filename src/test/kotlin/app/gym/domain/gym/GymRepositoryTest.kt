@@ -33,7 +33,7 @@ class GymRepositoryTest {
     fun `Gym should have createdAt with not null when getting gym`() {
         val id = 1L
         val gym = Gym(id)
-        gym.update("name", "address", "description", emptyList(), 0.0, 0.0)
+        gym.update("name", "franchise", "address", "description", emptyList(), 0.0, 0.0)
 
         gymRepository.saveAndFlush(gym)
 

@@ -2,6 +2,7 @@ CREATE TABLE gyms
 (
     id          INT PRIMARY KEY,
     name        VARCHAR(255)  NOT NULL,
+    franchise   VARCHAR(64)   NOT NULL,
     address     VARCHAR(255)  NOT NULL,
     description TEXT          NOT NULL,
     latitude    NUMERIC(2, 6) NOT NULL,

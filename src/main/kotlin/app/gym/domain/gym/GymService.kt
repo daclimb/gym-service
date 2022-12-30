@@ -38,7 +38,7 @@ class GymService(
         }
 
         val gym = Gym()
-        gym.update(command.name, command.address, command.description, images, command.latitude, command.longitude)
+        gym.update(command.name, command.franchise, command.address, command.description, images, command.latitude, command.longitude)
         return gymRepository.save(gym).id!!
     }
 
@@ -70,7 +70,7 @@ class GymService(
             imageRepository.findByUuidIn(imageIds)
         }
 
-        gym.update(command.name, command.address, command.description, images, command.latitude, command.longitude)
+        gym.update(command.name, command.franchise, command.address, command.description, images, command.latitude, command.longitude)
 
         gymRepository.save(gym)
     }

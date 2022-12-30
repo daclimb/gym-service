@@ -31,7 +31,6 @@ class Gym(id: Long? = null) {
     @Column(name = "name")
     var name: String = ""; private set
 
-    @Transient // TODO
     @Column(name = "franchise")
     var franchise: String = ""; private set
 
@@ -62,6 +61,7 @@ class Gym(id: Long? = null) {
 
     fun update(
         name: String,
+        franchise: String,
         address: String,
         description: String,
         images: List<Image>,
@@ -69,6 +69,7 @@ class Gym(id: Long? = null) {
         longitude: Double
     ) {
         this.name = name
+        this.franchise = franchise
         this.address = address
         this.description = description
         this.images = images.toMutableList()

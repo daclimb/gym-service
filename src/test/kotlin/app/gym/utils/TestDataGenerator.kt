@@ -10,6 +10,7 @@ class TestDataGenerator {
         fun gym(
             id: Long? = null,
             name: String = "name",
+            franchise: String = "franchise",
             address: String = "address",
             description: String = "description",
             images: MutableList<Image> = mutableListOf(Image.create(UUID.randomUUID(), "image")),
@@ -17,7 +18,7 @@ class TestDataGenerator {
             longitude: Double = 0.0
         ): Gym {
             val gym = Gym(id)
-            gym.update(name, address, description, images, latitude, longitude)
+            gym.update(name, franchise, address, description, images, latitude, longitude)
 
             return gym
         }
@@ -33,11 +34,12 @@ class TestDataGenerator {
 
         fun addGymRequest(
             name: String = "name",
+            franchise: String = "franchise",
             address: String = "address",
             description: String = "description",
             imageIds: List<UUID> = emptyList()
         ): AddGymRequest {
-            return AddGymRequest(name, address, description, imageIds, 0.0, 0.0)
+            return AddGymRequest(name, franchise, address, description, imageIds, 0.0, 0.0)
         }
     }
 }
