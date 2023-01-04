@@ -49,13 +49,12 @@ class JwtAuthenticationFilter(
 
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
         val antPathMatcher = AntPathMatcher()
-        val b = PUBLIC_ENDPOINTS.any { antPathMatcher.match(it, request.requestURI) } ||
+        return PUBLIC_ENDPOINTS.any { antPathMatcher.match(it, request.requestURI) } ||
                 (request.method == HttpMethod.GET.toString() && PUBLIC_ENDPOINTS_GET.any {
                     antPathMatcher.match(
                         it,
                         request.requestURI
                     )
                 })
-        return b
     }
 }

@@ -61,7 +61,7 @@ class GymController(
     fun updateGym(
         @PathVariable gymId: Long,
         @RequestBody request: UpdateGymRequest
-    ): ResponseEntity<UpdateGymResponse> {
+    ): ResponseEntity<Any> {
         return try {
             val command = request.toCommand(gymId)
             gymService.updateGym(command)

@@ -126,11 +126,12 @@ internal class GymControllerTest {
     @Test
     @WithMockMember(memberRole = MemberRole.Admin)
     fun `Should return status code 201 when add gym`() {
-        val request = AddGymRequest("name", "franchise", "address", "description", emptyList(), 0.0, 0.0)
+
+        val request = AddGymRequest("name", 1L, "address", "description", emptyList(), 0.0, 0.0)
         val content = JsonUtils.toJson(request)
         every { gymService.addGym(any()) } returns 1L
 
-        var result = mvc.perform(
+        val result = mvc.perform(
             post("/api/gym")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
@@ -141,7 +142,7 @@ internal class GymControllerTest {
             requestSchema(Schema("AddGymRequest"))
             requestFields(
                 fieldWithPath("name").type(JsonFieldType.STRING).description("name of the gym"),
-                fieldWithPath("franchise").type(JsonFieldType.STRING).description("franchise of the gym"),
+                fieldWithPath("franchiseId").type(JsonFieldType.NUMBER).description("franchise id of the gym"),
                 fieldWithPath("address").type(JsonFieldType.STRING).description("address of the gym"),
                 fieldWithPath("description").type(JsonFieldType.STRING).description("description of the gym"),
                 fieldWithPath("imageIds").type(JsonFieldType.ARRAY).description("image ids of the gym"),
@@ -164,7 +165,7 @@ internal class GymControllerTest {
 
     @Test
     fun `Should return status code 200 when update gym`() {
-        val request = UpdateGymRequest("name", "franchise", "address", "description", emptyList(), 0.0, 0.0)
+        val request = UpdateGymRequest("name", 1L, "address", "description", emptyList(), 0.0, 0.0)
         val content = JsonUtils.toJson(request)
         every { gymService.updateGym(any()) } returns Unit
 
@@ -183,7 +184,7 @@ internal class GymControllerTest {
             requestSchema(Schema("UpdateGymRequest"))
             requestFields(
                 fieldWithPath("name").type(JsonFieldType.STRING).description("name of the gym"),
-                fieldWithPath("franchise").type(JsonFieldType.STRING).description("franchise of the gym"),
+                fieldWithPath("franchiseId").type(JsonFieldType.NUMBER).description("franchise id of the gym"),
                 fieldWithPath("address").type(JsonFieldType.STRING).description("address of the gym"),
                 fieldWithPath("description").type(JsonFieldType.STRING).description("description of the gym"),
                 fieldWithPath("imageIds").type(JsonFieldType.ARRAY).description("image ids of the gym"),
@@ -195,7 +196,7 @@ internal class GymControllerTest {
 
     @Test
     fun `Should return status code 400 when update gym with id of not existing gym`() {
-        val request = UpdateGymRequest("name", "franchise", "address", "description", emptyList(), 0.0, 0.0)
+        val request = UpdateGymRequest("name", null, "address", "description", emptyList(), 0.0, 0.0)
         val content = JsonUtils.toJson(request)
         every { gymService.updateGym(any()) } throws GymNotFoundException()
 

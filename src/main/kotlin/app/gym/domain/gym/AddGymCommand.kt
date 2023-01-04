@@ -4,7 +4,7 @@ import java.util.*
 
 data class AddGymCommand(
     val name: String,
-    val franchise: String,
+    val franchiseId: Long?,
     val address: String,
     val description: String,
     val imageIds: List<UUID>,

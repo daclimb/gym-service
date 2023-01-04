@@ -4,7 +4,7 @@ import app.gym.domain.member.SignupCommand
 import org.hibernate.validator.constraints.Length
 import javax.validation.constraints.Email
 
-class SignupRequest(
+data class SignupRequest(
     @field:Email
     val email: String,
     @field:Length(min=8, max=16)
