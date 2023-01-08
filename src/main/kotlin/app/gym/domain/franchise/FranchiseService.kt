@@ -6,10 +6,10 @@ import org.springframework.stereotype.Service
 class FranchiseService(
     private val franchiseRepository: FranchiseRepository
 ) {
-    fun addFranchise(name: String, description: String) {
+    fun addFranchise(command: AddFranchiseCommand): Long {
         val franchise = Franchise()
-        franchise.update(name, description)
-        franchiseRepository.save(franchise)
+        franchise.updateDetails(command.name, command.description)
+        return franchiseRepository.save(franchise).id!!
     }
 
     fun getFranchise(id: Long): Franchise {
@@ -26,6 +26,6 @@ class FranchiseService(
 
     fun updateFranchise(command: UpdateFranchiseCommand) {
         val franchise = franchiseRepository.findById(command.id).get()
-        franchise.update(command.name, command.description)
+        franchise.updateDetails(command.name, command.description)
     }
 }

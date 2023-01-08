@@ -1,17 +1,15 @@
 package app.gym.e2e
 
-import app.gym.api.request.LoginRequest
-import app.gym.api.request.SignupRequest
 import app.gym.api.request.UpdateGymRequest
 import app.gym.api.response.AddGymResponse
 import app.gym.api.response.AddImageResponse
 import app.gym.api.response.GetGymResponse
 import app.gym.api.response.GetSimpleGymResponse
 import app.gym.config.AWSTestConfig
-import app.gym.config.JPAConfig
+import app.gym.config.JPATestConfig
+import app.gym.utils.AuthenticationUtils
 import app.gym.utils.TestDataGenerator
 import com.amazonaws.services.s3.AmazonS3
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeAll
@@ -28,21 +26,15 @@ import org.springframework.http.*
 import org.springframework.test.annotation.DirtiesContext.*
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 import java.util.*
 import kotlin.io.path.toPath
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    classes = [AWSTestConfig::class, JPAConfig::class]
+    classes = [AWSTestConfig::class, JPATestConfig::class]
 )
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class GymE2ETest(
-    @Value("\${admin.email}")
-    val adminEmail: String,
-    @Value("\${admin.password}")
-    val adminPassword: String
 ) {
 
     @Value("\${cloud.aws.bucket}")
@@ -54,28 +46,18 @@ class GymE2ETest(
     @Autowired
     private lateinit var s3client: AmazonS3
 
-    private var memberEmail: String = ""
-    private var memberPassword: String = "password"
-    private var memberName: String = "member name"
+    @Autowired
+    private lateinit var authUtils: AuthenticationUtils
+
 
     @BeforeAll
     fun beforeAll() {
         this.s3client.createBucket(bucket)
-        val random = Random()
-        memberEmail =
-            LocalDateTime.now().toEpochSecond(ZoneOffset.UTC).toString() + "_" + random.nextInt(1000) + "@email.com"
-    }
-
-    @AfterEach
-    fun afterEach() {
-//        SecurityContextHolder.getContext().authentication = null
     }
 
     @Test
     fun `Should return status code 201 when add gym`() {
-        val cookies = getCookieForAdmin()
-        val headers = HttpHeaders()
-        cookies.forEach { headers.add("Cookie", it) }
+        val headers = authUtils.getHeadersWithCookieForAdmin()
 
         val request = TestDataGenerator.addGymRequest()
         val response =
@@ -86,9 +68,7 @@ class GymE2ETest(
 
     @Test
     fun `Should return status code 200 when delete gym`() {
-        val cookies = getCookieForMember()
-        val headers = HttpHeaders()
-        cookies.forEach { headers.add("Cookie", it) }
+        val headers = authUtils.getHeadersWithCookieForAdmin()
 
         val addGymRequest = TestDataGenerator.addGymRequest()
         val addGymResponse = template.exchange(
@@ -109,9 +89,7 @@ class GymE2ETest(
 
     @Test
     fun `Should return status code 400 when delete not existing gym`() {
-        val cookies = getCookieForMember()
-        val headers = HttpHeaders()
-        cookies.forEach { headers.add("Cookie", it) }
+        val headers = authUtils.getHeadersWithCookieForAdmin()
 
         val response =
             template.exchange("/api/gym/93485713495", HttpMethod.DELETE, HttpEntity(null, headers), Any::class.java)
@@ -131,15 +109,18 @@ class GymE2ETest(
 
     @Test
     fun `Should return status code 200 and gym details when get gym`() {
-        val cookies = getCookieForAdmin()
-        val headers = HttpHeaders()
-        cookies.forEach { headers.add("Cookie", it) }
+        val headers = authUtils.getHeadersWithCookieForAdmin()
 
         val addGymRequest = TestDataGenerator.addGymRequest()
         val addGymResponse =
-            template.exchange("/api/gym", HttpMethod.POST, HttpEntity(addGymRequest, headers), AddGymResponse::class.java)
-
+            template.exchange(
+                "/api/gym",
+                HttpMethod.POST,
+                HttpEntity(addGymRequest, headers),
+                AddGymResponse::class.java
+            )
         assertNotNull(addGymResponse.body)
+
         val gymId = addGymResponse.body!!.gymId
 
         val getGymResponse: ResponseEntity<GetGymResponse> =
@@ -149,17 +130,16 @@ class GymE2ETest(
 
     @Test
     fun `Should return status code 200 when update gym`() {
-        val cookies = getCookieForAdmin()
-        val headers = HttpHeaders()
-        cookies.forEach { headers.add("Cookie", it) }
+        val headers = authUtils.getHeadersWithCookieForAdmin()
 
         val addGymRequest = TestDataGenerator.addGymRequest()
-        val addGymResponse = template.postForEntity("/api/gym", HttpEntity(addGymRequest, headers), AddGymResponse::class.java)
+        val addGymResponse =
+            template.postForEntity("/api/gym", HttpEntity(addGymRequest, headers), AddGymResponse::class.java)
 
         assertNotNull(addGymResponse.body)
         val gymId = addGymResponse.body!!.gymId
 
-        val request = UpdateGymRequest("name",null, "address", "description", emptyList(), 0.0, 0.0)
+        val request = UpdateGymRequest("name", null, "address", "description", emptyList(), 0.0, 0.0)
 
         val httpEntity = HttpEntity(request, headers)
         val response = template.exchange("/api/gym/$gymId", HttpMethod.PUT, httpEntity, Any::class.java)
@@ -169,9 +149,7 @@ class GymE2ETest(
 
     @Test
     fun `Should return status code 201 and uuid when adding gym image`() {
-        val cookies = getCookieForMember()
-        val headers = HttpHeaders()
-        cookies.forEach { headers.add("Cookie", it) }
+        val headers = authUtils.getHeadersWithCookieForMember()
 
         val imageResource = ClassPathResource("images/pooh.png")
         val file = FileSystemResource(imageResource.uri.toPath())
@@ -189,26 +167,5 @@ class GymE2ETest(
 
         val uuid = response.body!!.id
         assertNotNull(uuid)
-    }
-
-    private fun getCookieForAdmin(): MutableList<String> {
-        val loginRequest = LoginRequest(adminEmail, adminPassword)
-        val loginResponse = template.postForEntity("/api/admin/login", loginRequest, Any::class.java)
-
-        val cookies = loginResponse.headers["Set-Cookie"]
-        assertNotNull(cookies)
-        return cookies!!
-    }
-
-    private fun getCookieForMember(): MutableList<String> {
-        val signupRequest = SignupRequest(memberEmail, memberPassword, memberName)
-        val signupResponse = template.postForEntity("/api/member/signup", signupRequest, Any::class.java)
-
-        val loginRequest = LoginRequest(adminEmail, adminPassword)
-        val loginResponse = template.postForEntity("/api/admin/login", loginRequest, Any::class.java)
-
-        val cookies = loginResponse.headers["Set-Cookie"]
-        assertNotNull(cookies)
-        return cookies!!
     }
 }

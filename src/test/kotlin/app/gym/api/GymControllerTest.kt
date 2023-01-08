@@ -52,7 +52,7 @@ import kotlin.io.path.toPath
 )
 @Import(SecurityConfig::class)
 @AutoConfigureRestDocs
-internal class GymControllerTest {
+class GymControllerTest {
 
     @Autowired
     private lateinit var mvc: MockMvc
@@ -78,6 +78,9 @@ internal class GymControllerTest {
             .andExpect(jsonPath("$.name").value(gym.name))
             .andExpect(jsonPath("$.address").value(gym.address))
             .andExpect(jsonPath("$.description").value(gym.description))
+            .andExpect(jsonPath("$.imageIds").value(gym.images.map{ it.id!!.toString() }))
+            .andExpect(jsonPath("$.latitude").value(gym.latitude))
+            .andExpect(jsonPath("$.longitude").value(gym.longitude))
 
         // document
         result.andDocument("GetGym") {
@@ -105,7 +108,6 @@ internal class GymControllerTest {
         every { gymService.getGyms() } returns gyms
 
         val result = mvc.perform(get("/api/gym"))
-
 
         result.andExpect(status().isOk)
             .andExpect(jsonPath("$.length()").value(length))

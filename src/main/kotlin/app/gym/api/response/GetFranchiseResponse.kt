@@ -11,7 +11,7 @@ data class GetFranchiseResponse(
     val id: Long,
     val name: String,
     val description: String,
-    val RelatedGyms: List<RelatedGym>
+    val relatedGyms: List<RelatedGym>
 ) {
     companion object {
         fun from(franchise: Franchise): GetFranchiseResponse {

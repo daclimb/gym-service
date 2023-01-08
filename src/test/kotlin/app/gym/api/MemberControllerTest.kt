@@ -40,7 +40,7 @@ import javax.servlet.http.Cookie
 @Import(SecurityConfig::class)
 @AutoConfigureRestDocs
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-internal class MemberControllerTest {
+class MemberControllerTest {
 
     @Autowired
     lateinit var mvc: MockMvc
@@ -58,7 +58,7 @@ internal class MemberControllerTest {
     private lateinit var memberService: MemberService
 
     @Autowired
-    private lateinit var authenticationManager: org.springframework.security.authentication.AuthenticationManager
+    private lateinit var authenticationManager: AuthenticationManager
 
     @ParameterizedTest
     @MethodSource("emailProvider")

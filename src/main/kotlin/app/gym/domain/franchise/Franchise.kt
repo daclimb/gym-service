@@ -38,11 +38,17 @@ class Franchise(id: Long? = null) {
     @JsonSerialize(using = LocalDateTimeSerializer::class)
     var modifiedAt: LocalDateTime = LocalDateTime.MIN; private set
 
-    fun update(
+    fun updateDetails(
         name: String,
         description: String
     ) {
         this.name = name
         this.description = description
+    }
+
+    fun updateGyms(
+        gyms: List<Gym>
+    ) {
+        this.gyms = gyms.toMutableList()
     }
 }
