@@ -2,6 +2,9 @@ package app.gym.domain.franchise
 
 import org.springframework.stereotype.Service
 
+
+class FranchiseNotExistException : RuntimeException()
+
 @Service
 class FranchiseService(
     private val franchiseRepository: FranchiseRepository
@@ -13,6 +16,9 @@ class FranchiseService(
     }
 
     fun getFranchise(id: Long): Franchise {
+        val findById = franchiseRepository.findById(id)
+        if (findById.isEmpty)
+            throw FranchiseNotExistException()
         return franchiseRepository.findById(id).get()
     }
 

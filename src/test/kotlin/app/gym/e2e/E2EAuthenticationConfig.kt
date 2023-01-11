@@ -1,18 +1,18 @@
-package app.gym.utils
+package app.gym.e2e
 
 import app.gym.api.request.LoginRequest
 import app.gym.api.request.SignupRequest
 import org.junit.jupiter.api.Assertions
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpHeaders
-import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.util.*
 
-@Component
-class AuthenticationUtils(
+@TestConfiguration
+class E2EAuthenticationConfig(
     @Value("\${admin.email}")
     val adminEmail: String,
     @Value("\${admin.password}")

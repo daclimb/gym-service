@@ -68,14 +68,14 @@ class FranchiseControllerTest {
         val result = mvc.perform(get("/api/franchise"))
 
         result.andExpect(status().isOk)
-            .andExpect(jsonPath("$.length()").value(length))
+            .andExpect(jsonPath("$.franchises.length()").value(length))
 
         if (length == 3L) {
             result.andDocument("GetFranchiseList") {
                 responseSchema(Schema("GetFranchiseList"))
                 responseFields(
-                    fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("id of the franchise"),
-                    fieldWithPath("[].name").type(JsonFieldType.STRING).description("name of the franchise")
+                    fieldWithPath("franchises[].id").type(JsonFieldType.NUMBER).description("id of the franchise"),
+                    fieldWithPath("franchises[].name").type(JsonFieldType.STRING).description("name of the franchise")
                 )
             }
         }
@@ -161,8 +161,6 @@ class FranchiseControllerTest {
                 fieldWithPath("description").type(JsonFieldType.STRING).description("description of the franchise")
             )
         }
-
-
     }
 
     @Test

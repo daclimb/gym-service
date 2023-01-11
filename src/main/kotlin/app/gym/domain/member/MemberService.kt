@@ -6,9 +6,9 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
 
-class DuplicatedEmailException : RuntimeException()
-class MemberNotFoundException : RuntimeException()
-class PasswordNotMatchedException : RuntimeException()
+class DuplicatedEmailException : Exception()
+class MemberNotFoundException : Exception()
+class PasswordNotMatchedException : Exception()
 
 val logger = KotlinLogging.logger {  }
 

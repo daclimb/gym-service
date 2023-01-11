@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.util.*
 
-class GymNotFoundException : Exception()
-class ImageNotFoundException : Exception()
-class NullIdException : Exception()
+class GymNotFoundException : RuntimeException()
+class ImageNotFoundException : RuntimeException()
+class NullIdException : RuntimeException()
 
 @Service
 class GymService(

@@ -110,16 +110,16 @@ class GymControllerTest {
         val result = mvc.perform(get("/api/gym"))
 
         result.andExpect(status().isOk)
-            .andExpect(jsonPath("$.length()").value(length))
+            .andExpect(jsonPath("$.gyms.length()").value(length))
 
         if (length == 3L) {
             result.andDocument("GetGymList") {
                 responseSchema(Schema("GetGymListResponse"))
                 responseFields(
-                    fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("id of the gym"),
-                    fieldWithPath("[].name").type(JsonFieldType.STRING).description("name of the gym"),
-                    fieldWithPath("[].address").type(JsonFieldType.STRING).description("address of the gym"),
-                    fieldWithPath("[].thumbnail").type(JsonFieldType.STRING).description("thumbnail uuid of the gym"),
+                    fieldWithPath("gyms[].id").type(JsonFieldType.NUMBER).description("id of the gym"),
+                    fieldWithPath("gyms[].name").type(JsonFieldType.STRING).description("name of the gym"),
+                    fieldWithPath("gyms[].address").type(JsonFieldType.STRING).description("address of the gym"),
+                    fieldWithPath("gyms[].thumbnail").type(JsonFieldType.STRING).description("thumbnail uuid of the gym"),
                 )
             }
         }

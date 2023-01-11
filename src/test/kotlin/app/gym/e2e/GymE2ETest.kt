@@ -3,11 +3,10 @@ package app.gym.e2e
 import app.gym.api.request.UpdateGymRequest
 import app.gym.api.response.AddGymResponse
 import app.gym.api.response.AddImageResponse
+import app.gym.api.response.GetGymListResponse
 import app.gym.api.response.GetGymResponse
-import app.gym.api.response.GetSimpleGymResponse
 import app.gym.config.AWSTestConfig
 import app.gym.config.JPATestConfig
-import app.gym.utils.AuthenticationUtils
 import app.gym.utils.TestDataGenerator
 import com.amazonaws.services.s3.AmazonS3
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -19,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.core.ParameterizedTypeReference
 import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.*
@@ -31,7 +29,7 @@ import kotlin.io.path.toPath
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    classes = [AWSTestConfig::class, JPATestConfig::class]
+    classes = [AWSTestConfig::class, JPATestConfig::class, E2EAuthenticationConfig::class]
 )
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class GymE2ETest(
@@ -47,7 +45,7 @@ class GymE2ETest(
     private lateinit var s3client: AmazonS3
 
     @Autowired
-    private lateinit var authUtils: AuthenticationUtils
+    private lateinit var authUtils: E2EAuthenticationConfig
 
 
     @BeforeAll
@@ -103,7 +101,8 @@ class GymE2ETest(
                 "/api/gym",
                 HttpMethod.GET,
                 null,
-                object : ParameterizedTypeReference<List<GetSimpleGymResponse>>() {})
+                GetGymListResponse::class.java
+            )
         assertEquals(HttpStatus.OK, responses.statusCode)
     }
 

@@ -3,13 +3,17 @@ package app.gym.api.response
 import app.gym.domain.franchise.Franchise
 
 data class GetFranchiseListResponse(
-    val id: Long,
-    val name: String
-) {
+    val franchises: List<SimpleFranchise>,
+) : Response {
+
+    data class SimpleFranchise(
+        val id: Long,
+        val name: String,
+    )
+
     companion object {
-        fun from(franchise: Franchise): GetFranchiseListResponse {
-            return GetFranchiseListResponse(franchise.id!!, franchise.name)
+        fun from(franchises: List<Franchise>): GetFranchiseListResponse {
+            return GetFranchiseListResponse(franchises.map { SimpleFranchise(it.id!!, it.name) })
         }
     }
-
 }

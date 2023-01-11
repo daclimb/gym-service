@@ -2,9 +2,7 @@ package app.gym.api.controller
 
 import app.gym.api.request.AddFranchiseRequest
 import app.gym.api.request.UpdateFranchiseRequest
-import app.gym.api.response.AddFranchiseResponse
-import app.gym.api.response.GetFranchiseListResponse
-import app.gym.api.response.GetFranchiseResponse
+import app.gym.api.response.*
 import app.gym.domain.franchise.FranchiseService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -15,21 +13,24 @@ import org.springframework.web.bind.annotation.*
 @Controller
 @RequestMapping("/api/franchise")
 class FranchiseController(
-    private val franchiseService: FranchiseService
+    private val franchiseService: FranchiseService,
 ) {
     @GetMapping("/{franchiseId}")
-    fun getFranchise(@PathVariable franchiseId: Long): ResponseEntity<GetFranchiseResponse> {
-        val franchise = franchiseService.getFranchise(franchiseId)
-        val response = GetFranchiseResponse.from(franchise)
-        return ResponseEntity.ok().body(response)
+    fun getFranchise(@PathVariable franchiseId: Long): ResponseEntity<Response> {
+        return try {
+            val franchise = franchiseService.getFranchise(franchiseId)
+            val response = GetFranchiseResponse.from(franchise)
+            ResponseEntity.ok().body(response)
+        } catch (e: Exception) {
+            val response = ClientErrorResponse(e.message)
+            ResponseEntity.badRequest().body(response)
+        }
     }
 
     @GetMapping
-    fun getFranchiseList(): ResponseEntity<List<GetFranchiseListResponse>> {
+    fun getFranchiseList(): ResponseEntity<Response> {
         val franchiseList = franchiseService.getFranchiseList()
-        val response = franchiseList.map {
-            GetFranchiseListResponse.from(it)
-        }
+        val response = GetFranchiseListResponse.from(franchiseList)
         return ResponseEntity.ok().body(response)
     }
 
@@ -43,16 +44,21 @@ class FranchiseController(
 
     @PutMapping("/{franchiseId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    fun updateFranchise(@PathVariable franchiseId: Long, @RequestBody request: UpdateFranchiseRequest): ResponseEntity<Any> {
+    fun updateFranchise(
+        @PathVariable franchiseId: Long,
+        @RequestBody request: UpdateFranchiseRequest,
+    ): ResponseEntity<Response> {
         val command = request.toCommand(franchiseId)
         franchiseService.updateFranchise(command)
-        return ResponseEntity.ok().build()
+        val response = SuccessfulResponse("Success: update franchise")
+        return ResponseEntity.ok().body(response)
     }
 
     @DeleteMapping("/{franchiseId}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    fun deleteFranchise(@PathVariable franchiseId: Long): ResponseEntity<Any> {
+    fun deleteFranchise(@PathVariable franchiseId: Long): ResponseEntity<Response> {
         franchiseService.deleteFranchise(franchiseId)
-        return ResponseEntity.ok().build()
+        val response = SuccessfulResponse("Success: delete franchise")
+        return ResponseEntity.ok().body(response)
     }
 }
