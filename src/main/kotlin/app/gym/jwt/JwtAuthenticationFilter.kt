@@ -1,12 +1,14 @@
-package app.gym.config
+package app.gym.jwt
 
-import app.gym.domain.jwt.InvalidJwtTokenException
-import app.gym.domain.jwt.JwtProvider
-import app.gym.domain.member.MemberPrincipal
+import app.gym.config.PUBLIC_ENDPOINTS
+import app.gym.config.PUBLIC_ENDPOINTS_GET
 import mu.KotlinLogging
+import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.stereotype.Component
+import org.springframework.util.AntPathMatcher
 import org.springframework.web.filter.OncePerRequestFilter
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
@@ -16,9 +18,9 @@ class InvalidHeaderException : RuntimeException()
 
 val logger = KotlinLogging.logger { }
 
-//@Component
+@Component
 class JwtAuthenticationFilter(
-    private val jwtProvider: JwtProvider
+    private val authenticationManager: AuthenticationManager
 ) : OncePerRequestFilter() {
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -38,18 +40,22 @@ class JwtAuthenticationFilter(
             response.status = HttpStatus.UNAUTHORIZED.value()
             return
         }
+        val jwtAuthenticationToken = JwtAuthenticationToken(token.value)
+        val authentication = authenticationManager.authenticate(jwtAuthenticationToken)
+        SecurityContextHolder.getContext().authentication = authentication
 
-        val memberId = try {
-            jwtProvider.parseMemberId(token.value)
-        } catch (e: InvalidJwtTokenException) {
-            logger.warn("$e: Cause of exception is ambiguous.")
-            return
-        }
-        SecurityContextHolder.getContext().authentication =
-            UsernamePasswordAuthenticationToken(MemberPrincipal(memberId), null)
-
-        logger.info("Successfully authenticated")
-        logger.debug("with member id = $memberId")
         filterChain.doFilter(request, response)
+    }
+
+    override fun shouldNotFilter(request: HttpServletRequest): Boolean {
+        val antPathMatcher = AntPathMatcher()
+        val b = PUBLIC_ENDPOINTS.any { antPathMatcher.match(it, request.requestURI) } ||
+                (request.method == HttpMethod.GET.toString() && PUBLIC_ENDPOINTS_GET.any {
+                    antPathMatcher.match(
+                        it,
+                        request.requestURI
+                    )
+                })
+        return b
     }
 }

@@ -19,6 +19,7 @@ class AWSConfig {
         @Value("\${cloud.aws.endpoint}")
         endpoint: String,
         @Value("\${cloud.aws.region}")
+
         region: String
     ): AmazonS3 {
         val creds = BasicAWSCredentials("", "")

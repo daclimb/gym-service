@@ -26,6 +26,7 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: debug
     org.springframework.orm.jpa: DEBUG
     org.springframework.transaction: DEBUG
+    org.springframework.security: DEBUG
     app.gym: DEBUG
 
 springdoc:

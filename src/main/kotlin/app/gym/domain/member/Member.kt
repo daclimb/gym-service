@@ -31,6 +31,10 @@ class Member(
     @Column(name = "description")
     var description: String? = null; private set
 
+    @Column(name = "role")
+    var role: MemberRole = MemberRole.Member
+
+    @Transient // TODO
     @Column(name = "logo_url")
     var logoUrl: String? = null; private set
 
