@@ -1,6 +1,7 @@
 package app.gym.domain.gym
 
 
+import app.gym.domain.GymTag
 import app.gym.domain.franchise.Franchise
 import app.gym.domain.image.Image
 import org.springframework.data.annotation.CreatedDate
@@ -52,6 +53,10 @@ class Gym(id: Long? = null) {
 
     @Column(name = "longitude")
     var longitude: Double = 0.0; private set
+
+    @Column(name = "gym_tag")
+    @OneToMany(mappedBy = "gym")
+    var gymTag: List<GymTag> = listOf()
 
     @Column(name = "created_at")
     @CreatedDate
