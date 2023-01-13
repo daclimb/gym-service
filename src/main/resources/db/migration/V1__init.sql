@@ -2,6 +2,7 @@ CREATE TABLE gyms
 (
     id          INT PRIMARY KEY,
     name        VARCHAR(255)  NOT NULL,
+    franchise   VARCHAR(64)   NOT NULL,
     address     VARCHAR(255)  NOT NULL,
     description TEXT          NOT NULL,
     latitude    NUMERIC(2, 6) NOT NULL,
@@ -22,7 +23,7 @@ CREATE TABLE gym_images
 
 CREATE TABLE members
 (
-    id          SERIAL primary key,
+    id          SERIAL PRIMARY KEY,
     email       VARCHAR(127) NOT NULL UNIQUE,
     password    VARCHAR(127) NOT NULL,
     name        VARCHAR(255) NOT NULL,
@@ -31,3 +32,12 @@ CREATE TABLE members
     created_at  TIMESTAMP    NOT NULL,
     modified_at TIMESTAMP    NOT NULL
 );
+
+CREATE TABLE franchises
+(
+    id          SERIAL PRIMARY KEY,
+    name        VARCHAR(255) NOT NULL,
+    description TEXT         NOT NULL,
+    created_at  TIMESTAMP    NOT NULL,
+    modified_at TIMESTAMP    NOT NULL
+)

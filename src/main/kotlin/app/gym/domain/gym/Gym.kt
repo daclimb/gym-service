@@ -1,6 +1,7 @@
 package app.gym.domain.gym
 
 
+import app.gym.domain.franchise.Franchise
 import app.gym.domain.image.Image
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
@@ -31,9 +32,9 @@ class Gym(id: Long? = null) {
     @Column(name = "name")
     var name: String = ""; private set
 
-    @Transient // TODO
-    @Column(name = "franchise")
-    var franchise: String = ""; private set
+    @JoinColumn(name = "franchise_id")
+    @ManyToOne
+    var franchise: Franchise? = null; private set
 
     @Column(name = "address")
     var address: String = ""; private set
@@ -62,6 +63,7 @@ class Gym(id: Long? = null) {
 
     fun update(
         name: String,
+        franchise: Franchise?,
         address: String,
         description: String,
         images: List<Image>,
@@ -69,6 +71,7 @@ class Gym(id: Long? = null) {
         longitude: Double
     ) {
         this.name = name
+        this.franchise = franchise
         this.address = address
         this.description = description
         this.images = images.toMutableList()

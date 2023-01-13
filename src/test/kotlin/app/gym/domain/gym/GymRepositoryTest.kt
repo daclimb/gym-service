@@ -1,6 +1,6 @@
 package app.gym.domain.gym
 
-import app.gym.config.JPAConfig
+import app.gym.config.JPATestConfig
 import app.gym.domain.image.Image
 import app.gym.domain.image.ImageRepository
 import org.junit.jupiter.api.Assertions.*
@@ -14,7 +14,7 @@ import java.time.LocalDateTime
 import java.util.*
 
 @DataJpaTest
-@Import(JPAConfig::class)
+@Import(JPATestConfig::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class GymRepositoryTest {
 
@@ -33,7 +33,7 @@ class GymRepositoryTest {
     fun `Gym should have createdAt with not null when getting gym`() {
         val id = 1L
         val gym = Gym(id)
-        gym.update("name", "address", "description", emptyList(), 0.0, 0.0)
+        gym.update("name", null, "address", "description", emptyList(), 0.0, 0.0)
 
         gymRepository.saveAndFlush(gym)
 

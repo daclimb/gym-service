@@ -2,10 +2,10 @@ package app.gym.api.response
 
 import app.gym.domain.member.Member
 
-class MeResponse(
+data class MeResponse(
     val name: String,
 //    val logoUrl: String?
-) {
+) : Response {
     companion object {
         fun from(member: Member): MeResponse {
             return MeResponse(member.name)

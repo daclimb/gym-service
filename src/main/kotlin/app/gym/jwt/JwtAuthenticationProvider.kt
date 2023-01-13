@@ -9,6 +9,8 @@ import org.springframework.security.core.GrantedAuthority
 import java.security.KeyPair
 
 
+class InvalidJwtTokenException : RuntimeException()
+
 class JwtAuthenticationProvider(
     private val keyPair: KeyPair
 ) : AuthenticationProvider {
@@ -22,14 +24,13 @@ class JwtAuthenticationProvider(
             val memberRole = MemberRole.valueOf(claimsJwt.body["role"] as String)
             val memberPrincipal = if (memberRole == MemberRole.Admin) {
                 null
-            }
-            else {
+            } else {
                 val memberId = (claimsJwt.body["memberId"] as String).toLong()
                 MemberPrincipal(memberId)
             }
             JwtAuthenticationToken(memberPrincipal, null, listOf(GrantedAuthority { memberRole.value }))
 
-        } catch (e: Exception) {
+        } catch (e: RuntimeException) {
             throw InvalidJwtTokenException()
         }
     }

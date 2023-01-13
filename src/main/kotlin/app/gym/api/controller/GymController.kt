@@ -19,19 +19,21 @@ class GymController(
     @GetMapping("/{gymId}")
     fun getGym(
         @PathVariable gymId: Long
-    ): ResponseEntity<GetGymResponse> {
+    ): ResponseEntity<Response> {
         return try {
             val gym = gymService.getGym(gymId)
-            ResponseEntity.ok(GetGymResponse.from(gym))
+            val response = GetGymResponse.from(gym)
+            ResponseEntity.ok(response)
         } catch (e: GymNotFoundException) {
-            ResponseEntity.badRequest().build()
+            val response = ClientErrorResponse(e.message)
+            ResponseEntity.badRequest().body(response)
         }
     }
 
     @GetMapping
-    fun getGymList(): ResponseEntity<List<GetSimpleGymResponse>> {
+    fun getGymList(): ResponseEntity<Response> {
         val gyms = gymService.getGyms()
-        val responses = gyms.map(GetSimpleGymResponse::from)
+        val responses = GetGymListResponse.from(gyms)
         return ResponseEntity.ok(responses)
     }
 
@@ -39,21 +41,24 @@ class GymController(
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     fun addGym(
         @RequestBody request: AddGymRequest
-    ): ResponseEntity<Any> {
+    ): ResponseEntity<Response> {
         val command = request.toCommand()
         val gymId = gymService.addGym(command)
-        return ResponseEntity.status(HttpStatus.CREATED).body(AddGymResponse(gymId))
+        val response = AddGymResponse(gymId)
+        return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
 
     @DeleteMapping("/{gymId}")
     fun deleteGym(
         @PathVariable gymId: Long
-    ): ResponseEntity<Any> {
+    ): ResponseEntity<Response> {
         return try {
             gymService.deleteGym(gymId)
-            ResponseEntity.ok().build()
+            val response = SuccessfulResponse("Success: delete gym")
+            ResponseEntity.ok().body(response)
         } catch (e: GymNotFoundException) {
-            ResponseEntity.badRequest().build()
+            val response = ClientErrorResponse(e.message)
+            ResponseEntity.badRequest().body(response)
         }
     }
 
@@ -61,19 +66,22 @@ class GymController(
     fun updateGym(
         @PathVariable gymId: Long,
         @RequestBody request: UpdateGymRequest
-    ): ResponseEntity<UpdateGymResponse> {
+    ): ResponseEntity<Response> {
         return try {
             val command = request.toCommand(gymId)
             gymService.updateGym(command)
-            ResponseEntity.ok().build()
+            val response = SuccessfulResponse("Success: update gym")
+            ResponseEntity.ok().body(response)
         } catch (e: GymNotFoundException) {
-            ResponseEntity.badRequest().build()
+            val response = ClientErrorResponse(e.message)
+            ResponseEntity.badRequest().body(response)
         }
     }
 
     @PostMapping("/image")
-    fun addImage(@RequestParam image: MultipartFile): ResponseEntity<AddImageResponse> {
+    fun addImage(@RequestParam image: MultipartFile): ResponseEntity<Response> {
         val uuid = gymService.addImage(image)
-        return ResponseEntity.status(HttpStatus.CREATED).body(AddImageResponse.from(uuid))
+        val response = AddImageResponse.from(uuid)
+        return ResponseEntity.status(HttpStatus.CREATED).body(response)
     }
 }

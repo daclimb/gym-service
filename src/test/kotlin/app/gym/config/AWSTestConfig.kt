@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.DependsOn
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing
 import org.testcontainers.containers.localstack.LocalStackContainer
 import org.testcontainers.containers.localstack.LocalStackContainer.Service.S3
 import org.testcontainers.utility.DockerImageName
@@ -40,10 +39,4 @@ class AWSTestConfig {
         val localstackImage = DockerImageName.parse(localStackImageName)
         return LocalStackContainer(localstackImage).withServices(S3)
     }
-}
-
-@EnableJpaAuditing
-@TestConfiguration
-class JPAConfig {
-
 }

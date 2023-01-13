@@ -2,7 +2,7 @@ package app.gym.api.request
 
 import app.gym.domain.member.LoginCommand
 
-class LoginRequest(
+data class LoginRequest(
     val email: String,
     val password: String
 ) {
