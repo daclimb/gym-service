@@ -6,5 +6,7 @@ data class AddGymCommand(
     val name: String,
     val address: String,
     val description: String,
-    val imageIds: List<UUID>
+    val imageIds: List<UUID>,
+    val latitude: Double,
+    val longitude: Double
 )
