@@ -17,3 +17,11 @@ cloud:
     secretKey: secret-key
     region: region
     bucket: image
+
+admin:
+  email: test@gmail.com
+  password: 1234
+
+gym:
+  cors:
+    allowed-origins: "http://localhost:8080"

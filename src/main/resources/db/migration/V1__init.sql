@@ -5,8 +5,8 @@ CREATE TABLE gyms
     franchise   VARCHAR(64)   NOT NULL,
     address     VARCHAR(255)  NOT NULL,
     description TEXT          NOT NULL,
-    latitude    NUMERIC(2, 6) NOT NULL,
-    longitude   NUMERIC(3, 6) NOT NULL,
+    latitude    NUMERIC(8, 6) NOT NULL,
+    longitude   NUMERIC(9, 6) NOT NULL,
     created_at  TIMESTAMP     NOT NULL,
     modified_at TIMESTAMP     NOT NULL
 );
