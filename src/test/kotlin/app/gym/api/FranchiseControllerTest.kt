@@ -72,6 +72,7 @@ class FranchiseControllerTest {
 
         if (length == 3L) {
             result.andDocument("GetFranchiseList") {
+                tag("Franchise")
                 responseSchema(Schema("GetFranchiseList"))
                 responseFields(
                     fieldWithPath("franchises[].id").type(JsonFieldType.NUMBER).description("id of the franchise"),
@@ -95,6 +96,7 @@ class FranchiseControllerTest {
             .andExpect(jsonPath("$.description").value(franchise.description))
 
         result.andDocument("GetFranchise") {
+            tag("Franchise")
             pathParameters(
                 parameterWithName("franchiseId").type(SimpleType.INTEGER).description("id if the franchise")
             )
@@ -127,6 +129,7 @@ class FranchiseControllerTest {
         result.andExpect(status().isCreated)
 
         result.andDocument("AddFranchise") {
+            tag("Franchise")
             requestSchema(Schema("AddFranchiseRequest"))
             requestFields(
                 fieldWithPath("name").type(JsonFieldType.STRING).description("name of the franchise"),
@@ -152,6 +155,7 @@ class FranchiseControllerTest {
         result.andExpect(status().isOk)
 
         result.andDocument("UpdateFranchise") {
+            tag("Franchise")
             pathParameters(
                 parameterWithName("franchiseId").type(SimpleType.INTEGER).description("id of the franchise")
             )
@@ -174,6 +178,7 @@ class FranchiseControllerTest {
         result.andExpect(status().isOk)
 
         result.andDocument("DeleteFranchise") {
+            tag("Franchise")
             pathParameters(
                 parameterWithName("franchiseId").type(SimpleType.INTEGER).description("id of the franchise")
             )

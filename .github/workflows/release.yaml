@@ -63,15 +63,15 @@ jobs:
           SLACK_USERNAME: ImageTagBot
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
 
-      - name: Push api doc
-        uses: dmnemec/copy_file_to_another_repo_action@main
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.PAT }}
-        with:
-          source_file: 'openapi/openapi3.yaml'
-          destination_repo: 'daclimb/api-docs'
-          destination_folder: 'gym-service'
-          user_email: 'appledoughnut42@gmail.com'
-          user_name: 'bot'
-          commit_message: 'Add gym api doc'
+#      - name: Push api doc
+#        uses: dmnemec/copy_file_to_another_repo_action@main
+#        env:
+#          API_TOKEN_GITHUB: ${{ secrets.PAT }}
+#        with:
+#          source_file: 'openapi/openapi.yaml'
+#          destination_repo: 'daclimb/api-docs'
+#          destination_folder: 'gym-service'
+#          user_email: 'appledoughnut42@gmail.com'
+#          user_name: 'bot'
+#          commit_message: 'Add gym api doc'
 

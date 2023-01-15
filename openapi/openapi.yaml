@@ -2,15 +2,19 @@ openapi: 3.0.1
 info:
   title: Gym service
   description: Gym service api document
-  version: 0.1.0
+  version: 1.0.0
 servers:
 - url: http://localhost
-tags: []
+tags:
+- name: Gym
+  description: 암장 api
+- name: Franchise
+  description: 프랜차이즈 api
 paths:
   /api/franchise:
     get:
       tags:
-      - api
+      - Franchise
       operationId: GetFranchiseList
       responses:
         "200":
@@ -36,7 +40,7 @@ paths:
                     }
     post:
       tags:
-      - api
+      - Franchise
       operationId: AddFranchise
       requestBody:
         content:
@@ -56,7 +60,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/api-gym-gymId486549215'
+                $ref: '#/components/schemas/api-franchise-franchiseId486549215'
               examples:
                 AddFranchise:
                   value: |-
@@ -66,7 +70,7 @@ paths:
   /api/gym:
     get:
       tags:
-      - api
+      - Gym
       operationId: GetGymList
       responses:
         "200":
@@ -83,22 +87,22 @@ paths:
                         "id" : 1,
                         "name" : "name",
                         "address" : "address",
-                        "thumbnail" : "69a1b043-35bf-413d-837e-9daca9b7eb58"
+                        "thumbnail" : "4126d2b7-aa0d-482b-b7a3-b2a7fd73e546"
                       }, {
                         "id" : 2,
                         "name" : "name",
                         "address" : "address",
-                        "thumbnail" : "7a8a063a-5143-4c77-8c15-a9055b1b4071"
+                        "thumbnail" : "9e24ef7b-8ef6-455d-87b7-4ccbffbde38f"
                       }, {
                         "id" : 3,
                         "name" : "name",
                         "address" : "address",
-                        "thumbnail" : "15284c44-2b2b-4b44-b808-265abc741f32"
+                        "thumbnail" : "fd4db963-8a2e-4933-8a48-ba7366e08d1e"
                       } ]
                     }
     post:
       tags:
-      - api
+      - Gym
       operationId: AddGym
       requestBody:
         content:
@@ -133,7 +137,7 @@ paths:
   /api/franchise/{franchiseId}:
     get:
       tags:
-      - api
+      - Franchise
       operationId: GetFranchise
       parameters:
       - name: franchiseId
@@ -164,7 +168,7 @@ paths:
                     }
     put:
       tags:
-      - api
+      - Franchise
       operationId: UpdateFranchise
       parameters:
       - name: franchiseId
@@ -192,7 +196,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/api-gym-gymId486549215'
+                $ref: '#/components/schemas/api-franchise-franchiseId486549215'
               examples:
                 UpdateFranchise:
                   value: |-
@@ -201,7 +205,7 @@ paths:
                     }
     delete:
       tags:
-      - api
+      - Franchise
       operationId: DeleteFranchise
       parameters:
       - name: franchiseId
@@ -217,7 +221,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/api-gym-gymId486549215'
+                $ref: '#/components/schemas/api-franchise-franchiseId486549215'
               examples:
                 DeleteFranchise:
                   value: |-
@@ -227,8 +231,8 @@ paths:
   /api/gym/image:
     post:
       tags:
-      - api
-      operationId: AddImageImage
+      - Gym
+      operationId: Add
       responses:
         "201":
           description: "201"
@@ -237,15 +241,20 @@ paths:
               schema:
                 $ref: '#/components/schemas/AddImageResponse'
               examples:
+                AddGymImage:
+                  value: |-
+                    {
+                      "id" : "3245d9cd-b890-4477-93c6-df19c12c0c4d"
+                    }
                 AddImageImage:
                   value: |-
                     {
-                      "id" : "2353748e-4f60-402a-a684-ac9bca8a672a"
+                      "id" : "8bb982f4-c745-4c32-9b93-5964e886e468"
                     }
   /api/gym/{gymId}:
     get:
       tags:
-      - api
+      - Gym
       operationId: GetGym
       parameters:
       - name: gymId
@@ -270,13 +279,13 @@ paths:
                       "name" : "name",
                       "address" : "address",
                       "description" : "description",
-                      "imageIds" : [ "dc09da26-fd33-4601-9405-b5764630a510" ],
+                      "imageIds" : [ "640432a4-86a0-487a-a7f8-bc1df30b84c6" ],
                       "latitude" : 0.0,
                       "longitude" : 0.0
                     }
     put:
       tags:
-      - api
+      - Gym
       operationId: UpdateGym
       parameters:
       - name: gymId
@@ -309,7 +318,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/api-gym-gymId486549215'
+                $ref: '#/components/schemas/api-franchise-franchiseId486549215'
               examples:
                 UpdateGym:
                   value: |-
@@ -319,7 +328,7 @@ paths:
   /api/member/login:
     post:
       tags:
-      - api
+      - Member
       operationId: Login
       requestBody:
         content:
@@ -339,7 +348,7 @@ paths:
   /api/member/me:
     get:
       tags:
-      - api
+      - Member
       operationId: Me
       responses:
         "200":
@@ -357,7 +366,7 @@ paths:
   /api/member/signup:
     post:
       tags:
-      - api
+      - Member
       operationId: Signup
       requestBody:
         content:
@@ -588,8 +597,6 @@ components:
         name:
           type: string
           description: name of the member
-    api-gym-gymId486549215:
-      type: object
     AddImageResponse:
       title: AddImageResponse
       type: object
@@ -597,3 +604,5 @@ components:
         id:
           type: string
           description: uuid of the image
+    api-franchise-franchiseId486549215:
+      type: object

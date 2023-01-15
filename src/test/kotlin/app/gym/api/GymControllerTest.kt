@@ -86,6 +86,7 @@ class GymControllerTest {
 
         // document
         result.andDocument("GetGym") {
+            tags("Gym")
             pathParameters(
                 parameterWithName("gymId").type(SimpleType.INTEGER).description("Id of the gym")
             )
@@ -111,11 +112,14 @@ class GymControllerTest {
 
         val result = mvc.perform(get("/api/gym"))
 
-        result.andExpect(status().isOk)
-            .andExpect(jsonPath("$.gyms.length()").value(length))
+        result.andExpect {
+            status().isOk
+            jsonPath("$.gyms.length()").value(length)
+        }
 
         if (length == 3L) {
             result.andDocument("GetGymList") {
+                tag("Gym")
                 responseSchema(Schema("GetGymListResponse"))
                 responseFields(
                     fieldWithPath("gyms[].id").type(JsonFieldType.NUMBER).description("id of the gym"),
@@ -147,6 +151,7 @@ class GymControllerTest {
         }
 
         result.andDocument("AddGym") {
+            tag("Gym")
             requestSchema(Schema("AddGymRequest"))
             requestFields(
                 fieldWithPath("name").type(JsonFieldType.STRING).description("name of the gym"),
@@ -186,6 +191,7 @@ class GymControllerTest {
         result.andExpect(status().isOk)
 
         result.andDocument("UpdateGym") {
+            tag("Gym")
             pathParameters(
                 parameterWithName("gymId").type(SimpleType.INTEGER).description("id of the gym")
             )
@@ -208,11 +214,12 @@ class GymControllerTest {
         val content = JsonUtils.toJson(request)
         every { gymService.updateGym(any()) } throws GymNotFoundException()
 
-        mvc.perform(
-            put("/api/gym/1")
+        mvc.perform(put("/api/gym/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(content)
-        ).andExpect(status().isBadRequest)
+                .content(content))
+            .andExpect {
+                status().isBadRequest
+            }
     }
 
     @Test
@@ -226,12 +233,14 @@ class GymControllerTest {
 
         val result = mvc.perform(
             multipart("/api/gym/image")
-                .file("image", file)
-        )
-            .andExpect(status().isCreated)
-            .andExpect(jsonPath("$.id").value(uuid.toString()))
+                .file("image", file))
+            .andExpect {
+                status().isCreated
+                jsonPath("$.id").value(uuid.toString())
+            }
 
-        result.andDocument("AddImageImage") {
+        result.andDocument("AddGymImage") {
+            tag("Gym")
             requestParts(
                 partWithName("image").description("gym image")
             )

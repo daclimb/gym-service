@@ -60,12 +60,13 @@ openapi3 {
     description = "Gym service api document"
     format = "yaml"
     outputFileNamePrefix = "openapi"
+    tagDescriptionsPropertiesFile = "openapi/tags.yaml"
 }
 
 tasks.register<Copy>("apidoc") {
     group = "documentation"
 
-    from("$buildDir/api-spec/openapi3.yaml")
+    from("$buildDir/api-spec/openapi.yaml")
     into("$projectDir/openapi")
     dependsOn("openapi3")
 }
