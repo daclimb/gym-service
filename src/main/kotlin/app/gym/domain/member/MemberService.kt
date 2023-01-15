@@ -1,6 +1,6 @@
 package app.gym.domain.member
 
-import app.gym.jwt.JwtTokenGenerator
+import app.gym.security.JwtTokenHandler
 import mu.KotlinLogging
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -16,7 +16,7 @@ val logger = KotlinLogging.logger {  }
 class MemberService(
     private val memberRepository: MemberRepository,
     private val passwordEncoder: PasswordEncoder,
-    private val jwtTokenGenerator: JwtTokenGenerator
+    private val jwtTokenHandler: JwtTokenHandler
 ) {
     fun signup(command: SignupCommand) {
         // TODO: signup 후 이메일 전송
@@ -35,7 +35,7 @@ class MemberService(
         if (!passwordEncoder.matches(command.password, member.password)) {
             throw PasswordNotMatchedException()
         }
-        val token = jwtTokenGenerator.generateJwtToken(member)
+        val token = jwtTokenHandler.generateJwtToken(member)
         logger.info { "JWT token published" }
         logger.debug { "with member id = ${member.id}, token = \"$token\"" }
         return token

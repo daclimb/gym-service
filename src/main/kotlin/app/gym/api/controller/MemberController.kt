@@ -4,9 +4,11 @@ import app.gym.api.request.LoginRequest
 import app.gym.api.request.SignupRequest
 import app.gym.api.response.MeResponse
 import app.gym.domain.member.*
+import app.gym.security.UserPrincipal
 import app.gym.util.CookieUtils
 import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletResponse
@@ -55,10 +57,10 @@ class MemberController(
     }
 
     @GetMapping("/me")
-    fun getMe(@AuthenticationPrincipal principal: MemberPrincipal): ResponseEntity<MeResponse> {
+    fun getMe(@AuthenticationPrincipal principal: UserPrincipal): ResponseEntity<MeResponse> {
         logger.info { "Get me request" }
         return try {
-            val member = memberService.getMember(principal.memberId)
+            val member = memberService.getMember(principal.memberId!!)
             val response = MeResponse.from(member)
             ResponseEntity.ok(response)
         } catch (e: MemberNotFoundException) {

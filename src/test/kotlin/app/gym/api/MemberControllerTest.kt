@@ -3,11 +3,12 @@ package app.gym.api
 import app.gym.api.controller.MemberController
 import app.gym.config.SecurityConfig
 import app.gym.domain.member.*
-import app.gym.jwt.JwtAuthenticationProvider
-import app.gym.jwt.JwtAuthenticationToken
+import app.gym.security.JwtTokenHandler
+import app.gym.security.UserPrincipal
 import restdocs.andDocument
 import com.epages.restdocs.apispec.Schema
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
@@ -29,7 +30,6 @@ import org.springframework.restdocs.operation.preprocess.Preprocessors.*
 import org.springframework.restdocs.payload.JsonFieldType
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.core.GrantedAuthority
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.test.web.servlet.result.isEqualTo
@@ -45,20 +45,11 @@ class MemberControllerTest {
     @Autowired
     lateinit var mvc: MockMvc
 
-    @TestConfiguration
-    class Config {
-        @Bean
-        fun authenticationManager() = mockk<AuthenticationManager>()
-
-        @Bean
-        fun userService(jwtAuthenticationProvider: JwtAuthenticationProvider) = mockk<MemberService>()
-    }
-
-    @Autowired
+    @MockkBean
     private lateinit var memberService: MemberService
 
-    @Autowired
-    private lateinit var authenticationManager: AuthenticationManager
+    @MockkBean
+    private lateinit var jwtTokenHandler: JwtTokenHandler
 
     @ParameterizedTest
     @MethodSource("emailProvider")
@@ -245,20 +236,16 @@ class MemberControllerTest {
         val email = "valid@email.com"
         val password = "password"
         val name = "name"
-        val role = MemberRole.Member
         val member = Member(email, password, name)
         val tokenString = "valid_token"
-        val requestToken = JwtAuthenticationToken(tokenString)
         val memberId = 1L
-        val authenticatedToken =
-            JwtAuthenticationToken(MemberPrincipal(memberId), null, listOf(GrantedAuthority { role.value }))
-        every { authenticationManager.authenticate(requestToken) } returns authenticatedToken
+        val userPrincipal = UserPrincipal.member(memberId)
+        every { jwtTokenHandler.createPrincipal(tokenString) } returns userPrincipal
         every { memberService.getMember(memberId) } returns member
 
         val cookie = Cookie("jwt", tokenString)
 
         cookie.maxAge = 24 * 60 * 60
-
         cookie.secure = true
         cookie.isHttpOnly = true
 

@@ -32,7 +32,7 @@ class Member(
     var description: String? = null; private set
 
     @Column(name = "role")
-    var role: MemberRole = MemberRole.Member; private set
+    var role: UserRole = UserRole.Member; private set
 
     @Transient // TODO
     @Column(name = "logo_url")
