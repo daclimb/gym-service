@@ -58,11 +58,15 @@ tasks.withType<Test> {
 openapi3 {
     title = "Gym service"
     description = "Gym service api document"
-    version = "0.1.0"
     format = "yaml"
+    outputFileNamePrefix = "openapi"
+    tagDescriptionsPropertiesFile = "openapi/tags.yaml"
+}
 
-    copy {
-        from("$buildDir/api-spec/openapi3.yaml") // 복제할 yaml 파일 타겟팅
-        into("$projectDir/openapi") // 타겟 디렉토리로 파일 복제
-    }
+tasks.register<Copy>("apidoc") {
+    group = "documentation"
+
+    from("$buildDir/api-spec/openapi.yaml")
+    into("$projectDir/openapi")
+    dependsOn("openapi3")
 }

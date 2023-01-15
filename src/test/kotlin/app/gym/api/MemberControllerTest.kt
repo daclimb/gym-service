@@ -5,7 +5,7 @@ import app.gym.config.SecurityConfig
 import app.gym.domain.member.*
 import app.gym.jwt.JwtAuthenticationProvider
 import app.gym.jwt.JwtAuthenticationToken
-import app.gym.utils.andDocument
+import restdocs.andDocument
 import com.epages.restdocs.apispec.Schema
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.mockk.every
@@ -87,6 +87,7 @@ class MemberControllerTest {
                 status().isEqualTo(expectedStatusCode.value())
             )
             .andDocument("Signup") {
+                tag("Member")
                 requestSchema(Schema("SignupRequest"))
                 requestFields(
                     fieldWithPath("email").type(JsonFieldType.STRING).description("email"),
@@ -224,11 +225,13 @@ class MemberControllerTest {
             post("/api/member/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(request))
-        )
-            .andExpect(status().isOk)
-            .andExpect(cookie().value("jwt", token))
+        ).andExpect {
+            status().isOk
+            cookie().value("jwt", token)
+        }
 
         result.andDocument("Login") {
+            tag("Member")
             requestSchema(Schema("LoginRequest"))
             requestFields(
                 fieldWithPath("email").type(JsonFieldType.STRING).description("email address"),
@@ -262,12 +265,14 @@ class MemberControllerTest {
         val result = mvc.perform(
             get("/api/member/me")
                 .cookie(cookie)
-        )
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.name").value(member.name))
+        ).andExpect {
+            status().isOk
+            jsonPath("$.name").value(member.name)
+        }
 //            .andExpect(jsonPath("$.logoUrl").value(member.logoUrl))
 
         result.andDocument("Me") {
+            tag("Member")
             responseSchema(Schema("MeRequest"))
             responseFields(
                 fieldWithPath("name").type(JsonFieldType.STRING).description("name of the member")

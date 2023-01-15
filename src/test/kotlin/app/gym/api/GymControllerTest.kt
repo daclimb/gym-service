@@ -11,7 +11,7 @@ import app.gym.domain.member.WithMockMember
 import app.gym.jwt.JwtAuthenticationFilter
 import app.gym.util.JsonUtils
 import app.gym.utils.TestDataGenerator
-import app.gym.utils.andDocument
+import restdocs.andDocument
 import com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName
 import com.epages.restdocs.apispec.Schema
 import com.epages.restdocs.apispec.SimpleType
@@ -38,6 +38,8 @@ import org.springframework.restdocs.request.RequestDocumentation.requestParts
 import org.springframework.test.web.servlet.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import restdocs.RestdocsType
+import restdocs.andDocument2
 import java.nio.file.Files
 import java.util.*
 import kotlin.io.path.toPath
@@ -73,30 +75,57 @@ class GymControllerTest {
 
         val result = mvc.perform(get("/api/gym/{gymId}", 1))
 
-        result.andExpect(status().isOk)
-            .andExpect(jsonPath("$.id").value(gym.id))
-            .andExpect(jsonPath("$.name").value(gym.name))
-            .andExpect(jsonPath("$.address").value(gym.address))
-            .andExpect(jsonPath("$.description").value(gym.description))
-            .andExpect(jsonPath("$.imageIds").value(gym.images.map{ it.id!!.toString() }))
-            .andExpect(jsonPath("$.latitude").value(gym.latitude))
-            .andExpect(jsonPath("$.longitude").value(gym.longitude))
+        result.andExpect{
+            status().isOk
+            jsonPath("$.id").value(gym.id)
+            jsonPath("$.name").value(gym.name)
+            jsonPath("$.address").value(gym.address)
+            jsonPath("$.description").value(gym.description)
+            jsonPath("$.imageIds").value(gym.images.map { it.id!!.toString() })
+            jsonPath("$.latitude").value(gym.latitude)
+            jsonPath("$.longitude").value(gym.longitude)
+        }
 
         // document
-        result.andDocument("GetGym") {
-            pathParameters(
-                parameterWithName("gymId").type(SimpleType.INTEGER).description("Id of the gym")
-            )
-            responseSchema(Schema("GetGymResponse"))
-            responseFields(
-                fieldWithPath("id").type(JsonFieldType.NUMBER).description("id of the gym"),
-                fieldWithPath("name").type(JsonFieldType.STRING).description("name of the gym"),
-                fieldWithPath("address").type(JsonFieldType.STRING).description("address of the gym"),
-                fieldWithPath("description").type(JsonFieldType.STRING).description("description of the gym"),
-                fieldWithPath("imageIds").type(JsonFieldType.ARRAY).description("image ids of the gym"),
-                fieldWithPath("latitude").type(JsonFieldType.NUMBER).description("latitude of the gym"),
-                fieldWithPath("longitude").type(JsonFieldType.NUMBER).description("longitude of the gym")
-            )
+        result.andDocument2("GetGym") {
+            tags = setOf("Gym")
+
+            request {
+                pathParam("gymId") {
+                    type = RestdocsType.NUMBER
+                    description = "Id of the gym"
+                }
+            }
+            response("GetGymResponse") {
+                field("id") {
+                    type = RestdocsType.NUMBER
+                    description = "id of the gym"
+                }
+                field("name") {
+                    type = RestdocsType.STRING
+                    description = "name of the gym"
+                }
+                field("address") {
+                    type = RestdocsType.STRING
+                    description = "address of the gym"
+                }
+                field("description") {
+                    type = RestdocsType.STRING
+                    description = "description of the gym"
+                }
+                field("imageIds") {
+                    type = RestdocsType.STRING_ARRAY
+                    description = "image ids of the gym"
+                }
+                field("latitude") {
+                    type = RestdocsType.NUMBER
+                    description = "latitude of the gym"
+                }
+                field("longitude") {
+                    type = RestdocsType.NUMBER
+                    description = "longitude of the gym"
+                }
+            }
         }
     }
 
@@ -109,18 +138,35 @@ class GymControllerTest {
 
         val result = mvc.perform(get("/api/gym"))
 
-        result.andExpect(status().isOk)
-            .andExpect(jsonPath("$.gyms.length()").value(length))
+        result.andExpect {
+            status().isOk
+            jsonPath("$.gyms.length()").value(length)
+        }
 
         if (length == 3L) {
-            result.andDocument("GetGymList") {
-                responseSchema(Schema("GetGymListResponse"))
-                responseFields(
-                    fieldWithPath("gyms[].id").type(JsonFieldType.NUMBER).description("id of the gym"),
-                    fieldWithPath("gyms[].name").type(JsonFieldType.STRING).description("name of the gym"),
-                    fieldWithPath("gyms[].address").type(JsonFieldType.STRING).description("address of the gym"),
-                    fieldWithPath("gyms[].thumbnail").type(JsonFieldType.STRING).description("thumbnail uuid of the gym"),
-                )
+            result.andDocument2("GetGymList") {
+                tags = setOf("Gym")
+
+                response("GetGymListResponse") {
+                    array("gyms") {
+                        field("id") {
+                            type = RestdocsType.NUMBER
+                            description = "id of the gym"
+                        }
+                        field("name") {
+                            type = RestdocsType.STRING
+                            description = "name of the gym"
+                        }
+                        field("address") {
+                            type = RestdocsType.STRING
+                            description = "address of the gym"
+                        }
+                        field("thumbnail") {
+                            type = RestdocsType.STRING
+                            description = "thumbnail uuid of the gym"
+                        }
+                    }
+                }
             }
         }
     }
@@ -139,22 +185,49 @@ class GymControllerTest {
                 .content(content)
         )
 
-        result.andExpect(status().isCreated)
-        result.andDocument("AddGym") {
-            requestSchema(Schema("AddGymRequest"))
-            requestFields(
-                fieldWithPath("name").type(JsonFieldType.STRING).description("name of the gym"),
-                fieldWithPath("franchiseId").type(JsonFieldType.NUMBER).description("franchise id of the gym"),
-                fieldWithPath("address").type(JsonFieldType.STRING).description("address of the gym"),
-                fieldWithPath("description").type(JsonFieldType.STRING).description("description of the gym"),
-                fieldWithPath("imageIds").type(JsonFieldType.ARRAY).description("image ids of the gym"),
-                fieldWithPath("latitude").type(JsonFieldType.NUMBER).description("latitude of the gym"),
-                fieldWithPath("longitude").type(JsonFieldType.NUMBER).description("longitude of the gym")
-            )
-            responseSchema(Schema("AddGymResponse"))
-            responseFields(
-                fieldWithPath("gymId").type(JsonFieldType.NUMBER).description("id of the created gym")
-            )
+        result.andExpect {
+            status().isCreated
+        }
+
+        result.andDocument2("AddGym") {
+            tags = setOf("Gym")
+
+            request("AddGymRequest") {
+                field("name") {
+                    type = RestdocsType.STRING
+                    description = "name of the gym"
+                }
+                field("address") {
+                    type = RestdocsType.STRING
+                    description = "address of the gym"
+                }
+                field("franchiseId") {
+                    type = RestdocsType.NUMBER
+                    description = "franchise id of the gym"
+                }
+                field("description") {
+                    type = RestdocsType.STRING
+                    description = "description of the gym"
+                }
+                field("imageIds") {
+                    type = RestdocsType.STRING_ARRAY
+                    description = "image ids of the gym"
+                }
+                field("latitude") {
+                    type = RestdocsType.NUMBER
+                    description = "latitude of the gym"
+                }
+                field("longitude") {
+                    type = RestdocsType.NUMBER
+                    description = "longitude of the gym"
+                }
+            }
+            response("AddGymResponse") {
+                field("gymId") {
+                    type = RestdocsType.NUMBER
+                    description = "id of the created gym"
+                }
+            }
         }
     }
 
@@ -180,6 +253,7 @@ class GymControllerTest {
         result.andExpect(status().isOk)
 
         result.andDocument("UpdateGym") {
+            tag("Gym")
             pathParameters(
                 parameterWithName("gymId").type(SimpleType.INTEGER).description("id of the gym")
             )
@@ -202,11 +276,12 @@ class GymControllerTest {
         val content = JsonUtils.toJson(request)
         every { gymService.updateGym(any()) } throws GymNotFoundException()
 
-        mvc.perform(
-            put("/api/gym/1")
+        mvc.perform(put("/api/gym/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(content)
-        ).andExpect(status().isBadRequest)
+                .content(content))
+            .andExpect {
+                status().isBadRequest
+            }
     }
 
     @Test
@@ -220,12 +295,14 @@ class GymControllerTest {
 
         val result = mvc.perform(
             multipart("/api/gym/image")
-                .file("image", file)
-        )
-            .andExpect(status().isCreated)
-            .andExpect(jsonPath("$.id").value(uuid.toString()))
+                .file("image", file))
+            .andExpect {
+                status().isCreated
+                jsonPath("$.id").value(uuid.toString())
+            }
 
-        result.andDocument("AddImageImage") {
+        result.andDocument("AddGymImage") {
+            tag("Gym")
             requestParts(
                 partWithName("image").description("gym image")
             )
