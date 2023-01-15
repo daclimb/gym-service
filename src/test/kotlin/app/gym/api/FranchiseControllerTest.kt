@@ -10,7 +10,7 @@ import app.gym.domain.member.WithMockMember
 import app.gym.jwt.JwtAuthenticationFilter
 import app.gym.util.JsonUtils
 import app.gym.utils.TestDataGenerator
-import app.gym.utils.andDocument
+import restdocs.andDocument
 import com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName
 import com.epages.restdocs.apispec.Schema
 import com.epages.restdocs.apispec.SimpleType

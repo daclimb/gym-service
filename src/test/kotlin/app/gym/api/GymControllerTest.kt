@@ -11,7 +11,7 @@ import app.gym.domain.member.WithMockMember
 import app.gym.jwt.JwtAuthenticationFilter
 import app.gym.util.JsonUtils
 import app.gym.utils.TestDataGenerator
-import app.gym.utils.andDocument
+import restdocs.andDocument
 import com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName
 import com.epages.restdocs.apispec.Schema
 import com.epages.restdocs.apispec.SimpleType
@@ -38,6 +38,8 @@ import org.springframework.restdocs.request.RequestDocumentation.requestParts
 import org.springframework.test.web.servlet.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import restdocs.RestdocsType
+import restdocs.andDocument2
 import java.nio.file.Files
 import java.util.*
 import kotlin.io.path.toPath
@@ -85,21 +87,45 @@ class GymControllerTest {
         }
 
         // document
-        result.andDocument("GetGym") {
-            tags("Gym")
-            pathParameters(
-                parameterWithName("gymId").type(SimpleType.INTEGER).description("Id of the gym")
-            )
-            responseSchema(Schema("GetGymResponse"))
-            responseFields(
-                fieldWithPath("id").type(JsonFieldType.NUMBER).description("id of the gym"),
-                fieldWithPath("name").type(JsonFieldType.STRING).description("name of the gym"),
-                fieldWithPath("address").type(JsonFieldType.STRING).description("address of the gym"),
-                fieldWithPath("description").type(JsonFieldType.STRING).description("description of the gym"),
-                fieldWithPath("imageIds").type(JsonFieldType.ARRAY).description("image ids of the gym"),
-                fieldWithPath("latitude").type(JsonFieldType.NUMBER).description("latitude of the gym"),
-                fieldWithPath("longitude").type(JsonFieldType.NUMBER).description("longitude of the gym")
-            )
+        result.andDocument2("GetGym") {
+            tags = setOf("Gym")
+
+            request {
+                pathParam("gymId") {
+                    type = RestdocsType.NUMBER
+                    description = "Id of the gym"
+                }
+            }
+            response("GetGymResponse") {
+                field("id") {
+                    type = RestdocsType.NUMBER
+                    description = "id of the gym"
+                }
+                field("name") {
+                    type = RestdocsType.STRING
+                    description = "name of the gym"
+                }
+                field("address") {
+                    type = RestdocsType.STRING
+                    description = "address of the gym"
+                }
+                field("description") {
+                    type = RestdocsType.STRING
+                    description = "description of the gym"
+                }
+                field("imageIds") {
+                    type = RestdocsType.ARRAY(String::class.java)
+                    description = "image ids of the gym"
+                }
+                field("latitude") {
+                    type = RestdocsType.NUMBER
+                    description = "latitude of the gym"
+                }
+                field("longitude") {
+                    type = RestdocsType.NUMBER
+                    description = "longitude of the gym"
+                }
+            }
         }
     }
 
@@ -118,16 +144,29 @@ class GymControllerTest {
         }
 
         if (length == 3L) {
-            result.andDocument("GetGymList") {
-                tag("Gym")
-                responseSchema(Schema("GetGymListResponse"))
-                responseFields(
-                    fieldWithPath("gyms[].id").type(JsonFieldType.NUMBER).description("id of the gym"),
-                    fieldWithPath("gyms[].name").type(JsonFieldType.STRING).description("name of the gym"),
-                    fieldWithPath("gyms[].address").type(JsonFieldType.STRING).description("address of the gym"),
-                    fieldWithPath("gyms[].thumbnail").type(JsonFieldType.STRING)
-                        .description("thumbnail uuid of the gym"),
-                )
+            result.andDocument2("GetGymList") {
+                tags = setOf("Gym")
+
+                response("GetGymListResponse") {
+                    array("gyms") {
+                        field("id") {
+                            type = RestdocsType.NUMBER
+                            description = "id of the gym"
+                        }
+                        field("name") {
+                            type = RestdocsType.STRING
+                            description = "name of the gym"
+                        }
+                        field("address") {
+                            type = RestdocsType.STRING
+                            description = "address of the gym"
+                        }
+                        field("thumbnail") {
+                            type = RestdocsType.STRING
+                            description = "thumbnail uuid of the gym"
+                        }
+                    }
+                }
             }
         }
     }

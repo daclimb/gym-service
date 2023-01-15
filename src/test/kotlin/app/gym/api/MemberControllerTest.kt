@@ -5,7 +5,7 @@ import app.gym.config.SecurityConfig
 import app.gym.domain.member.*
 import app.gym.jwt.JwtAuthenticationProvider
 import app.gym.jwt.JwtAuthenticationToken
-import app.gym.utils.andDocument
+import restdocs.andDocument
 import com.epages.restdocs.apispec.Schema
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.mockk.every
