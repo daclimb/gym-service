@@ -1,48 +1,44 @@
-package app.gym.jwt
+package app.gym.security
 
 import app.gym.config.PUBLIC_ENDPOINTS
 import app.gym.config.PUBLIC_ENDPOINTS_GET
 import mu.KotlinLogging
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
-import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.util.AntPathMatcher
 import org.springframework.web.filter.OncePerRequestFilter
+import java.lang.Exception
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-class InvalidHeaderException : RuntimeException()
-
-val logger = KotlinLogging.logger { }
+class InvalidJwtTokenException(
+    exception: Exception
+) : RuntimeException(exception)
 
 @Component
 class JwtAuthenticationFilter(
-    private val authenticationManager: AuthenticationManager
+    private val jwtTokenHandler: JwtTokenHandler
 ) : OncePerRequestFilter() {
+    val logger = KotlinLogging.logger { }
+
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
         val cookies = request.cookies
-        if (cookies.isNullOrEmpty()) {
-            logger.info { "Cookie is null or empty." }
-            response.status = HttpStatus.UNAUTHORIZED.value()
-            return
-        }
-
         val token = cookies.find { it.name == "jwt" }
         if (token == null) {
             logger.info { "Cookie has no jwt token." }
             response.status = HttpStatus.UNAUTHORIZED.value()
             return
         }
-        val jwtAuthenticationToken = JwtAuthenticationToken(token.value)
-        val authentication = authenticationManager.authenticate(jwtAuthenticationToken)
-        SecurityContextHolder.getContext().authentication = authentication
+
+        val principal = this.jwtTokenHandler.createPrincipal(token.value)
+        SecurityContextHolder.getContext().authentication = UserAuthentication(principal)
 
         filterChain.doFilter(request, response)
     }

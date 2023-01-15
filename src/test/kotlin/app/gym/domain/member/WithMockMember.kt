@@ -6,5 +6,5 @@ import org.springframework.security.test.context.support.WithSecurityContext
 @WithSecurityContext(factory = WithMockMemberSecurityContextFactory::class)
 annotation class WithMockMember(
     val memberId: Long = 0L,
-    val memberRole: MemberRole = MemberRole.Member
+    val userRole: UserRole = UserRole.Member
 )
