@@ -87,17 +87,17 @@ paths:
                         "id" : 1,
                         "name" : "name",
                         "address" : "address",
-                        "thumbnail" : "4126d2b7-aa0d-482b-b7a3-b2a7fd73e546"
+                        "thumbnail" : "0773752e-22bc-413c-95e3-ffc1441c3345"
                       }, {
                         "id" : 2,
                         "name" : "name",
                         "address" : "address",
-                        "thumbnail" : "9e24ef7b-8ef6-455d-87b7-4ccbffbde38f"
+                        "thumbnail" : "c6daf762-4676-4c71-82cb-acc89b4ae9ac"
                       }, {
                         "id" : 3,
                         "name" : "name",
                         "address" : "address",
-                        "thumbnail" : "fd4db963-8a2e-4933-8a48-ba7366e08d1e"
+                        "thumbnail" : "7dc5b0de-5067-47d8-9b2c-eaf47c595cc2"
                       } ]
                     }
     post:
@@ -244,7 +244,7 @@ paths:
                 AddGymImage:
                   value: |-
                     {
-                      "id" : "3245d9cd-b890-4477-93c6-df19c12c0c4d"
+                      "id" : "437d412d-b1e4-4265-8695-f0781e735079"
                     }
                 AddImageImage:
                   value: |-
@@ -279,7 +279,7 @@ paths:
                       "name" : "name",
                       "address" : "address",
                       "description" : "description",
-                      "imageIds" : [ "640432a4-86a0-487a-a7f8-bc1df30b84c6" ],
+                      "imageIds" : [ "61b6921d-061b-4866-8db9-025af0a95f6c" ],
                       "latitude" : 0.0,
                       "longitude" : 0.0
                     }
@@ -434,37 +434,6 @@ components:
         email:
           type: string
           description: email address
-    GetGymResponse:
-      title: GetGymResponse
-      type: object
-      properties:
-        address:
-          type: string
-          description: address of the gym
-        latitude:
-          type: number
-          description: latitude of the gym
-        name:
-          type: string
-          description: name of the gym
-        description:
-          type: string
-          description: description of the gym
-        id:
-          type: number
-          description: id of the gym
-        imageIds:
-          type: array
-          description: image ids of the gym
-          items:
-            oneOf:
-            - type: object
-            - type: boolean
-            - type: string
-            - type: number
-        longitude:
-          type: number
-          description: longitude of the gym
     AddGymRequest:
       title: AddGymRequest
       type: object
@@ -488,11 +457,34 @@ components:
           type: array
           description: image ids of the gym
           items:
-            oneOf:
-            - type: object
-            - type: boolean
-            - type: string
-            - type: number
+            type: string
+        longitude:
+          type: number
+          description: longitude of the gym
+    GetGymResponse:
+      title: GetGymResponse
+      type: object
+      properties:
+        address:
+          type: string
+          description: address of the gym
+        latitude:
+          type: number
+          description: latitude of the gym
+        name:
+          type: string
+          description: name of the gym
+        description:
+          type: string
+          description: description of the gym
+        id:
+          type: number
+          description: id of the gym
+        imageIds:
+          type: array
+          description: image ids of the gym
+          items:
+            type: string
         longitude:
           type: number
           description: longitude of the gym

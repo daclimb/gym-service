@@ -3,11 +3,10 @@ package restdocs
 import com.epages.restdocs.apispec.*
 import com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName
 import org.springframework.restdocs.operation.preprocess.Preprocessors
+import org.springframework.restdocs.payload.FieldDescriptor
 import org.springframework.restdocs.payload.JsonFieldType
-import org.springframework.restdocs.payload.PayloadDocumentation
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.test.web.servlet.ResultActions
-import java.util.SimpleTimeZone
 
 fun ResultActions.andDocument2(
     identifier: String,
@@ -47,16 +46,16 @@ sealed class RestdocsType {
     object BOOLEAN: RestdocsType()
     object OBJECT: RestdocsType()
 
-    class ENUM<T: Enum<T>>(
-        private val type: Enum<T>): RestdocsType() {
+    open class Array(
+        internal val itemsType: String
+    ): RestdocsType()
 
-    }
+    object STRING_ARRAY: Array("string")
+    object NUMBER_ARRAY: Array("number")
+    object BOOLEAN_ARRAY: Array("boolean")
+    object OBJECT_ARRAY: Array("object")
 
-    class ARRAY<T>(
-        private val type: T): RestdocsType() {
-
-    }
-
+    class ENUM<T: Enum<T>>(internal val type: Enum<T>): RestdocsType()
 
     fun toSimpleType(): SimpleType {
         return when(this) {
@@ -72,7 +71,7 @@ sealed class RestdocsType {
             STRING -> JsonFieldType.STRING
             NUMBER -> JsonFieldType.NUMBER
             BOOLEAN -> JsonFieldType.BOOLEAN
-            is ARRAY<*> -> JsonFieldType.ARRAY
+            is Array -> JsonFieldType.ARRAY
             is ENUM<*> -> JsonFieldType.ARRAY
             else -> throw Error("Cannot convert to json field type")
         }
@@ -86,8 +85,9 @@ class RestdocsBuilder {
     private var response: Response? = null
 
     fun build(): ResourceSnippetParameters {
+        val _tags = this.tags
         return ResourceSnippetParametersBuilder().apply {
-            tags(*this.tags.toTypedArray())
+            tags(*_tags.toTypedArray())
             buildRequest(this)
             buildResponse(this)
         }.build()
@@ -102,6 +102,7 @@ class RestdocsBuilder {
                 parameterWithName(it.name).type(it.type.toSimpleType()).description(it.description)
             }
             builder.pathParameters(params)
+            builder.requestFields(toRestdocsFields(this.fields))
         }
     }
 
@@ -110,10 +111,25 @@ class RestdocsBuilder {
             if (name != null) {
                 builder.responseSchema(Schema(this.name))
             }
-            val fields = this.fields.map {
-                fieldWithPath(it.name).type(it.type.toJsonType()).description(it.description)
+            builder.responseFields(toRestdocsFields(this.fields))
+        }
+    }
+
+    private fun toRestdocsFields(fields: List<Field>): List<FieldDescriptor> {
+        return fields.map {
+            val type = it.type
+            val field = fieldWithPath(it.name)
+                .description(it.description)
+
+            if (type is RestdocsType.Array) {
+                field.attributes["itemsType"] = type.itemsType
+            } else if (type is RestdocsType.ENUM<*>) {
+                field.type("enum")
+                field.attributes["enumValues"] = type.type::class.java.enumConstants.joinToString(",")
+            } else {
+                field.type(type.toJsonType())
             }
-            builder.responseFields(fields)
+            field
         }
     }
 
@@ -129,9 +145,32 @@ class RestdocsBuilder {
         internal val name: String? = null
     ) {
         internal val pathParams = mutableListOf<PathParam>()
+        internal val fields = mutableListOf<Field>()
+
+        private var prefix = ""
 
         fun pathParam(name: String, builder: PathParam.() -> Unit) {
             this.pathParams.add(PathParam(name).apply(builder))
+        }
+
+        fun field(name: String, builder: Field.() -> Unit) {
+            val fieldName = if (prefix.isNotEmpty()) {
+                "$prefix.$name"
+            } else {
+                name
+            }
+            this.fields.add(Field(fieldName).apply(builder))
+        }
+
+        fun array(name: String, builder: Request.() -> Unit) {
+            this.prefixed("$name[]", builder)
+        }
+
+        fun prefixed(prefix: String, builder: Request.() -> Unit) {
+            val old = this.prefix
+            this.prefix = "$prefix.$old"
+            this.apply(builder)
+            this.prefix = old
         }
     }
 

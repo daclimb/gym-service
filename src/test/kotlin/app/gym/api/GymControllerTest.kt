@@ -114,7 +114,7 @@ class GymControllerTest {
                     description = "description of the gym"
                 }
                 field("imageIds") {
-                    type = RestdocsType.ARRAY(String::class.java)
+                    type = RestdocsType.STRING_ARRAY
                     description = "image ids of the gym"
                 }
                 field("latitude") {
@@ -189,22 +189,45 @@ class GymControllerTest {
             status().isCreated
         }
 
-        result.andDocument("AddGym") {
-            tag("Gym")
-            requestSchema(Schema("AddGymRequest"))
-            requestFields(
-                fieldWithPath("name").type(JsonFieldType.STRING).description("name of the gym"),
-                fieldWithPath("franchiseId").type(JsonFieldType.NUMBER).description("franchise id of the gym"),
-                fieldWithPath("address").type(JsonFieldType.STRING).description("address of the gym"),
-                fieldWithPath("description").type(JsonFieldType.STRING).description("description of the gym"),
-                fieldWithPath("imageIds").type(JsonFieldType.ARRAY).description("image ids of the gym"),
-                fieldWithPath("latitude").type(JsonFieldType.NUMBER).description("latitude of the gym"),
-                fieldWithPath("longitude").type(JsonFieldType.NUMBER).description("longitude of the gym")
-            )
-            responseSchema(Schema("AddGymResponse"))
-            responseFields(
-                fieldWithPath("gymId").type(JsonFieldType.NUMBER).description("id of the created gym")
-            )
+        result.andDocument2("AddGym") {
+            tags = setOf("Gym")
+
+            request("AddGymRequest") {
+                field("name") {
+                    type = RestdocsType.STRING
+                    description = "name of the gym"
+                }
+                field("address") {
+                    type = RestdocsType.STRING
+                    description = "address of the gym"
+                }
+                field("franchiseId") {
+                    type = RestdocsType.NUMBER
+                    description = "franchise id of the gym"
+                }
+                field("description") {
+                    type = RestdocsType.STRING
+                    description = "description of the gym"
+                }
+                field("imageIds") {
+                    type = RestdocsType.STRING_ARRAY
+                    description = "image ids of the gym"
+                }
+                field("latitude") {
+                    type = RestdocsType.NUMBER
+                    description = "latitude of the gym"
+                }
+                field("longitude") {
+                    type = RestdocsType.NUMBER
+                    description = "longitude of the gym"
+                }
+            }
+            response("AddGymResponse") {
+                field("gymId") {
+                    type = RestdocsType.NUMBER
+                    description = "id of the created gym"
+                }
+            }
         }
     }
 
