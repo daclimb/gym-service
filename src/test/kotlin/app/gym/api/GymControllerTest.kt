@@ -73,14 +73,16 @@ class GymControllerTest {
 
         val result = mvc.perform(get("/api/gym/{gymId}", 1))
 
-        result.andExpect(status().isOk)
-            .andExpect(jsonPath("$.id").value(gym.id))
-            .andExpect(jsonPath("$.name").value(gym.name))
-            .andExpect(jsonPath("$.address").value(gym.address))
-            .andExpect(jsonPath("$.description").value(gym.description))
-            .andExpect(jsonPath("$.imageIds").value(gym.images.map{ it.id!!.toString() }))
-            .andExpect(jsonPath("$.latitude").value(gym.latitude))
-            .andExpect(jsonPath("$.longitude").value(gym.longitude))
+        result.andExpect{
+            status().isOk
+            jsonPath("$.id").value(gym.id)
+            jsonPath("$.name").value(gym.name)
+            jsonPath("$.address").value(gym.address)
+            jsonPath("$.description").value(gym.description)
+            jsonPath("$.imageIds").value(gym.images.map { it.id!!.toString() })
+            jsonPath("$.latitude").value(gym.latitude)
+            jsonPath("$.longitude").value(gym.longitude)
+        }
 
         // document
         result.andDocument("GetGym") {
@@ -119,7 +121,8 @@ class GymControllerTest {
                     fieldWithPath("gyms[].id").type(JsonFieldType.NUMBER).description("id of the gym"),
                     fieldWithPath("gyms[].name").type(JsonFieldType.STRING).description("name of the gym"),
                     fieldWithPath("gyms[].address").type(JsonFieldType.STRING).description("address of the gym"),
-                    fieldWithPath("gyms[].thumbnail").type(JsonFieldType.STRING).description("thumbnail uuid of the gym"),
+                    fieldWithPath("gyms[].thumbnail").type(JsonFieldType.STRING)
+                        .description("thumbnail uuid of the gym"),
                 )
             }
         }
@@ -139,7 +142,10 @@ class GymControllerTest {
                 .content(content)
         )
 
-        result.andExpect(status().isCreated)
+        result.andExpect {
+            status().isCreated
+        }
+
         result.andDocument("AddGym") {
             requestSchema(Schema("AddGymRequest"))
             requestFields(

@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Component
 class WebConfig(
-    @Value("\${gym.cors.allowed-origins}")
+    @Value("\${gym.cors.allowed-origins:}")
     private val allowedOrigins: Array<String> = emptyArray()
 ): WebMvcConfigurer {
 

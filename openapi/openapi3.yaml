@@ -7,11 +7,246 @@ servers:
 - url: http://localhost
 tags: []
 paths:
-  /api/{gymId}:
+  /api/franchise:
     get:
       tags:
       - api
-      operationId: getGym
+      operationId: GetFranchiseList
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFranchiseList'
+              examples:
+                GetFranchiseList:
+                  value: |-
+                    {
+                      "franchises" : [ {
+                        "id" : 1,
+                        "name" : "name"
+                      }, {
+                        "id" : 2,
+                        "name" : "name"
+                      }, {
+                        "id" : 3,
+                        "name" : "name"
+                      } ]
+                    }
+    post:
+      tags:
+      - api
+      operationId: AddFranchise
+      requestBody:
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/AddFranchiseRequest'
+            examples:
+              AddFranchise:
+                value: |-
+                  {
+                    "name" : "name",
+                    "description" : "description"
+                  }
+      responses:
+        "201":
+          description: "201"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-gym-gymId486549215'
+              examples:
+                AddFranchise:
+                  value: |-
+                    {
+                      "franchiseId" : 1
+                    }
+  /api/gym:
+    get:
+      tags:
+      - api
+      operationId: GetGymList
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetGymListResponse'
+              examples:
+                GetGymList:
+                  value: |-
+                    {
+                      "gyms" : [ {
+                        "id" : 1,
+                        "name" : "name",
+                        "address" : "address",
+                        "thumbnail" : "69a1b043-35bf-413d-837e-9daca9b7eb58"
+                      }, {
+                        "id" : 2,
+                        "name" : "name",
+                        "address" : "address",
+                        "thumbnail" : "7a8a063a-5143-4c77-8c15-a9055b1b4071"
+                      }, {
+                        "id" : 3,
+                        "name" : "name",
+                        "address" : "address",
+                        "thumbnail" : "15284c44-2b2b-4b44-b808-265abc741f32"
+                      } ]
+                    }
+    post:
+      tags:
+      - api
+      operationId: AddGym
+      requestBody:
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/AddGymRequest'
+            examples:
+              AddGym:
+                value: |-
+                  {
+                    "name" : "name",
+                    "franchiseId" : 1,
+                    "address" : "address",
+                    "description" : "description",
+                    "imageIds" : [ ],
+                    "latitude" : 0.0,
+                    "longitude" : 0.0
+                  }
+      responses:
+        "201":
+          description: "201"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddGymResponse'
+              examples:
+                AddGym:
+                  value: |-
+                    {
+                      "gymId" : 1
+                    }
+  /api/franchise/{franchiseId}:
+    get:
+      tags:
+      - api
+      operationId: GetFranchise
+      parameters:
+      - name: franchiseId
+        in: path
+        description: id if the franchise
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getFranchise'
+              examples:
+                GetFranchise:
+                  value: |-
+                    {
+                      "id" : 1,
+                      "name" : "name",
+                      "description" : "description",
+                      "relatedGyms" : [ {
+                        "id" : 1,
+                        "name" : ""
+                      } ]
+                    }
+    put:
+      tags:
+      - api
+      operationId: UpdateFranchise
+      parameters:
+      - name: franchiseId
+        in: path
+        description: id of the franchise
+        required: true
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/UpdateFranchiseRequest'
+            examples:
+              UpdateFranchise:
+                value: |-
+                  {
+                    "name" : "name",
+                    "description" : "description"
+                  }
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-gym-gymId486549215'
+              examples:
+                UpdateFranchise:
+                  value: |-
+                    {
+                      "message" : "Success: update franchise"
+                    }
+    delete:
+      tags:
+      - api
+      operationId: DeleteFranchise
+      parameters:
+      - name: franchiseId
+        in: path
+        description: id of the franchise
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-gym-gymId486549215'
+              examples:
+                DeleteFranchise:
+                  value: |-
+                    {
+                      "message" : "Success: delete franchise"
+                    }
+  /api/gym/image:
+    post:
+      tags:
+      - api
+      operationId: AddImageImage
+      responses:
+        "201":
+          description: "201"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddImageResponse'
+              examples:
+                AddImageImage:
+                  value: |-
+                    {
+                      "id" : "2353748e-4f60-402a-a684-ac9bca8a672a"
+                    }
+  /api/gym/{gymId}:
+    get:
+      tags:
+      - api
+      operationId: GetGym
       parameters:
       - name: gymId
         in: path
@@ -28,29 +263,337 @@ paths:
               schema:
                 $ref: '#/components/schemas/GetGymResponse'
               examples:
-                getGym:
+                GetGym:
                   value: |-
                     {
                       "id" : 1,
                       "name" : "name",
                       "address" : "address",
-                      "description" : "description"
+                      "description" : "description",
+                      "imageIds" : [ "dc09da26-fd33-4601-9405-b5764630a510" ],
+                      "latitude" : 0.0,
+                      "longitude" : 0.0
                     }
+    put:
+      tags:
+      - api
+      operationId: UpdateGym
+      parameters:
+      - name: gymId
+        in: path
+        description: id of the gym
+        required: true
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/UpdateGymRequest'
+            examples:
+              UpdateGym:
+                value: |-
+                  {
+                    "name" : "name",
+                    "franchiseId" : 1,
+                    "address" : "address",
+                    "description" : "description",
+                    "imageIds" : [ ],
+                    "latitude" : 0.0,
+                    "longitude" : 0.0
+                  }
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/api-gym-gymId486549215'
+              examples:
+                UpdateGym:
+                  value: |-
+                    {
+                      "message" : "Success: update gym"
+                    }
+  /api/member/login:
+    post:
+      tags:
+      - api
+      operationId: Login
+      requestBody:
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            examples:
+              Login:
+                value: |-
+                  {
+                    "email" : "valid@email.com",
+                    "password" : "password"
+                  }
+      responses:
+        "200":
+          description: "200"
+  /api/member/me:
+    get:
+      tags:
+      - api
+      operationId: Me
+      responses:
+        "200":
+          description: "200"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MeRequest'
+              examples:
+                Me:
+                  value: |-
+                    {
+                      "name" : "name"
+                    }
+  /api/member/signup:
+    post:
+      tags:
+      - api
+      operationId: Signup
+      requestBody:
+        content:
+          application/json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+            examples:
+              Signup:
+                value: |-
+                  {
+                    "email" : "valid@email.com",
+                    "password" : "password",
+                    "name" : "name"
+                  }
+      responses:
+        "200":
+          description: "200"
 components:
   schemas:
+    AddGymResponse:
+      title: AddGymResponse
+      type: object
+      properties:
+        gymId:
+          type: number
+          description: id of the created gym
+    GetGymListResponse:
+      title: GetGymListResponse
+      type: object
+      properties:
+        gyms:
+          type: array
+          items:
+            type: object
+            properties:
+              thumbnail:
+                type: string
+                description: thumbnail uuid of the gym
+              address:
+                type: string
+                description: address of the gym
+              name:
+                type: string
+                description: name of the gym
+              id:
+                type: number
+                description: id of the gym
+    UpdateFranchiseRequest:
+      title: UpdateFranchiseRequest
+      type: object
+      properties:
+        name:
+          type: string
+          description: name of the franchise
+        description:
+          type: string
+          description: description of the franchise
+    LoginRequest:
+      title: LoginRequest
+      type: object
+      properties:
+        password:
+          type: string
+          description: password
+        email:
+          type: string
+          description: email address
     GetGymResponse:
       title: GetGymResponse
       type: object
       properties:
-        price:
+        address:
+          type: string
+          description: address of the gym
+        latitude:
           type: number
-          description: ""
+          description: latitude of the gym
+        name:
+          type: string
+          description: name of the gym
         description:
           type: string
           description: description of the gym
         id:
           type: number
           description: id of the gym
-        title:
+        imageIds:
+          type: array
+          description: image ids of the gym
+          items:
+            oneOf:
+            - type: object
+            - type: boolean
+            - type: string
+            - type: number
+        longitude:
+          type: number
+          description: longitude of the gym
+    AddGymRequest:
+      title: AddGymRequest
+      type: object
+      properties:
+        address:
+          type: string
+          description: address of the gym
+        latitude:
+          type: number
+          description: latitude of the gym
+        name:
           type: string
           description: name of the gym
+        description:
+          type: string
+          description: description of the gym
+        franchiseId:
+          type: number
+          description: franchise id of the gym
+        imageIds:
+          type: array
+          description: image ids of the gym
+          items:
+            oneOf:
+            - type: object
+            - type: boolean
+            - type: string
+            - type: number
+        longitude:
+          type: number
+          description: longitude of the gym
+    getFranchise:
+      title: getFranchise
+      type: object
+      properties:
+        relatedGyms:
+          type: array
+          description: gyms of the franchise
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: name of the related gym
+              id:
+                type: number
+                description: id of the related gym
+        name:
+          type: string
+          description: name of the franchise
+        description:
+          type: string
+          description: description of the franchise
+        id:
+          type: number
+          description: id of the franchise
+    SignupRequest:
+      title: SignupRequest
+      type: object
+      properties:
+        password:
+          type: string
+          description: password
+        name:
+          type: string
+          description: name
+        email:
+          type: string
+          description: email
+    UpdateGymRequest:
+      title: UpdateGymRequest
+      type: object
+      properties:
+        address:
+          type: string
+          description: address of the gym
+        latitude:
+          type: number
+          description: latitude of the gym
+        name:
+          type: string
+          description: name of the gym
+        description:
+          type: string
+          description: description of the gym
+        franchiseId:
+          type: number
+          description: franchise id of the gym
+        imageIds:
+          type: array
+          description: image ids of the gym
+          items:
+            oneOf:
+            - type: object
+            - type: boolean
+            - type: string
+            - type: number
+        longitude:
+          type: number
+          description: longitude of the gym
+    GetFranchiseList:
+      title: GetFranchiseList
+      type: object
+      properties:
+        franchises:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: name of the franchise
+              id:
+                type: number
+                description: id of the franchise
+    AddFranchiseRequest:
+      title: AddFranchiseRequest
+      type: object
+      properties:
+        name:
+          type: string
+          description: name of the franchise
+        description:
+          type: string
+          description: description of the franchise
+    MeRequest:
+      title: MeRequest
+      type: object
+      properties:
+        name:
+          type: string
+          description: name of the member
+    api-gym-gymId486549215:
+      type: object
+    AddImageResponse:
+      title: AddImageResponse
+      type: object
+      properties:
+        id:
+          type: string
+          description: uuid of the image
