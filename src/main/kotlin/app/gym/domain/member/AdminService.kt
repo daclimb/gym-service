@@ -1,6 +1,6 @@
 package app.gym.domain.member
 
-import app.gym.jwt.JwtTokenGenerator
+import app.gym.security.JwtTokenHandler
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
@@ -12,13 +12,13 @@ class AdminService(
     private val email: String,
     @Value("\${admin.password}")
     private val password: String,
-    private val jwtTokenGenerator: JwtTokenGenerator
+    private val jwtTokenHandler: JwtTokenHandler
     ) {
     fun login(command: LoginCommand): String {
         if (command.email != email || command.password != password) {
             throw EmailOrPasswordNotMatchedException()
         }
-        val token = jwtTokenGenerator.generateAdminJwtToken()
+        val token = jwtTokenHandler.generateAdminJwtToken()
         logger.info { "Admin JWT token published" }
         return token
     }

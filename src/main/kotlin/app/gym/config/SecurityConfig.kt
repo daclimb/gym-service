@@ -1,6 +1,5 @@
 package app.gym.config
 
-import app.gym.jwt.JwtAuthenticationProvider
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -24,9 +23,6 @@ class SecurityConfig(val authenticationConfiguration: AuthenticationConfiguratio
 
     @Bean
     fun passwordEncoder() = BCryptPasswordEncoder()
-
-    @Bean
-    fun jwtAuthenticationProvider(keyPair: KeyPair) = JwtAuthenticationProvider(keyPair)
 
     @Bean
     fun webSecurityCustomizer(): WebSecurityCustomizer {
@@ -62,10 +58,5 @@ class SecurityConfig(val authenticationConfiguration: AuthenticationConfiguratio
         val privateKey = keyFactory.generatePrivate(privateKeySpec)
 
         return KeyPair(publicKey, privateKey)
-    }
-
-    @Bean
-    fun authenticationManager(): AuthenticationManager {
-        return authenticationConfiguration.authenticationManager
     }
 }

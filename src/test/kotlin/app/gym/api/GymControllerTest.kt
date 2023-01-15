@@ -6,15 +6,16 @@ import app.gym.api.request.UpdateGymRequest
 import app.gym.config.SecurityConfig
 import app.gym.domain.gym.GymNotFoundException
 import app.gym.domain.gym.GymService
-import app.gym.domain.member.MemberRole
+import app.gym.domain.member.UserRole
 import app.gym.domain.member.WithMockMember
-import app.gym.jwt.JwtAuthenticationFilter
+import app.gym.security.JwtAuthenticationFilter
 import app.gym.util.JsonUtils
 import app.gym.utils.TestDataGenerator
 import restdocs.andDocument
 import com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName
 import com.epages.restdocs.apispec.Schema
 import com.epages.restdocs.apispec.SimpleType
+import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Test
@@ -59,13 +60,7 @@ class GymControllerTest {
     @Autowired
     private lateinit var mvc: MockMvc
 
-    @TestConfiguration
-    class Config {
-        @Bean
-        fun gymService() = mockk<GymService>()
-    }
-
-    @Autowired
+    @MockkBean
     private lateinit var gymService: GymService
 
     @Test
@@ -172,7 +167,7 @@ class GymControllerTest {
     }
 
     @Test
-    @WithMockMember(memberRole = MemberRole.Admin)
+    @WithMockMember(userRole = UserRole.Admin)
     fun `Should return status code 201 when add gym`() {
 
         val request = AddGymRequest("name", 1L, "address", "description", emptyList(), 0.0, 0.0)
