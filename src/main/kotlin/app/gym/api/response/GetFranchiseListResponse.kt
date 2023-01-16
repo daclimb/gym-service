@@ -4,7 +4,7 @@ import app.gym.domain.franchise.Franchise
 
 data class GetFranchiseListResponse(
     val franchises: List<SimpleFranchise>,
-) : Response {
+) {
 
     data class SimpleFranchise(
         val id: Long,

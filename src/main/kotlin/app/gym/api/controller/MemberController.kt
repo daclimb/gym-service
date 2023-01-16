@@ -3,17 +3,16 @@ package app.gym.api.controller
 import app.gym.api.request.LoginRequest
 import app.gym.api.request.SignupRequest
 import app.gym.api.response.MeResponse
+import app.gym.api.response.SimpleSuccessfulResponse
 import app.gym.domain.member.*
 import app.gym.security.UserPrincipal
 import app.gym.util.CookieUtils
 import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletResponse
 import javax.validation.Valid
-
 
 
 @RestController
@@ -21,51 +20,33 @@ import javax.validation.Valid
 class MemberController(
     private val memberService: MemberService,
 ) {
-    private val logger = KotlinLogging.logger {  }
+    private val logger = KotlinLogging.logger { }
 
     @PostMapping("/signup")
     fun signup(@RequestBody @Valid request: SignupRequest): ResponseEntity<Any> {
         logger.info { "Signup request" }
-        return try {
-            memberService.signup(request.toCommand())
-            ResponseEntity.ok().build()
-        } catch (e: DuplicatedEmailException) {
-            logger.info { "Signup failed" }
-            logger.debug { "$e" }
-            ResponseEntity.badRequest().build()
-        }
+        memberService.signup(request.toCommand())
+        return ResponseEntity.ok().body(SimpleSuccessfulResponse("Success: signup"))
     }
 
     @PostMapping("/login")
-    fun login(@RequestBody request: LoginRequest, response: HttpServletResponse): ResponseEntity<Any> {
+    fun login(
+        @RequestBody request: LoginRequest,
+        response: HttpServletResponse,
+    ): ResponseEntity<SimpleSuccessfulResponse> {
         logger.info { "Login request" }
         val command = request.toCommand()
-        return try {
-            val token = memberService.login(command)
-            val cookie = CookieUtils.create(token)
-            response.addCookie(cookie)
-            ResponseEntity.ok().build()
-        } catch (e: MemberNotFoundException) {
-            logger.info { "Login failed" }
-            logger.debug { "$e" }
-            ResponseEntity.badRequest().build()
-        } catch (e: PasswordNotMatchedException) {
-            logger.info { "Login failed" }
-            logger.debug { "$e" }
-            ResponseEntity.badRequest().build()
-        }
+        val token = memberService.login(command)
+        val cookie = CookieUtils.create(token)
+        response.addCookie(cookie)
+        return ResponseEntity.ok().body(SimpleSuccessfulResponse("Success: login"))
     }
 
     @GetMapping("/me")
     fun getMe(@AuthenticationPrincipal principal: UserPrincipal): ResponseEntity<MeResponse> {
         logger.info { "Get me request" }
-        return try {
-            val member = memberService.getMember(principal.memberId!!)
-            val response = MeResponse.from(member)
-            ResponseEntity.ok(response)
-        } catch (e: MemberNotFoundException) {
-            logger.error { " $e: JWT token based authentication must not throw this exception." }
-            ResponseEntity.internalServerError().build()
-        }
+        val member = memberService.getMember(principal.memberId!!)
+        val response = MeResponse.from(member)
+        return ResponseEntity.ok(response)
     }
 }

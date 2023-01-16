@@ -5,7 +5,7 @@ import app.gym.domain.member.Member
 data class MeResponse(
     val name: String,
 //    val logoUrl: String?
-) : Response {
+) {
     companion object {
         fun from(member: Member): MeResponse {
             return MeResponse(member.name)
