@@ -10,13 +10,13 @@ class DuplicatedEmailException : Exception()
 class MemberNotFoundException : Exception()
 class PasswordNotMatchedException : Exception()
 
-val logger = KotlinLogging.logger {  }
+val logger = KotlinLogging.logger { }
 
 @Service
 class MemberService(
     private val memberRepository: MemberRepository,
     private val passwordEncoder: PasswordEncoder,
-    private val jwtTokenHandler: JwtTokenHandler
+    private val jwtTokenHandler: JwtTokenHandler,
 ) {
     fun signup(command: SignupCommand) {
         // TODO: signup 후 이메일 전송

@@ -82,7 +82,7 @@ class FranchiseE2ETest(
     }
 
     @Test
-    fun `Should return status code 400 when get not existing franchise`() {
+    fun `Should return status code 400 when get franchise which is not existing`() {
         val memberHeaders = authUtils.getHeadersWithCookieForMember()
 
         val response = template.exchange(

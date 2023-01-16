@@ -5,9 +5,6 @@ import app.gym.config.SecurityConfig
 import app.gym.domain.member.AdminService
 import app.gym.security.JwtAuthenticationFilter
 import com.ninjasquad.springmockk.MockkBean
-import org.junit.jupiter.api.Test
-import org.junit.runner.RunWith
-import org.mockito.junit.MockitoJUnitRunner
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
@@ -15,7 +12,6 @@ import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.FilterType
 import org.springframework.context.annotation.Import
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.post
 
 @WebMvcTest(
     controllers = [AdminController::class],
@@ -35,10 +31,10 @@ class AdminControllerTest {
     @Autowired
     lateinit var mvc: MockMvc
 
-    @Test
-    fun `Should return response with jwt cookie when logged in`() {
-        mvc.post("/api/admin/login") {
-
-        }
-    }
+//    @Test
+//    fun `Should return response with jwt cookie when logged in`() {
+//        mvc.post("/api/admin/login") {
+//
+//        }
+//    }
 }
