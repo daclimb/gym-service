@@ -2,7 +2,7 @@ package app.gym.domain.gym
 
 import java.util.*
 
-class UpdateGymCommand(
+data class UpdateGymCommand(
     val id: Long,
     val name: String,
     val franchiseId: Long?,
@@ -10,4 +10,6 @@ class UpdateGymCommand(
     val description: String,
     val imageIds: List<UUID>,
     val longitude: Double,
-    val latitude: Double)
+    val latitude: Double,
+    val tagIds: List<Long>
+)

@@ -11,21 +11,17 @@ import app.gym.domain.member.WithMockMember
 import app.gym.security.JwtAuthenticationFilter
 import app.gym.util.JsonUtils
 import app.gym.utils.TestDataGenerator
-import restdocs.andDocument
 import com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName
 import com.epages.restdocs.apispec.Schema
 import com.epages.restdocs.apispec.SimpleType
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.FilterType
 import org.springframework.context.annotation.Import
@@ -40,6 +36,7 @@ import org.springframework.test.web.servlet.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import restdocs.RestdocsType
+import restdocs.andDocument
 import restdocs.andDocument2
 import java.nio.file.Files
 import java.util.*
@@ -169,8 +166,7 @@ class GymControllerTest {
     @Test
     @WithMockMember(userRole = UserRole.Admin)
     fun `Should return status code 201 when add gym`() {
-
-        val request = AddGymRequest("name", 1L, "address", "description", emptyList(), 0.0, 0.0)
+        val request = AddGymRequest("name", 1L, "address", "description", emptyList(), 0.0, 0.0, emptyList())
         val content = JsonUtils.toJson(request)
         every { gymService.addGym(any()) } returns 1L
 
@@ -216,6 +212,10 @@ class GymControllerTest {
                     type = RestdocsType.NUMBER
                     description = "longitude of the gym"
                 }
+                field("gymTagIds") {
+                    type = RestdocsType.OBJECT_ARRAY
+                    description = "gym tag ids of the gym"
+                }
             }
             response("AddGymResponse") {
                 field("gymId") {
@@ -235,7 +235,7 @@ class GymControllerTest {
 
     @Test
     fun `Should return status code 200 when update gym`() {
-        val request = UpdateGymRequest("name", 1L, "address", "description", emptyList(), 0.0, 0.0)
+        val request = UpdateGymRequest("name", 1L, "address", "description", emptyList(), 0.0, 0.0, emptyList())
         val content = JsonUtils.toJson(request)
         every { gymService.updateGym(any()) } returns Unit
 
@@ -260,14 +260,15 @@ class GymControllerTest {
                 fieldWithPath("description").type(JsonFieldType.STRING).description("description of the gym"),
                 fieldWithPath("imageIds").type(JsonFieldType.ARRAY).description("image ids of the gym"),
                 fieldWithPath("latitude").type(JsonFieldType.NUMBER).description("latitude of the gym"),
-                fieldWithPath("longitude").type(JsonFieldType.NUMBER).description("longitude of the gym")
+                fieldWithPath("longitude").type(JsonFieldType.NUMBER).description("longitude of the gym"),
+                fieldWithPath("tagIds").type(JsonFieldType.ARRAY).description("")
             )
         }
     }
 
     @Test
     fun `Should return status code 400 when update gym with id of not existing gym`() {
-        val request = UpdateGymRequest("name", null, "address", "description", emptyList(), 0.0, 0.0)
+        val request = UpdateGymRequest("name", null, "address", "description", emptyList(), 0.0, 0.0, emptyList())
         val content = JsonUtils.toJson(request)
         every { gymService.updateGym(any()) } throws GymNotFoundException()
 

@@ -138,7 +138,7 @@ class GymE2ETest(
         assertNotNull(addGymResponse.body)
         val gymId = addGymResponse.body!!.gymId
 
-        val request = UpdateGymRequest("name", null, "address", "description", emptyList(), 0.0, 0.0)
+        val request = UpdateGymRequest("name", null, "address", "description", emptyList(), 0.0, 0.0, emptyList())
 
         val httpEntity = HttpEntity(request, headers)
         val response = template.exchange("/api/gym/$gymId", HttpMethod.PUT, httpEntity, Any::class.java)

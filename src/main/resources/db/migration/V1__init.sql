@@ -1,14 +1,14 @@
 CREATE TABLE gyms
 (
-    id          INT PRIMARY KEY,
-    name        VARCHAR(255)  NOT NULL,
-    franchise   VARCHAR(64)   NOT NULL,
-    address     VARCHAR(255)  NOT NULL,
-    description TEXT          NOT NULL,
-    latitude    NUMERIC(8, 6) NOT NULL,
-    longitude   NUMERIC(9, 6) NOT NULL,
-    created_at  TIMESTAMP     NOT NULL,
-    modified_at TIMESTAMP     NOT NULL
+    id           INT PRIMARY KEY,
+    name         VARCHAR(255)  NOT NULL,
+    franchise_id INT,
+    address      VARCHAR(255)  NOT NULL,
+    description  TEXT          NOT NULL,
+    latitude     NUMERIC(8, 6) NOT NULL,
+    longitude    NUMERIC(9, 6) NOT NULL,
+    created_at   TIMESTAMP     NOT NULL,
+    modified_at  TIMESTAMP     NOT NULL
 );
 
 CREATE SEQUENCE GYMS_SEQ START WITH 1 INCREMENT BY 1;
@@ -40,4 +40,17 @@ CREATE TABLE franchises
     description TEXT         NOT NULL,
     created_at  TIMESTAMP    NOT NULL,
     modified_at TIMESTAMP    NOT NULL
+)
+
+CREATE TABLE tags
+(
+    id SERIAL PRIMARY KEY ,
+    tag VARCHAR(8) NOT NULL
+)
+
+CREATE TABLE gym_tags
+(
+    id SERIAL PRIMARY KEY,
+    gym_id INT,
+    tag_id INT
 )
