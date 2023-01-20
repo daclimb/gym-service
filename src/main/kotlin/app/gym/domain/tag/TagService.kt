@@ -12,7 +12,7 @@ class TagService(
     private val tagRepository: TagRepository
 ) {
     fun addTag(command: AddTagCommand) {
-        val tag = Tag(command.tag)
+        val tag = Tag(null, command.tag)
 
         try {
             tagRepository.save(tag)

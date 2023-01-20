@@ -11,9 +11,7 @@ import app.gym.domain.member.WithMockMember
 import app.gym.security.JwtAuthenticationFilter
 import app.gym.util.JsonUtils
 import app.gym.utils.TestDataGenerator
-import com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName
 import com.epages.restdocs.apispec.Schema
-import com.epages.restdocs.apispec.SimpleType
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import org.junit.jupiter.api.Test
@@ -67,7 +65,7 @@ class GymControllerTest {
 
         val result = mvc.perform(get("/api/gym/{gymId}", 1))
 
-        result.andExpect{
+        result.andExpect {
             status().isOk
             jsonPath("$.id").value(gym.id)
             jsonPath("$.name").value(gym.name)
@@ -85,7 +83,7 @@ class GymControllerTest {
             request {
                 pathParam("gymId") {
                     type = RestdocsType.NUMBER
-                    description = "Id of the gym"
+                    description = "id of the gym"
                 }
             }
             response("GetGymResponse") {
@@ -188,13 +186,13 @@ class GymControllerTest {
                     type = RestdocsType.STRING
                     description = "name of the gym"
                 }
-                field("address") {
-                    type = RestdocsType.STRING
-                    description = "address of the gym"
-                }
                 field("franchiseId") {
                     type = RestdocsType.NUMBER
                     description = "franchise id of the gym"
+                }
+                field("address") {
+                    type = RestdocsType.STRING
+                    description = "address of the gym"
                 }
                 field("description") {
                     type = RestdocsType.STRING
@@ -212,9 +210,9 @@ class GymControllerTest {
                     type = RestdocsType.NUMBER
                     description = "longitude of the gym"
                 }
-                field("gymTagIds") {
-                    type = RestdocsType.OBJECT_ARRAY
-                    description = "gym tag ids of the gym"
+                field("tagIds") {
+                    type = RestdocsType.NUMBER_ARRAY
+                    description = "tag ids of the gym"
                 }
             }
             response("AddGymResponse") {
@@ -229,7 +227,7 @@ class GymControllerTest {
     @Test
     fun `Should return status code 400 when delete gym with id of not existing gym`() {
         every { gymService.deleteGym(any()) } throws GymNotFoundException()
-        mvc.perform(delete("/api/gym/1"))
+        mvc.perform(delete("/api/gym/{gymId}", 1))
             .andExpect(status().isBadRequest)
     }
 
@@ -247,22 +245,47 @@ class GymControllerTest {
 
         result.andExpect(status().isOk)
 
-        result.andDocument("UpdateGym") {
-            tag("Gym")
-            pathParameters(
-                parameterWithName("gymId").type(SimpleType.INTEGER).description("id of the gym")
-            )
-            requestSchema(Schema("UpdateGymRequest"))
-            requestFields(
-                fieldWithPath("name").type(JsonFieldType.STRING).description("name of the gym"),
-                fieldWithPath("franchiseId").type(JsonFieldType.NUMBER).description("franchise id of the gym"),
-                fieldWithPath("address").type(JsonFieldType.STRING).description("address of the gym"),
-                fieldWithPath("description").type(JsonFieldType.STRING).description("description of the gym"),
-                fieldWithPath("imageIds").type(JsonFieldType.ARRAY).description("image ids of the gym"),
-                fieldWithPath("latitude").type(JsonFieldType.NUMBER).description("latitude of the gym"),
-                fieldWithPath("longitude").type(JsonFieldType.NUMBER).description("longitude of the gym"),
-                fieldWithPath("tagIds").type(JsonFieldType.ARRAY).description("")
-            )
+        result.andDocument2("UpdateGym") {
+            tags = setOf("Gym")
+
+            request("UpdateGymRequest") {
+                pathParam("gymId") {
+                    type = RestdocsType.NUMBER
+                    description = "id of the gym"
+                }
+                field("name") {
+                    type = RestdocsType.STRING
+                    description = "name of the gym"
+                }
+                field("franchiseId") {
+                    type = RestdocsType.NUMBER
+                    description = "franchise id of the gym"
+                }
+                field("address") {
+                    type = RestdocsType.STRING
+                    description = "address of the gym"
+                }
+                field("description") {
+                    type = RestdocsType.STRING
+                    description = "description of the gym"
+                }
+                field("imageIds") {
+                    type = RestdocsType.STRING_ARRAY
+                    description = "image ids of the gym"
+                }
+                field("latitude") {
+                    type = RestdocsType.NUMBER
+                    description = "latitude of the gym"
+                }
+                field("longitude") {
+                    type = RestdocsType.NUMBER
+                    description = "longitude of the gym"
+                }
+                field("tagIds") {
+                    type = RestdocsType.NUMBER_ARRAY
+                    description = "tag ids of the gym"
+                }
+            }
         }
     }
 
@@ -272,9 +295,11 @@ class GymControllerTest {
         val content = JsonUtils.toJson(request)
         every { gymService.updateGym(any()) } throws GymNotFoundException()
 
-        mvc.perform(put("/api/gym/1")
+        mvc.perform(
+            put("/api/gym/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(content))
+                .content(content)
+        )
             .andExpect {
                 status().isBadRequest
             }
@@ -291,7 +316,8 @@ class GymControllerTest {
 
         val result = mvc.perform(
             multipart("/api/gym/image")
-                .file("image", file))
+                .file("image", file)
+        )
             .andExpect {
                 status().isCreated
                 jsonPath("$.id").value(uuid.toString())

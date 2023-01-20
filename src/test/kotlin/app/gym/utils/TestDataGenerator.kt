@@ -20,10 +20,10 @@ class TestDataGenerator {
             images: MutableList<Image> = mutableListOf(Image.create(UUID.randomUUID(), "image")),
             latitude: Double = 0.0,
             longitude: Double = 0.0,
-            gymTags: List<GymTag> = listOf(GymTag(Tag("tag")))
+            gymTags: List<GymTag> = listOf(GymTag(Tag(null, "tag")))
         ): Gym {
             val gym = Gym(id)
-            gym.update(name, null, address, description, images, latitude, longitude, gymTags)
+            gym.update(name, franchise, address, description, images, latitude, longitude, gymTags)
 
             return gym
         }

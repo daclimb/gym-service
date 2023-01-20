@@ -11,9 +11,9 @@ data class AddGymRequest(
     val imageIds: List<UUID>,
     val latitude: Double,
     val longitude: Double,
-    val gymTagIds: List<Long>
+    val tagIds: List<Long>
 ) {
     fun toCommand(): AddGymCommand {
-        return AddGymCommand(name, franchiseId, address, description, imageIds, latitude, longitude, gymTagIds)
+        return AddGymCommand(name, franchiseId, address, description, imageIds, latitude, longitude, tagIds)
     }
 }
