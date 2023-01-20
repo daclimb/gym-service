@@ -7,6 +7,8 @@ import app.gym.domain.member.DuplicatedEmailException
 import app.gym.domain.member.EmailOrPasswordNotMatchedException
 import app.gym.domain.member.MemberNotFoundException
 import app.gym.domain.member.PasswordNotMatchedException
+import app.gym.domain.tag.TagDuplicatedException
+import app.gym.domain.tag.TagNotExistsException
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -55,4 +57,20 @@ class ExceptionHandler {
             ClientErrorResponse("Failure: member not found")
         )
     }
+
+    @ExceptionHandler
+    fun handlerTagDuplicatedException(exception: TagDuplicatedException): ResponseEntity<ClientErrorResponse> {
+        return ResponseEntity.badRequest().body(
+            ClientErrorResponse("Failure: tag already exists")
+        )
+    }
+
+    @ExceptionHandler
+    fun handlerTagNotExistsException(exception: TagNotExistsException): ResponseEntity<ClientErrorResponse> {
+        return ResponseEntity.badRequest().body(
+            ClientErrorResponse("Failure: tag not exists")
+        )
+    }
+
+
 }

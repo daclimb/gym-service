@@ -45,7 +45,7 @@ CREATE TABLE franchises
 CREATE TABLE tags
 (
     id SERIAL PRIMARY KEY ,
-    tag VARCHAR(8) NOT NULL
+    tag VARCHAR(8) NOT NULL UNIQUE
 )
 
 CREATE TABLE gym_tags
