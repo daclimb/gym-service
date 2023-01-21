@@ -44,13 +44,17 @@ CREATE TABLE franchises
 
 CREATE TABLE tags
 (
-    id SERIAL PRIMARY KEY ,
-    tag VARCHAR(8) NOT NULL UNIQUE
+    id          SERIAL PRIMARY KEY,
+    tag         VARCHAR(8) NOT NULL UNIQUE,
+    created_at  TIMESTAMP  NOT NULL,
+    modified_at TIMESTAMP  NOT NULL
 )
 
 CREATE TABLE gym_tags
 (
-    id SERIAL PRIMARY KEY,
-    gym_id INT,
-    tag_id INT
+    id          SERIAL PRIMARY KEY,
+    gym_id      INT,
+    tag_id      INT,
+    created_at  TIMESTAMP NOT NULL,
+    modified_at TIMESTAMP NOT NULL
 )

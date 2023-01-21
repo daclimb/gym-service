@@ -4,6 +4,7 @@ import app.gym.api.request.AddTagRequest
 import app.gym.api.response.GetTagListResponse
 import app.gym.api.response.SimpleSuccessfulResponse
 import app.gym.domain.tag.TagService
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
@@ -18,7 +19,7 @@ class TagController(
     fun addTag(@RequestBody request: AddTagRequest): ResponseEntity<SimpleSuccessfulResponse> {
         val command = request.toCommand()
         tagService.addTag(command)
-        return ResponseEntity.ok().body(SimpleSuccessfulResponse("Success: add tag"))
+        return ResponseEntity.status(HttpStatus.CREATED).body(SimpleSuccessfulResponse("Success: add tag"))
     }
 
     @GetMapping

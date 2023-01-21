@@ -2,7 +2,10 @@ package app.gym.domain.gymTag
 
 import app.gym.domain.gym.Gym
 import app.gym.domain.tag.Tag
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
+import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
@@ -22,4 +25,12 @@ class GymTag(
     @ManyToOne
     @JoinColumn(name = "tag_id")
     var tag: Tag = tag; private set
+
+    @Column(name = "created_at")
+    @CreatedDate
+    var createdAt: LocalDateTime = LocalDateTime.MIN; private set
+
+    @Column(name = "modified_at")
+    @LastModifiedDate
+    var modifiedAt: LocalDateTime = LocalDateTime.MIN; private set
 }

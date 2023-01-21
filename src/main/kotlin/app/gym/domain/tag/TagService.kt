@@ -1,7 +1,7 @@
 package app.gym.domain.tag
 
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
-import javax.validation.ConstraintViolationException
 
 class TagDuplicatedException : RuntimeException()
 
@@ -16,7 +16,7 @@ class TagService(
 
         try {
             tagRepository.save(tag)
-        } catch (e: ConstraintViolationException) {
+        } catch (e: DataIntegrityViolationException) {
             throw TagDuplicatedException()
         }
     }

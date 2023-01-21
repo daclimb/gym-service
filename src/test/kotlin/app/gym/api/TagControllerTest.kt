@@ -3,6 +3,8 @@ package app.gym.api
 import app.gym.api.controller.TagController
 import app.gym.api.request.AddTagRequest
 import app.gym.config.SecurityConfig
+import app.gym.domain.member.UserRole
+import app.gym.domain.member.WithCustomMockUser
 import app.gym.domain.tag.Tag
 import app.gym.domain.tag.TagDuplicatedException
 import app.gym.domain.tag.TagNotExistsException
@@ -48,6 +50,7 @@ internal class TagControllerTest {
     private lateinit var tagService: TagService
 
     @Test
+    @WithCustomMockUser(userRole = UserRole.Admin)
     fun `Should return status code 201 when add tag`() {
         val request = AddTagRequest("new tag")
         val content = JsonUtils.toJson(request)
@@ -60,9 +63,7 @@ internal class TagControllerTest {
                 .content(content)
         )
 
-        result.andExpect {
-            status().isCreated
-        }
+        result.andExpect(status().isCreated) // andExpect{ }를 사용하면 제대로 동작하지 않음
 
         result.andDocument2("AddTag") {
             tags = setOf("Tag")
@@ -106,10 +107,8 @@ internal class TagControllerTest {
             get("/api/tag")
         )
 
-        result.andExpect {
-            status().isOk
-            jsonPath("$.tags.length()").value(length)
-        }
+        result.andExpect(status().isOk)
+            .andExpect(jsonPath("$.tags.length()").value(length))
 
         if (length == 3L) {
             result.andDocument2("GetTagList") {

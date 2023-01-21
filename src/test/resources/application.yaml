@@ -20,6 +20,8 @@ spring:
         show_sql: true
     database-platform: org.hibernate.dialect.H2Dialect
 
+
+
 logging:
   level:
     org.hibernate.sql: debug

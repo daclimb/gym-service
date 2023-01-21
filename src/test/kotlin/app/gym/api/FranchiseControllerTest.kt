@@ -6,7 +6,7 @@ import app.gym.api.request.UpdateFranchiseRequest
 import app.gym.config.SecurityConfig
 import app.gym.domain.franchise.FranchiseService
 import app.gym.domain.member.UserRole
-import app.gym.domain.member.WithMockMember
+import app.gym.domain.member.WithCustomMockUser
 import app.gym.security.JwtAuthenticationFilter
 import app.gym.util.JsonUtils
 import app.gym.utils.TestDataGenerator
@@ -16,16 +16,12 @@ import com.epages.restdocs.apispec.Schema
 import com.epages.restdocs.apispec.SimpleType
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
-import org.mockito.Mock
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.FilterType
 import org.springframework.context.annotation.Import
@@ -109,7 +105,7 @@ class FranchiseControllerTest {
     }
 
     @Test
-    @WithMockMember(userRole = UserRole.Admin)
+    @WithCustomMockUser(userRole = UserRole.Admin)
     fun `Should return status code 201 when add franchise`() {
         val request = AddFranchiseRequest("name", "description")
         val content = JsonUtils.toJson(request)
@@ -135,7 +131,7 @@ class FranchiseControllerTest {
     }
 
     @Test
-    @WithMockMember(userRole = UserRole.Admin)
+    @WithCustomMockUser(userRole = UserRole.Admin)
     fun `Should return status code 200 when update franchise`() {
         val request = UpdateFranchiseRequest("name", "description")
         val content = JsonUtils.toJson(request)
@@ -164,7 +160,7 @@ class FranchiseControllerTest {
     }
 
     @Test
-    @WithMockMember(userRole = UserRole.Admin)
+    @WithCustomMockUser(userRole = UserRole.Admin)
     fun `Should return status code 200 when delete franchise`() {
 
         every { franchiseService.deleteFranchise(any()) } returns Unit

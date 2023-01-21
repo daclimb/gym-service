@@ -7,7 +7,7 @@ import app.gym.config.SecurityConfig
 import app.gym.domain.gym.GymNotFoundException
 import app.gym.domain.gym.GymService
 import app.gym.domain.member.UserRole
-import app.gym.domain.member.WithMockMember
+import app.gym.domain.member.WithCustomMockUser
 import app.gym.security.JwtAuthenticationFilter
 import app.gym.util.JsonUtils
 import app.gym.utils.TestDataGenerator
@@ -65,16 +65,14 @@ class GymControllerTest {
 
         val result = mvc.perform(get("/api/gym/{gymId}", 1))
 
-        result.andExpect {
-            status().isOk
-            jsonPath("$.id").value(gym.id)
-            jsonPath("$.name").value(gym.name)
-            jsonPath("$.address").value(gym.address)
-            jsonPath("$.description").value(gym.description)
-            jsonPath("$.imageIds").value(gym.images.map { it.id!!.toString() })
-            jsonPath("$.latitude").value(gym.latitude)
-            jsonPath("$.longitude").value(gym.longitude)
-        }
+        result.andExpect(status().isOk)
+            .andExpect(jsonPath("$.id").value(gym.id))
+            .andExpect(jsonPath("$.name").value(gym.name))
+            .andExpect(jsonPath("$.address").value(gym.address))
+            .andExpect(jsonPath("$.description").value(gym.description))
+            .andExpect(jsonPath("$.imageIds").value(gym.images.map { it.id!!.toString() }))
+            .andExpect(jsonPath("$.latitude").value(gym.latitude))
+            .andExpect(jsonPath("$.longitude").value(gym.longitude))
 
         // document
         result.andDocument2("GetGym") {
@@ -128,10 +126,8 @@ class GymControllerTest {
 
         val result = mvc.perform(get("/api/gym"))
 
-        result.andExpect {
-            status().isOk
-            jsonPath("$.gyms.length()").value(length)
-        }
+        result.andExpect(status().isOk)
+            .andExpect(jsonPath("$.gyms.length()").value(length))
 
         if (length == 3L) {
             result.andDocument2("GetGymList") {
@@ -162,7 +158,7 @@ class GymControllerTest {
     }
 
     @Test
-    @WithMockMember(userRole = UserRole.Admin)
+    @WithCustomMockUser(userRole = UserRole.Admin)
     fun `Should return status code 201 when add gym`() {
         val request = AddGymRequest("name", 1L, "address", "description", emptyList(), 0.0, 0.0, emptyList())
         val content = JsonUtils.toJson(request)
@@ -174,9 +170,7 @@ class GymControllerTest {
                 .content(content)
         )
 
-        result.andExpect {
-            status().isCreated
-        }
+        result.andExpect(status().isCreated)
 
         result.andDocument2("AddGym") {
             tags = setOf("Gym")
@@ -227,8 +221,10 @@ class GymControllerTest {
     @Test
     fun `Should return status code 400 when delete gym with id of not existing gym`() {
         every { gymService.deleteGym(any()) } throws GymNotFoundException()
-        mvc.perform(delete("/api/gym/{gymId}", 1))
-            .andExpect(status().isBadRequest)
+
+        val result = mvc.perform(delete("/api/gym/{gymId}", 1))
+
+        result.andExpect(status().isBadRequest)
     }
 
     @Test
@@ -295,14 +291,13 @@ class GymControllerTest {
         val content = JsonUtils.toJson(request)
         every { gymService.updateGym(any()) } throws GymNotFoundException()
 
-        mvc.perform(
+        val result = mvc.perform(
             put("/api/gym/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(content)
         )
-            .andExpect {
-                status().isBadRequest
-            }
+
+        result.andExpect(status().isBadRequest)
     }
 
     @Test
@@ -318,10 +313,9 @@ class GymControllerTest {
             multipart("/api/gym/image")
                 .file("image", file)
         )
-            .andExpect {
-                status().isCreated
-                jsonPath("$.id").value(uuid.toString())
-            }
+
+        result.andExpect(status().isCreated)
+            .andExpect(jsonPath("$.id").value(uuid.toString()))
 
         result.andDocument("AddGymImage") {
             tag("Gym")

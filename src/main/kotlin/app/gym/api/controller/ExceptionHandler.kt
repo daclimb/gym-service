@@ -71,6 +71,4 @@ class ExceptionHandler {
             ClientErrorResponse("Failure: tag not exists")
         )
     }
-
-
 }
