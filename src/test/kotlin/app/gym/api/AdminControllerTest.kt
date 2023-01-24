@@ -30,11 +30,4 @@ class AdminControllerTest {
 
     @Autowired
     lateinit var mvc: MockMvc
-
-//    @Test
-//    fun `Should return response with jwt cookie when logged in`() {
-//        mvc.post("/api/admin/login") {
-//
-//        }
-//    }
 }

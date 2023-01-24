@@ -9,9 +9,10 @@ import app.gym.domain.image.ImageStorage
 import app.gym.domain.tag.TagRepository
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
-import java.util.*
 
 class GymNotFoundException : RuntimeException()
+
+class ImageNotFoundException : RuntimeException()
 
 @Service
 class GymService(
@@ -40,6 +41,9 @@ class GymService(
         val images = if (imageIds.isEmpty()) {
             emptyList()
         } else {
+            if(imageRepository.countAllByUuidIn(imageIds) != imageIds.size){
+                throw ImageNotFoundException()
+            }
             imageRepository.findByUuidIn(imageIds)
         }
         val gym = Gym()
@@ -73,8 +77,8 @@ class GymService(
             throw GymNotFoundException()
     }
 
-    fun addImage(imageFile: MultipartFile): UUID {
-        val id = imageStorage.save(imageFile.inputStream)
+    fun addImage(imageFile: MultipartFile): String {
+        val id = imageStorage.save(imageFile.inputStream).toString()
         val image = Image.create(id, imageFile.name)
         return imageRepository.save(image).uuid!!
     }
@@ -124,3 +128,4 @@ class GymService(
 //        return gymRepository.findGymsByGymTagsTagId()
 //    } // TODO
 }
+
