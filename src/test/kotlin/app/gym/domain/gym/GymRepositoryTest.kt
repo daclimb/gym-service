@@ -16,7 +16,6 @@ import org.springframework.context.annotation.Import
 import org.testcontainers.containers.DockerComposeContainer
 import java.time.LocalDateTime
 import java.util.*
-
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @DataJpaTest
 @Import(JPATestConfig::class, TestContainersConfig::class)
@@ -30,7 +29,7 @@ class GymRepositoryTest {
     companion object {
         @Autowired
         @JvmStatic
-        private lateinit var container: DockerComposeContainer<Nothing>
+        private lateinit var container: DockerComposeContainer<*>
     }
 
     @BeforeAll

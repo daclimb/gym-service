@@ -8,17 +8,12 @@ import java.io.File
 @TestConfiguration
 class TestContainersConfig {
 
-    private val dockerImageName = "test-image"
-    private val databaseName = "test-database"
-    private val username = "username"
-    private val password = "password"
-
-    private val container = DockerComposeContainer<Nothing>(
+    private val container = DockerComposeContainer(
         File("src/test/resources/docker-compose.yml")
     )
 
     @Bean
-    fun psqlContainer(): DockerComposeContainer<Nothing> {
+    fun psqlContainer(): DockerComposeContainer<*> {
         return container
     }
 }

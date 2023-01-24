@@ -34,18 +34,17 @@ class FranchiseE2ETest {
     @Autowired
     private lateinit var authUtils: E2EAuthenticationConfig
 
-    companion object {
-        @Autowired
-        @JvmStatic
-        private lateinit var container: DockerComposeContainer<Nothing>
-    }
+    @Autowired
+    private lateinit var container: DockerComposeContainer<*>
+
     @BeforeAll
     fun beforeAll() {
 
     }
 
     @Test
-    fun `Should return status code 201 when add franchise`() {
+    fun
+            `Should return status code 201 when add franchise`() {
         val headers = authUtils.getHeadersWithCookieForAdmin()
 
         val request = TestDataGenerator.addFranchiseRequest()

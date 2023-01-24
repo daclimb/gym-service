@@ -48,11 +48,9 @@ class GymE2ETest {
     @Autowired
     private lateinit var authUtils: E2EAuthenticationConfig
 
-    companion object {
-        @Autowired
-        @JvmStatic
-        private lateinit var container: DockerComposeContainer<Nothing>
-    }
+    @Autowired
+    private lateinit var container: DockerComposeContainer<*>
+
     @BeforeAll
     fun beforeAll() {
         this.s3client.createBucket(bucket)

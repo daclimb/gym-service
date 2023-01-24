@@ -30,11 +30,9 @@ class TagE2ETest {
     @Autowired
     private lateinit var authUtils: E2EAuthenticationConfig
 
-    companion object {
-        @Autowired
-        @JvmStatic
-        private lateinit var container: DockerComposeContainer<Nothing>
-    }
+    @Autowired
+    private lateinit var container: DockerComposeContainer<*>
+
 
     @Test
     fun `Should return status code 201 when add tag`() {
@@ -83,11 +81,6 @@ class TagE2ETest {
         )
 
         assertEquals(HttpStatus.OK, response.statusCode)
-    }
-
-    @Test
-    fun `Should return status code 200 when get tag details`() {
-        // TODO
     }
 
     @Test
