@@ -15,6 +15,17 @@ import org.springframework.web.multipart.MultipartFile
 class GymController(
     private val gymService: GymService,
 ) {
+    @PostMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    fun addGym(
+        @RequestBody request: AddGymRequest,
+    ): ResponseEntity<AddGymResponse> {
+        val command = request.toCommand()
+        val gymId = gymService.addGym(command)
+        val response = AddGymResponse(gymId)
+        return ResponseEntity.status(HttpStatus.CREATED).body(response)
+    }
+
     @GetMapping("/{gymId}")
     fun getGym(
         @PathVariable gymId: Long,
@@ -31,15 +42,9 @@ class GymController(
         return ResponseEntity.ok(responses)
     }
 
-    @PostMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    fun addGym(
-        @RequestBody request: AddGymRequest,
-    ): ResponseEntity<AddGymResponse> {
-        val command = request.toCommand()
-        val gymId = gymService.addGym(command)
-        val response = AddGymResponse(gymId)
-        return ResponseEntity.status(HttpStatus.CREATED).body(response)
+    @GetMapping("?tags={tags}")
+    fun getGymListWithTags(@PathVariable tags: List<Long>) {
+        val gyms = gymService.getGymsWithTags(tags)
     }
 
     @DeleteMapping("/{gymId}")

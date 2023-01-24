@@ -119,4 +119,8 @@ class GymService(
 
         gymRepository.save(gym)
     }
+
+//    fun getGymsWithTags(tags: List<Long>): List<Gym> {
+//        return gymRepository.findGymsByGymTagsTagId()
+//    } // TODO
 }
