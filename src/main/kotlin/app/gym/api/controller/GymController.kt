@@ -42,10 +42,10 @@ class GymController(
         return ResponseEntity.ok(responses)
     }
 
-    @GetMapping("?tags={tags}")
-    fun getGymListWithTags(@PathVariable tags: List<Long>) {
-        val gyms = gymService.getGymsWithTags(tags)
-    }
+//    @GetMapping("?tags={tags}")
+//    fun getGymListWithTags(@PathVariable tags: List<Long>) {
+//        val gyms = gymService.getGymsWithTags(tags)
+//    } // TODO
 
     @DeleteMapping("/{gymId}")
     fun deleteGym(
