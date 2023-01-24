@@ -7,6 +7,7 @@ import app.gym.api.response.GetGymListResponse
 import app.gym.api.response.GetGymResponse
 import app.gym.config.AWSTestConfig
 import app.gym.config.JPATestConfig
+import app.gym.config.TestContainersConfig
 import app.gym.utils.TestDataGenerator
 import com.amazonaws.services.s3.AmazonS3
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -24,16 +25,16 @@ import org.springframework.http.*
 import org.springframework.test.annotation.DirtiesContext.*
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
+import org.testcontainers.containers.DockerComposeContainer
 import java.util.*
 import kotlin.io.path.toPath
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    classes = [AWSTestConfig::class, JPATestConfig::class, E2EAuthenticationConfig::class]
+    classes = [AWSTestConfig::class, JPATestConfig::class, E2EAuthenticationConfig::class, TestContainersConfig::class]
 )
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class GymE2ETest(
-) {
+class GymE2ETest {
 
     @Value("\${cloud.aws.bucket}")
     private lateinit var bucket: String
@@ -47,7 +48,11 @@ class GymE2ETest(
     @Autowired
     private lateinit var authUtils: E2EAuthenticationConfig
 
-
+    companion object {
+        @Autowired
+        @JvmStatic
+        private lateinit var container: DockerComposeContainer<Nothing>
+    }
     @BeforeAll
     fun beforeAll() {
         this.s3client.createBucket(bucket)
