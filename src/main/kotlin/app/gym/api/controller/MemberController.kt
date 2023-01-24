@@ -8,6 +8,7 @@ import app.gym.domain.member.*
 import app.gym.security.UserPrincipal
 import app.gym.util.CookieUtils
 import mu.KotlinLogging
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
@@ -26,7 +27,7 @@ class MemberController(
     fun signup(@RequestBody @Valid request: SignupRequest): ResponseEntity<Any> {
         logger.info { "Signup request" }
         memberService.signup(request.toCommand())
-        return ResponseEntity.ok().body(SimpleSuccessfulResponse("Success: signup"))
+        return ResponseEntity.status(HttpStatus.CREATED).body(SimpleSuccessfulResponse("Success: signup"))
     }
 
     @PostMapping("/login")
