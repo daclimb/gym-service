@@ -8,7 +8,7 @@ data class GetFranchiseResponse(
     val name: String,
     val description: String,
     val relatedGyms: List<RelatedGym>,
-) : Response {
+) {
 
     data class RelatedGym(
         val id: Long,

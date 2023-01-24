@@ -3,7 +3,7 @@ package app.gym.domain.member
 import org.springframework.security.core.GrantedAuthority
 
 enum class UserRole(
-    var value: String
+    val value: String
 ): GrantedAuthority {
     Admin("ROLE_ADMIN"),
     Manager("ROLE_MANAGER"),

@@ -1,5 +1,5 @@
 package app.gym.api.response
 
-class ClientErrorResponse(
+class SimpleSuccessfulResponse(
     val message: String?,
 )

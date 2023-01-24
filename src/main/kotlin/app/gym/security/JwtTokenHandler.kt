@@ -14,7 +14,7 @@ const val JWT_CLAIM_MEMBER_ID = "memberId"
 
 @Component
 class JwtTokenHandler(
-    private val keyPair: KeyPair
+    private val keyPair: KeyPair,
 ) {
     fun generateJwtToken(member: Member): String {
         return Jwts.builder()
@@ -39,7 +39,7 @@ class JwtTokenHandler(
                 .setSigningKey(keyPair.public)
                 .parseClaimsJws(token)
 
-            return when(val userRole = UserRole.valueOf(claimsJwt.body["role"] as String)) {
+            return when (val userRole = UserRole.valueOf(claimsJwt.body["role"] as String)) {
                 UserRole.Admin -> UserPrincipal.admin()
                 UserRole.Member -> {
                     val memberId = (claimsJwt.body["memberId"] as String).toLong()

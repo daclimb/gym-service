@@ -11,7 +11,7 @@ data class GetGymResponse(
     val imageIds: List<UUID>,
     val latitude: Double,
     val longitude: Double,
-) : Response {
+) {
     companion object {
         fun from(gym: Gym): GetGymResponse {
             return GetGymResponse(

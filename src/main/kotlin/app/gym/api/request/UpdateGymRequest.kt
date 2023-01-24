@@ -10,10 +10,11 @@ data class UpdateGymRequest(
     val description: String,
     val imageIds: List<UUID>,
     val latitude: Double,
-    val longitude: Double
+    val longitude: Double,
+    val tagIds: List<Long>,
 ) {
     fun toCommand(id: Long): UpdateGymCommand {
-        return UpdateGymCommand(id, name, franchiseId, address, description, imageIds, latitude, longitude)
+        return UpdateGymCommand(id, name, franchiseId, address, description, imageIds, latitude, longitude, tagIds)
     }
 
 }

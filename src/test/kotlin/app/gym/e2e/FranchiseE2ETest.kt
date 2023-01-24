@@ -6,6 +6,7 @@ import app.gym.api.response.ClientErrorResponse
 import app.gym.api.response.GetFranchiseResponse
 import app.gym.config.AWSTestConfig
 import app.gym.config.JPATestConfig
+import app.gym.config.TestContainersConfig
 import app.gym.utils.TestDataGenerator
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -18,20 +19,23 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
+import org.testcontainers.containers.DockerComposeContainer
 import java.util.*
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-    classes = [AWSTestConfig::class, JPATestConfig::class, E2EAuthenticationConfig::class]
+    classes = [AWSTestConfig::class, JPATestConfig::class, E2EAuthenticationConfig::class, TestContainersConfig::class]
 )
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class FranchiseE2ETest(
-) {
+class FranchiseE2ETest {
     @Autowired
     private lateinit var template: TestRestTemplate
 
     @Autowired
     private lateinit var authUtils: E2EAuthenticationConfig
+
+    @Autowired
+    private lateinit var container: DockerComposeContainer<*>
 
     @BeforeAll
     fun beforeAll() {
@@ -39,7 +43,8 @@ class FranchiseE2ETest(
     }
 
     @Test
-    fun `Should return status code 201 when add franchise`() {
+    fun
+            `Should return status code 201 when add franchise`() {
         val headers = authUtils.getHeadersWithCookieForAdmin()
 
         val request = TestDataGenerator.addFranchiseRequest()
@@ -82,7 +87,7 @@ class FranchiseE2ETest(
     }
 
     @Test
-    fun `Should return status code 400 when get not existing franchise`() {
+    fun `Should return status code 400 when get franchise which is not existing`() {
         val memberHeaders = authUtils.getHeadersWithCookieForMember()
 
         val response = template.exchange(

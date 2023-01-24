@@ -4,4 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface GymRepository: JpaRepository<Gym, Long>
+interface GymRepository: JpaRepository<Gym, Long> {
+//    fun findGymsByGymTagsTagId(tagId: Long) // TODO
+}

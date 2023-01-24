@@ -2,6 +2,7 @@ package app.gym.domain.gym
 
 
 import app.gym.domain.franchise.Franchise
+import app.gym.domain.gymTag.GymTag
 import app.gym.domain.image.Image
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
@@ -53,6 +54,10 @@ class Gym(id: Long? = null) {
     @Column(name = "longitude")
     var longitude: Double = 0.0; private set
 
+    @Column(name = "gym_tag")
+    @OneToMany(mappedBy = "gym", orphanRemoval = true)
+    var gymTags: MutableList<GymTag> = mutableListOf(); private set
+
     @Column(name = "created_at")
     @CreatedDate
     var createdAt: LocalDateTime = LocalDateTime.MIN; private set
@@ -68,7 +73,8 @@ class Gym(id: Long? = null) {
         description: String,
         images: List<Image>,
         latitude: Double,
-        longitude: Double
+        longitude: Double,
+        gymTags: List<GymTag>
     ) {
         this.name = name
         this.franchise = franchise
@@ -77,5 +83,7 @@ class Gym(id: Long? = null) {
         this.images = images.toMutableList()
         this.latitude = latitude
         this.longitude = longitude
+        this.gymTags.clear()
+        this.gymTags.addAll(gymTags)
     }
 }

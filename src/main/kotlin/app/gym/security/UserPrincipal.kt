@@ -1,18 +1,17 @@
 package app.gym.security
 
 import app.gym.domain.member.UserRole
-import org.springframework.security.authentication.AbstractAuthenticationToken
 
 class UserPrincipal private constructor(val memberId: Long? = null) {
 
     val isAdmin: Boolean
         get() {
-            return this.memberId == null
+            return this.memberId == null // TODO
         }
 
     val authorities: List<UserRole>
         get() {
-            return if (this.memberId == null) {
+            return if (this.memberId == null) { // TODO
                 listOf(UserRole.Admin)
             } else {
                 listOf(UserRole.Member)

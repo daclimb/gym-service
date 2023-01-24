@@ -9,5 +9,6 @@ data class AddGymCommand(
     val description: String,
     val imageIds: List<UUID>,
     val latitude: Double,
-    val longitude: Double
+    val longitude: Double,
+    val gymTags: List<Long>
 )

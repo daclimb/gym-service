@@ -10,9 +10,10 @@ data class AddGymRequest(
     val description: String,
     val imageIds: List<UUID>,
     val latitude: Double,
-    val longitude: Double
+    val longitude: Double,
+    val tagIds: List<Long>
 ) {
     fun toCommand(): AddGymCommand {
-        return AddGymCommand(name, franchiseId, address, description, imageIds, latitude, longitude)
+        return AddGymCommand(name, franchiseId, address, description, imageIds, latitude, longitude, tagIds)
     }
 }

@@ -5,7 +5,7 @@ import java.util.*
 
 data class GetGymListResponse(
     val gyms: List<SimpleGym>,
-) : Response {
+) {
 
     data class SimpleGym(
         val id: Long,

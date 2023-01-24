@@ -6,8 +6,8 @@ import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.test.context.support.WithSecurityContextFactory
 
-class WithMockMemberSecurityContextFactory : WithSecurityContextFactory<WithMockMember> {
-    override fun createSecurityContext(mockMember: WithMockMember): SecurityContext {
+class WithMockMemberSecurityContextFactory : WithSecurityContextFactory<WithCustomMockUser> {
+    override fun createSecurityContext(mockMember: WithCustomMockUser): SecurityContext {
         val context = SecurityContextHolder.getContext()
 
         val principal = if (mockMember.userRole == UserRole.Admin) {

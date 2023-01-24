@@ -43,6 +43,9 @@ dependencies {
     testImplementation("org.testcontainers:localstack:1.17.3")
     testImplementation("org.testcontainers:junit-jupiter:1.17.3")
     testImplementation("com.epages:restdocs-api-spec-mockmvc:0.16.0") //2.2
+    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.testcontainers:postgresql:1.17.6")
+
 }
 
 tasks.withType<KotlinCompile> {
