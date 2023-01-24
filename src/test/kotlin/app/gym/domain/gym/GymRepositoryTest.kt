@@ -9,12 +9,15 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.*
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import
 import org.testcontainers.containers.DockerComposeContainer
 import java.time.LocalDateTime
 import java.util.*
 
+@AutoConfigureTestDatabase(replace = Replace.NONE)
 @DataJpaTest
 @Import(JPATestConfig::class, TestContainersConfig::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
