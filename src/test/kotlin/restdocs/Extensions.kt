@@ -8,7 +8,7 @@ import org.springframework.restdocs.payload.JsonFieldType
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.test.web.servlet.ResultActions
 
-fun ResultActions.andDocument2(
+fun ResultActions.andDocument(
     identifier: String,
     builder: RestdocsBuilder.() -> Unit
 ) {
@@ -19,22 +19,6 @@ fun ResultActions.andDocument2(
             Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
             ResourceDocumentation.resource(
                 RestdocsBuilder().apply(builder).build()
-            )
-        )
-    )
-}
-
-fun ResultActions.andDocument(
-    identifier: String,
-    builder: ResourceSnippetParametersBuilder.() -> Unit
-) {
-    this.andDo(
-        MockMvcRestDocumentationWrapper.document(
-            identifier,
-            Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
-            Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
-            ResourceDocumentation.resource(
-                ResourceSnippetParametersBuilder().apply(builder).build()
             )
         )
     )

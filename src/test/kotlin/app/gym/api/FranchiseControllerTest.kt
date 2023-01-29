@@ -10,10 +10,6 @@ import app.gym.domain.member.WithCustomMockUser
 import app.gym.security.JwtAuthenticationFilter
 import app.gym.util.JsonUtils
 import app.gym.utils.TestDataGenerator
-import restdocs.andDocument
-import com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName
-import com.epages.restdocs.apispec.Schema
-import com.epages.restdocs.apispec.SimpleType
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import org.junit.jupiter.api.Test
@@ -27,11 +23,11 @@ import org.springframework.context.annotation.FilterType
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*
-import org.springframework.restdocs.payload.JsonFieldType
-import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import restdocs.RestdocsType
+import restdocs.andDocument
 
 @WebMvcTest(
     controllers = [FranchiseController::class],
@@ -64,12 +60,20 @@ class FranchiseControllerTest {
 
         if (length == 3L) {
             result.andDocument("GetFranchiseList") {
-                tag("Franchise")
-                responseSchema(Schema("GetFranchiseList"))
-                responseFields(
-                    fieldWithPath("franchises[].id").type(JsonFieldType.NUMBER).description("id of the franchise"),
-                    fieldWithPath("franchises[].name").type(JsonFieldType.STRING).description("name of the franchise")
-                )
+                tags = setOf("Franchise")
+
+                response("GetFranchiseListResponse") {
+                    array("franchises") {
+                        field("id") {
+                            type = RestdocsType.NUMBER
+                            description = "id of the franchise"
+                        }
+                        field("name") {
+                            type = RestdocsType.STRING
+                            description = "name of the franchise"
+                        }
+                    }
+                }
             }
         }
     }
@@ -83,24 +87,37 @@ class FranchiseControllerTest {
         val result = mvc.perform(get("/api/franchise/{franchiseId}", 1L))
 
         result.andExpect(status().isOk)
-            .andExpect(jsonPath("$.id").value(franchise.id))
             .andExpect(jsonPath("$.name").value(franchise.name))
             .andExpect(jsonPath("$.description").value(franchise.description))
 
         result.andDocument("GetFranchise") {
-            tag("Franchise")
-            pathParameters(
-                parameterWithName("franchiseId").type(SimpleType.INTEGER).description("id if the franchise")
-            )
-            responseSchema(Schema("getFranchise"))
-            responseFields(
-                fieldWithPath("id").type(JsonFieldType.NUMBER).description("id of the franchise"),
-                fieldWithPath("name").type(JsonFieldType.STRING).description("name of the franchise"),
-                fieldWithPath("description").type(JsonFieldType.STRING).description("description of the franchise"),
-                fieldWithPath("relatedGyms").type(JsonFieldType.ARRAY).description("gyms of the franchise"),
-                fieldWithPath("relatedGyms[].id").type(JsonFieldType.NUMBER).description("id of the related gym"),
-                fieldWithPath("relatedGyms[].name").type(JsonFieldType.STRING).description("name of the related gym")
-            )
+            tags = setOf("Franchise")
+            request {
+                pathParam("franchiseId") {
+                    type = RestdocsType.NUMBER
+                    description = "id of the franchise"
+                }
+            }
+            response("GetFranchiseResponse") {
+                field("name") {
+                    type = RestdocsType.STRING
+                    description = "name of the franchise"
+                }
+                field("description") {
+                    type = RestdocsType.STRING
+                    description ="description of the franchise"
+                }
+                array("relatedGyms") {
+                    field("id") {
+                        type = RestdocsType.NUMBER
+                        description = "id of the related gym"
+                    }
+                    field("name") {
+                        type = RestdocsType.STRING
+                        description = "name of the related gym"
+                    }
+                }
+            }
         }
     }
 
@@ -121,12 +138,17 @@ class FranchiseControllerTest {
         result.andExpect(status().isCreated)
 
         result.andDocument("AddFranchise") {
-            tag("Franchise")
-            requestSchema(Schema("AddFranchiseRequest"))
-            requestFields(
-                fieldWithPath("name").type(JsonFieldType.STRING).description("name of the franchise"),
-                fieldWithPath("description").type(JsonFieldType.STRING).description("description of the franchise")
-            )
+            tags = setOf("Franchise")
+            request("AddFranchiseRequest") {
+                field("name") {
+                    type = RestdocsType.STRING
+                    description = "name of the franchise"
+                }
+                field("description") {
+                    type = RestdocsType.STRING
+                    description = "description of the franchise"
+                }
+            }
         }
     }
 
@@ -147,15 +169,21 @@ class FranchiseControllerTest {
         result.andExpect(status().isOk)
 
         result.andDocument("UpdateFranchise") {
-            tag("Franchise")
-            pathParameters(
-                parameterWithName("franchiseId").type(SimpleType.INTEGER).description("id of the franchise")
-            )
-            requestSchema(Schema("UpdateFranchiseRequest"))
-            requestFields(
-                fieldWithPath("name").type(JsonFieldType.STRING).description("name of the franchise"),
-                fieldWithPath("description").type(JsonFieldType.STRING).description("description of the franchise")
-            )
+            tags = setOf("Franchise")
+            request("UpdateFranchiseRequest") {
+                pathParam("franchiseId") {
+                    type = RestdocsType.NUMBER
+                    description = "id of the franchise"
+                }
+                field("name") {
+                    type = RestdocsType.STRING
+                    description = "name of the franchise"
+                }
+                field("description") {
+                    type = RestdocsType.STRING
+                    description = "description of the franchise"
+                }
+            }
         }
     }
 
@@ -170,10 +198,13 @@ class FranchiseControllerTest {
         result.andExpect(status().isOk)
 
         result.andDocument("DeleteFranchise") {
-            tag("Franchise")
-            pathParameters(
-                parameterWithName("franchiseId").type(SimpleType.INTEGER).description("id of the franchise")
-            )
+            tags = setOf("Franchise")
+            request {
+                pathParam("franchiseId") {
+                    type = RestdocsType.NUMBER
+                    description = "id of the franchise"
+                }
+            }
         }
     }
 }

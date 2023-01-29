@@ -11,7 +11,6 @@ import app.gym.domain.member.WithCustomMockUser
 import app.gym.security.JwtAuthenticationFilter
 import app.gym.util.JsonUtils
 import app.gym.utils.TestDataGenerator
-import com.epages.restdocs.apispec.Schema
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import org.junit.jupiter.api.Test
@@ -26,8 +25,6 @@ import org.springframework.context.annotation.Import
 import org.springframework.core.io.ClassPathResource
 import org.springframework.http.MediaType
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*
-import org.springframework.restdocs.payload.JsonFieldType
-import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.request.RequestDocumentation.partWithName
 import org.springframework.restdocs.request.RequestDocumentation.requestParts
 import org.springframework.test.web.servlet.*
@@ -35,7 +32,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import restdocs.RestdocsType
 import restdocs.andDocument
-import restdocs.andDocument2
 import java.nio.file.Files
 import java.util.*
 import kotlin.io.path.toPath
@@ -76,7 +72,7 @@ class GymControllerTest {
             .andExpect(jsonPath("$.longitude").value(gym.longitude))
 
         // document
-        result.andDocument2("GetGym") {
+        result.andDocument("GetGym") {
             tags = setOf("Gym")
 
             request {
@@ -135,7 +131,7 @@ class GymControllerTest {
             .andExpect(jsonPath("$.gyms.length()").value(length))
 
         if (length == 3L) {
-            result.andDocument2("GetGymList") {
+            result.andDocument("GetGymList") {
                 tags = setOf("Gym")
 
                 response("GetGymListResponse") {
@@ -177,7 +173,7 @@ class GymControllerTest {
 
         result.andExpect(status().isCreated)
 
-        result.andDocument2("AddGym") {
+        result.andDocument("AddGym") {
             tags = setOf("Gym")
 
             request("AddGymRequest") {
@@ -246,7 +242,7 @@ class GymControllerTest {
 
         result.andExpect(status().isOk)
 
-        result.andDocument2("UpdateGym") {
+        result.andDocument("UpdateGym") {
             tags = setOf("Gym")
 
             request("UpdateGymRequest") {
@@ -323,14 +319,18 @@ class GymControllerTest {
             .andExpect(jsonPath("$.id").value(uuid.toString()))
 
         result.andDocument("AddGymImage") {
-            tag("Gym")
-            requestParts(
-                partWithName("image").description("gym image")
-            )
-            responseSchema(Schema("AddImageResponse"))
-            responseFields(
-                fieldWithPath("id").type(JsonFieldType.STRING).description("uuid of the image")
-            )
+            tags = setOf("Gym")
+            request {
+                requestParts(
+                    partWithName("image").description("gym image")
+                )
+            }
+            response("AddImageResponse") {
+                field("id") {
+                    type = RestdocsType.STRING
+                    description = "uuid of the image"
+                }
+            }
         }
     }
 }

@@ -5,7 +5,6 @@ import app.gym.config.SecurityConfig
 import app.gym.domain.member.*
 import app.gym.security.JwtTokenHandler
 import app.gym.security.UserPrincipal
-import com.epages.restdocs.apispec.Schema
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
@@ -23,11 +22,10 @@ import org.springframework.http.MediaType
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post
 import org.springframework.restdocs.operation.preprocess.Preprocessors.*
-import org.springframework.restdocs.payload.JsonFieldType
-import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.test.web.servlet.result.isEqualTo
+import restdocs.RestdocsType
 import restdocs.andDocument
 import java.util.stream.Stream
 import javax.servlet.http.Cookie
@@ -51,7 +49,7 @@ class MemberControllerTest {
     @MethodSource("emailProvider")
     fun `Should return 400 with invalid email and 200 with valid email when signup`(
         email: String?,
-        expectedStatusCode: HttpStatus
+        expectedStatusCode: HttpStatus,
     ) {
         val request = mapOf(
             "email" to email,
@@ -69,19 +67,25 @@ class MemberControllerTest {
                 .content(mapper.writeValueAsString(request))
         )
 
-        result
-            .andExpect(
-                status().isEqualTo(expectedStatusCode.value())
-            )
-            .andDocument("MemberSignup") {
-                tag("Member")
-                requestSchema(Schema("SignupRequest"))
-                requestFields(
-                    fieldWithPath("email").type(JsonFieldType.STRING).description("email"),
-                    fieldWithPath("password").type(JsonFieldType.STRING).description("password"),
-                    fieldWithPath("name").type(JsonFieldType.STRING).description("name")
-                )
+        result.andExpect(status().isEqualTo(expectedStatusCode.value()))
+
+        result.andDocument("MemberSignup") {
+            tags = setOf("Member")
+            request("SignupRequest") {
+                field("email") {
+                    type = RestdocsType.STRING
+                    description = "email address of the signup form"
+                }
+                field("password") {
+                    type = RestdocsType.STRING
+                    description = "password of the signup form"
+                }
+                field("name") {
+                    type = RestdocsType.STRING
+                    description = "name of the signup form"
+                }
             }
+        }
     }
 
     private fun emailProvider(): Stream<Arguments> {
@@ -95,7 +99,7 @@ class MemberControllerTest {
     @MethodSource("passwordProvider")
     fun `Should return 400 with invalid password and 200 with valid password when signup`(
         password: String?,
-        expectedStatusCode: HttpStatus
+        expectedStatusCode: HttpStatus,
     ) {
         val request = mapOf(
             "email" to "valid@email.com",
@@ -119,7 +123,7 @@ class MemberControllerTest {
     @MethodSource("nameProvider")
     fun `Should return 400 with invalid name and 200 with valid name when sign up`(
         name: String?,
-        expectedStatusCode: HttpStatus
+        expectedStatusCode: HttpStatus,
     ) {
         val request = mapOf(
             "email" to "valid@email.com",
@@ -212,19 +216,24 @@ class MemberControllerTest {
             post("/api/member/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(request))
-        ).andExpect {
-            status().isOk
-            cookie().value("jwt", token)
-            println()
-        }
+        )
+        result
+            .andExpect(status().isOk)
+            .andExpect(cookie().value("jwt", token))
+
 
         result.andDocument("MemberLogin") {
-            tag("Member")
-            requestSchema(Schema("LoginRequest"))
-            requestFields(
-                fieldWithPath("email").type(JsonFieldType.STRING).description("email address"),
-                fieldWithPath("password").type(JsonFieldType.STRING).description("password")
-            )
+            tags = setOf("Member")
+            request("LoginRequest") {
+                field("email") {
+                    type = RestdocsType.STRING
+                    description = "email address of the login form"
+                }
+                field("password") {
+                    type = RestdocsType.STRING
+                    description = "password of the login form"
+                }
+            }
         }
     }
 
@@ -249,19 +258,20 @@ class MemberControllerTest {
         val result = mvc.perform(
             get("/api/member/me")
                 .cookie(cookie)
-        ).andExpect {
-            status().isOk
-            jsonPath("$.name").value(member.name)
-        }
-//            .andExpect(jsonPath("$.logoUrl").value(member.logoUrl))
+        )
+
+        result
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.name").value(member.name))
 
         result.andDocument("Me") {
-            tag("Member")
-            responseSchema(Schema("MeRequest"))
-            responseFields(
-                fieldWithPath("name").type(JsonFieldType.STRING).description("name of the member")
-//                fieldWithPath("logoUrl").type(JsonFieldType.STRING).description("logo url of the member")
-            )
+            tags = setOf("Member")
+            response("MeResponse") {
+                field("name") {
+                    type = RestdocsType.STRING
+                    description = "name of the member"
+                }
+            }
         }
     }
 
