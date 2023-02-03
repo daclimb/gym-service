@@ -10,7 +10,7 @@ import app.gym.domain.member.UserRole
 import app.gym.domain.member.WithCustomMockUser
 import app.gym.security.JwtAuthenticationFilter
 import app.gym.util.JsonUtils
-import app.gym.utils.TestDataGenerator
+import app.gym.util.TestDataGenerator
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import org.junit.jupiter.api.Test

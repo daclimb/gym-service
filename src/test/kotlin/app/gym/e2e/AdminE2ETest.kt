@@ -28,9 +28,6 @@ class AdminE2ETest {
     private lateinit var template: TestRestTemplate
 
     @Autowired
-    private lateinit var authUtils: E2EAuthenticationConfig
-
-    @Autowired
     private lateinit var container: DockerComposeContainer<*>
 
     @Value("\${admin.email}")

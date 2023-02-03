@@ -7,13 +7,14 @@ import app.gym.api.response.GetFranchiseResponse
 import app.gym.config.AWSTestConfig
 import app.gym.config.JPATestConfig
 import app.gym.config.TestContainersConfig
-import app.gym.utils.TestDataGenerator
+import app.gym.util.TestDataGenerator
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpEntity
@@ -37,14 +38,18 @@ class FranchiseE2ETest {
     @Autowired
     private lateinit var container: DockerComposeContainer<*>
 
+    @Value("\${jwt.token.admin}")
+    private lateinit var adminJwtToken: String
+    @Value("\${jwt.token.member}")
+    private lateinit var memberJwtToken: String
+
     @BeforeAll
     fun beforeAll() {
 
     }
 
     @Test
-    fun
-            `Should return status code 201 when add franchise`() {
+    fun `Should return status code 201 when add franchise`() {
         val headers = authUtils.getHeadersWithCookieForAdmin()
 
         val request = TestDataGenerator.addFranchiseRequest()

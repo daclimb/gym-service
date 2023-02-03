@@ -8,10 +8,10 @@ import app.gym.domain.member.*
 import app.gym.security.UserPrincipal
 import app.gym.util.CookieUtils
 import mu.KotlinLogging
+import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
-import javax.servlet.http.HttpServletResponse
 import javax.validation.Valid
 
 
@@ -31,15 +31,15 @@ class MemberController(
 
     @PostMapping("/login")
     fun login(
-        @RequestBody request: LoginRequest,
-        response: HttpServletResponse,
+        @RequestBody request: LoginRequest
     ): ResponseEntity<SimpleSuccessfulResponse> {
         logger.info { "Login request" }
         val command = request.toCommand()
         val token = memberService.login(command)
-        val cookie = CookieUtils.create(token)
-        response.addCookie(cookie)
-        return ResponseEntity.ok().body(SimpleSuccessfulResponse("Success: login"))
+        val cookie = CookieUtils.createCookie(token)
+        return ResponseEntity.ok()
+            .header(HttpHeaders.SET_COOKIE, cookie.toString())
+            .body(SimpleSuccessfulResponse("Success: login"))
     }
 
     @GetMapping("/me")

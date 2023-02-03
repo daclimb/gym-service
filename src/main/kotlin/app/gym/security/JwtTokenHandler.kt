@@ -52,5 +52,4 @@ class JwtTokenHandler(
             throw InvalidJwtTokenException(e)
         }
     }
-
 }

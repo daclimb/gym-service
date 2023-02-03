@@ -204,7 +204,7 @@ class MemberControllerTest {
     @Test
     fun `Should return 200 and JWT token when login`() {
         val mapper = jacksonObjectMapper()
-        val token = "JWT token"
+        val token = "valid_token"
         val request = mapOf(
             "email" to "valid@email.com",
             "password" to "password"

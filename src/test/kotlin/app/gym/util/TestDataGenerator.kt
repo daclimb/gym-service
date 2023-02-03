@@ -1,4 +1,4 @@
-package app.gym.utils
+package app.gym.util
 
 import app.gym.api.request.AddFranchiseRequest
 import app.gym.api.request.AddGymRequest

@@ -8,7 +8,7 @@ import app.gym.api.response.GetGymResponse
 import app.gym.config.AWSTestConfig
 import app.gym.config.JPATestConfig
 import app.gym.config.TestContainersConfig
-import app.gym.utils.TestDataGenerator
+import app.gym.util.TestDataGenerator
 import com.amazonaws.services.s3.AmazonS3
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -59,7 +59,6 @@ class GymE2ETest {
     @Test
     fun `Should return status code 201 when add gym`() {
         val headers = authUtils.getHeadersWithCookieForAdmin()
-
         val request = TestDataGenerator.addGymRequest()
         val response =
             template.exchange("/api/gym", HttpMethod.POST, HttpEntity(request, headers), AddGymResponse::class.java)
