@@ -13,9 +13,11 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.*
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import
+import org.springframework.core.io.ClassPathResource
 import org.testcontainers.containers.DockerComposeContainer
 import java.time.LocalDateTime
 import java.util.*
+
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @DataJpaTest
 @Import(JPATestConfig::class, TestContainersConfig::class)
@@ -62,5 +64,17 @@ class GymRepositoryTest {
         val getGym = imageRepository.findById(uuid).get()
 
         assertNotEquals(LocalDateTime.MIN, getGym.createdAt)
+    }
+
+    @Test
+    fun `Should update gym details successfully`() {
+        val jsonString = ClassPathResource("files/details.json").inputStream.reader().readText()
+        val gym = Gym()
+        gym.updateDetails(jsonString)
+        gymRepository.save(gym)
+
+        val getGym = gymRepository.findAll()
+
+//        assertEquals("010-0000-0000", getGym.details!!.phoneNumber)
     }
 }

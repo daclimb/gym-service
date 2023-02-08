@@ -14,5 +14,9 @@ class JsonUtils {
                 throw RuntimeException("Failed to convert object to JSON string", e)
             }
         }
+
+        fun <T> fromJson(json: String, valueType: Class<T>): T {
+            return mapper.readValue(json, valueType)
+        }
     }
 }

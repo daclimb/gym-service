@@ -127,5 +127,6 @@ class GymService(
 //    fun getGymsWithTags(tags: List<Long>): List<Gym> {
 //        return gymRepository.findGymsByGymTagsTagId()
 //    } // TODO
+
 }
 
