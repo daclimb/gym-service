@@ -1,3 +1,5 @@
 build
 local/pg/data
 local/pgdata
+.gradle
+.idea
