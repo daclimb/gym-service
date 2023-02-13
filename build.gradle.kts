@@ -43,10 +43,9 @@ dependencies {
     testImplementation("com.ninja-squad:springmockk:3.0.1")
     testImplementation("com.h2database:h2")
     testImplementation("org.testcontainers:localstack:1.17.3")
-    testImplementation("org.testcontainers:junit-jupiter:1.17.3")
     testImplementation("com.epages:restdocs-api-spec-mockmvc:0.16.0") //2.2
-    testImplementation("org.testcontainers:junit-jupiter")
-    testImplementation("org.testcontainers:postgresql:1.17.6")
+    testImplementation("org.testcontainers:junit-jupiter:1.16.2")
+    testImplementation("org.testcontainers:postgresql:1.16.2")
 
 }
 

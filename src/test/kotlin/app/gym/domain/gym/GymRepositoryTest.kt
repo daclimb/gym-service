@@ -15,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import
 import org.springframework.core.io.ClassPathResource
 import org.testcontainers.containers.DockerComposeContainer
+import org.testcontainers.junit.jupiter.Testcontainers
 import java.time.LocalDateTime
 import java.util.*
 
@@ -22,20 +23,21 @@ import java.util.*
 @DataJpaTest
 @Import(JPATestConfig::class, TestContainersConfig::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Testcontainers
 class GymRepositoryTest {
 
     @Autowired
     lateinit var gymRepository: GymRepository
+
     @Autowired
     lateinit var imageRepository: ImageRepository
-    companion object {
-        @Autowired
-        @JvmStatic
-        private lateinit var container: DockerComposeContainer<*>
-    }
+
+    @Autowired
+    lateinit var container: DockerComposeContainer<*>
 
     @BeforeAll
     fun beforeAll() {
+        container.start()
         gymRepository.deleteAll()
         imageRepository.deleteAll()
     }
@@ -45,6 +47,8 @@ class GymRepositoryTest {
         val id = 1L
         val gym = Gym(id)
         gym.update("name", null, "address", "description", emptyList(), 0.0, 0.0, emptyList())
+
+        Thread.sleep(10000)
 
         gymRepository.saveAndFlush(gym)
 
@@ -71,8 +75,8 @@ class GymRepositoryTest {
         val jsonString = ClassPathResource("files/details.json").inputStream.reader().readText()
         val gym = Gym()
         gym.updateDetails(jsonString)
-        gymRepository.save(gym)
 
+        gymRepository.save(gym)
         val getGym = gymRepository.findAll()
 
 //        assertEquals("010-0000-0000", getGym.details!!.phoneNumber)

@@ -8,9 +8,11 @@ import java.io.File
 @TestConfiguration
 class TestContainersConfig {
 
-    private val container = DockerComposeContainer(
-        File("src/test/resources/docker-compose.yml")
-    )
+    private val container =
+        DockerComposeContainer(File("./src/test/resources/docker-compose.yml"))
+            .withExposedService("postgres", 5432)
+            .apply { start() }
+
 
     @Bean
     fun psqlContainer(): DockerComposeContainer<*> {
