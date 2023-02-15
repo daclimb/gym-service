@@ -25,7 +25,6 @@ import org.springframework.http.*
 import org.springframework.test.annotation.DirtiesContext.*
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
-import org.testcontainers.containers.DockerComposeContainer
 import java.util.*
 import kotlin.io.path.toPath
 
@@ -47,9 +46,6 @@ class GymE2ETest {
 
     @Autowired
     private lateinit var authUtils: E2EAuthenticationConfig
-
-    @Autowired
-    private lateinit var container: DockerComposeContainer<*>
 
     @BeforeAll
     fun beforeAll() {

@@ -64,7 +64,7 @@ class Gym(id: Long? = null) {
 
     @Column(name = "details")
     @Type(type = "jsonb")
-    var details: GymDetails? = null; private set
+    var details: GymDetails = GymDetails(); private set
 
     @Column(name = "created_at")
     @CreatedDate

@@ -15,7 +15,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
-import org.testcontainers.containers.DockerComposeContainer
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
@@ -29,10 +28,6 @@ class TagE2ETest {
 
     @Autowired
     private lateinit var authUtils: E2EAuthenticationConfig
-
-    @Autowired
-    private lateinit var container: DockerComposeContainer<*>
-
 
     @Test
     fun `Should return status code 201 when add tag`() {

@@ -1,6 +1,7 @@
 package app.gym.domain.image
 
 import app.gym.config.AWSTestConfig
+import app.gym.config.TestContainersConfig
 import com.amazonaws.services.s3.AmazonS3
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
@@ -12,11 +13,10 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.FileSystemResource
-import org.springframework.transaction.annotation.Transactional
 import kotlin.io.path.toPath
 
 @SpringBootTest(
-    classes = [AWSTestConfig::class]
+    classes = [TestContainersConfig::class, AWSTestConfig::class]
 )
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class ImageDeletionSchedulerTest {
@@ -27,6 +27,7 @@ internal class ImageDeletionSchedulerTest {
     @Autowired
     lateinit var imageStorage: ImageStorage
 
+    @Autowired
     lateinit var imageDeletionScheduler: ImageDeletionScheduler
 
     @Autowired
@@ -64,7 +65,6 @@ internal class ImageDeletionSchedulerTest {
     }
 
     @Test
-    @Transactional
     fun `Should delete image created in a day`() {
         val imageResource = ClassPathResource("images/pooh.png")
         val file = FileSystemResource(imageResource.uri.toPath())

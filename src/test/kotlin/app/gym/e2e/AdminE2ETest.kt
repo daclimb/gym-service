@@ -15,7 +15,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
-import org.testcontainers.containers.DockerComposeContainer
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
@@ -26,9 +25,6 @@ class AdminE2ETest {
 
     @Autowired
     private lateinit var template: TestRestTemplate
-
-    @Autowired
-    private lateinit var container: DockerComposeContainer<*>
 
     @Value("\${admin.email}")
     private lateinit var email: String

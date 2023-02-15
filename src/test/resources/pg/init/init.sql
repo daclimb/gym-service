@@ -1,5 +1,3 @@
-CREATE DATABASE daclimb;
-
 CREATE TABLE gyms
 (
     id           SERIAL PRIMARY KEY,

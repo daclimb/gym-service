@@ -6,12 +6,10 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/testdb
     driver-class-name: org.postgresql.Driver
-    username: user
+    username: postgres
     password: password
 
   jpa:
-#    hibernate:
-#      ddl-auto: update
     properties:
       hibernate:
         format_sql: true

@@ -2,7 +2,6 @@ package app.gym.domain.gym
 
 import app.gym.domain.franchise.FranchiseRepository
 import app.gym.domain.gymTag.GymTag
-import app.gym.domain.gymTag.GymTagRepository
 import app.gym.domain.image.Image
 import app.gym.domain.image.ImageRepository
 import app.gym.domain.image.ImageStorage
@@ -19,7 +18,6 @@ class GymService(
     private val gymRepository: GymRepository,
     private val franchiseRepository: FranchiseRepository,
     private val imageRepository: ImageRepository,
-    private val gymTagRepository: GymTagRepository,
     private val tagRepository: TagRepository,
     private val imageStorage: ImageStorage,
 ) {
