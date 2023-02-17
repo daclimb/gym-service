@@ -82,7 +82,8 @@ class Gym(id: Long? = null) {
         images: List<Image>,
         latitude: Double,
         longitude: Double,
-        gymTags: List<GymTag>
+        gymTags: List<GymTag>,
+        details: GymDetails
     ) {
         this.name = name
         this.franchise = franchise
@@ -93,9 +94,6 @@ class Gym(id: Long? = null) {
         this.longitude = longitude
         this.gymTags.clear()
         this.gymTags.addAll(gymTags)
-    }
-
-    fun updateDetails(details: String) {
-        this.details = GymDetails.from(details)
+        this.details = details
     }
 }

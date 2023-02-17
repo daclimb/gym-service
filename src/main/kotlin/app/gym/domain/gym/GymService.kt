@@ -54,6 +54,7 @@ class GymService(
 
         val tags = tagRepository.findAllById(command.gymTags)
         val gymTags = tags.map { GymTag(it) }
+        val details = GymDetails.from(command.details)
 
         gym.update(
             command.name,
@@ -63,7 +64,8 @@ class GymService(
             images,
             command.latitude,
             command.longitude,
-            gymTags
+            gymTags,
+            details
         )
         return gymRepository.save(gym).id!!
     }
@@ -108,6 +110,8 @@ class GymService(
         }
         val gymTags: List<GymTag> = tags.map { GymTag(it) }
 
+        val details = GymDetails.from(command.details)
+
         gym.update(
             command.name,
             franchise,
@@ -116,15 +120,11 @@ class GymService(
             images,
             command.latitude,
             command.longitude,
-            gymTags
+            gymTags,
+            details
         )
 
         gymRepository.save(gym)
     }
-
-//    fun getGymsWithTags(tags: List<Long>): List<Gym> {
-//        return gymRepository.findGymsByGymTagsTagId()
-//    } // TODO
-
 }
 

@@ -10,6 +10,8 @@ import app.gym.domain.member.MemberNotFoundException
 import app.gym.domain.member.PasswordNotMatchedException
 import app.gym.domain.tag.TagDuplicatedException
 import app.gym.domain.tag.TagNotExistsException
+import com.fasterxml.jackson.core.JsonParseException
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -79,4 +81,20 @@ class ExceptionHandler {
             ClientErrorResponse("Failure: image not found")
         )
     }
+
+    @ExceptionHandler
+    fun handlerUnrecognizedPropertyException(exception: UnrecognizedPropertyException): ResponseEntity<ClientErrorResponse> {
+        return ResponseEntity.badRequest().body(
+            ClientErrorResponse("Failure: unrecognized property")
+        )
+    }
+
+    @ExceptionHandler
+    fun handlerJsonParseException(exception: JsonParseException): ResponseEntity<ClientErrorResponse> {
+        return ResponseEntity.badRequest().body(
+            ClientErrorResponse("Failure: json string not well-formed")
+        )
+    }
+
+
 }

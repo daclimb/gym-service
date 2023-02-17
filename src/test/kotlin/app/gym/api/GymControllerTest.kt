@@ -161,7 +161,7 @@ class GymControllerTest {
     @Test
     @WithCustomMockUser(userRole = UserRole.Admin)
     fun `Should return status code 201 when add gym`() {
-        val request = AddGymRequest("name", 1L, "address", "description", emptyList(), 0.0, 0.0, emptyList())
+        val request = AddGymRequest("name", 1L, "address", "description", emptyList(), 0.0, 0.0, emptyList(), "")
         val content = JsonUtils.toJson(request)
         every { gymService.addGym(any()) } returns 1L
 
@@ -230,7 +230,7 @@ class GymControllerTest {
 
     @Test
     fun `Should return status code 200 when update gym`() {
-        val request = UpdateGymRequest("name", 1L, "address", "description", emptyList(), 0.0, 0.0, emptyList())
+        val request = UpdateGymRequest("name", 1L, "address", "description", emptyList(), 0.0, 0.0, emptyList(), "")
         val content = JsonUtils.toJson(request)
         every { gymService.updateGym(any()) } returns Unit
 
@@ -288,7 +288,7 @@ class GymControllerTest {
 
     @Test
     fun `Should return status code 400 when update gym with id of not existing gym`() {
-        val request = UpdateGymRequest("name", null, "address", "description", emptyList(), 0.0, 0.0, emptyList())
+        val request = UpdateGymRequest("name", null, "address", "description", emptyList(), 0.0, 0.0, emptyList(), "")
         val content = JsonUtils.toJson(request)
         every { gymService.updateGym(any()) } throws GymNotFoundException()
 

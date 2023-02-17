@@ -4,6 +4,7 @@ import app.gym.api.request.AddFranchiseRequest
 import app.gym.api.request.AddGymRequest
 import app.gym.domain.franchise.Franchise
 import app.gym.domain.gym.Gym
+import app.gym.domain.gym.GymDetails
 import app.gym.domain.gymTag.GymTag
 import app.gym.domain.image.Image
 import app.gym.domain.tag.Tag
@@ -20,10 +21,11 @@ class TestDataGenerator {
             images: MutableList<Image> = mutableListOf(Image.create(UUID.randomUUID().toString(), "image")),
             latitude: Double = 0.0,
             longitude: Double = 0.0,
-            gymTags: List<GymTag> = listOf(GymTag(Tag(null, "tag")))
+            gymTags: List<GymTag> = listOf(GymTag(Tag(null, "tag"))),
+            details: GymDetails = GymDetails()
         ): Gym {
             val gym = Gym(id)
-            gym.update(name, franchise, address, description, images, latitude, longitude, gymTags)
+            gym.update(name, franchise, address, description, images, latitude, longitude, gymTags, details)
 
             return gym
         }
@@ -45,9 +47,10 @@ class TestDataGenerator {
             imageIds: List<String> = emptyList(),
             latitude: Double = 0.0,
             longitude: Double = 0.0,
-            gymTags: List<Long> = emptyList()
+            gymTags: List<Long> = emptyList(),
+            details: String = ""
         ): AddGymRequest {
-            return AddGymRequest(name, franchiseId, address, description, imageIds, latitude, longitude, gymTags)
+            return AddGymRequest(name, franchiseId, address, description, imageIds, latitude, longitude, gymTags, details)
         }
 
         fun franchise(

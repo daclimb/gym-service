@@ -2,8 +2,12 @@ package app.gym.domain.gym
 
 import app.gym.util.JsonUtils
 import com.fasterxml.jackson.annotation.JsonProperty
+import javax.validation.constraints.Pattern
 
 data class GymDetails(
+
+
+    @field:Pattern(regexp = "/\\^\\d{2,3}-\\d{3,4}-\\d{4}\\$/")
     val phoneNumber: String? = null,
     val instagram: String? = null,
     val prices: List<Price>? = null,
@@ -11,17 +15,22 @@ data class GymDetails(
     val services: List<String>? = null,
     val trainings: List<String>? = null,
     val openingHours: OpeningHour? = null,
-    val floorArea: Int? = null
+    val floorArea: Int? = null,
 ) {
     companion object {
         fun from(detailsString: String): GymDetails {
-            return JsonUtils.fromJson(detailsString, GymDetails::class.java)
+            return if (detailsString == "") {
+                GymDetails()
+            } else {
+                val fromJson = JsonUtils.fromJson(detailsString, GymDetails::class.java)
+                fromJson
+            }
         }
     }
 
     class Price(
         val type: String,
-        val price: Int
+        val price: Int,
     )
 
     class OpeningHour(
@@ -32,6 +41,6 @@ data class GymDetails(
         @JsonProperty("금") val fri: List<String>,
         @JsonProperty("토") val sat: List<String>,
         @JsonProperty("일") val sun: List<String>,
-        @JsonProperty("공휴일") val hol: List<String>
+        @JsonProperty("공휴일") val hol: List<String>,
     )
 }
