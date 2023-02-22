@@ -3,6 +3,7 @@ package app.gym.api.controller
 import app.gym.api.response.ClientErrorResponse
 import app.gym.domain.franchise.FranchiseNotFoundException
 import app.gym.domain.gym.GymNotFoundException
+import app.gym.domain.gym.ImageNotFoundException
 import app.gym.domain.member.DuplicatedEmailException
 import app.gym.domain.member.EmailOrPasswordNotMatchedException
 import app.gym.domain.member.MemberNotFoundException
@@ -69,6 +70,13 @@ class ExceptionHandler {
     fun handlerTagNotExistsException(exception: TagNotExistsException): ResponseEntity<ClientErrorResponse> {
         return ResponseEntity.badRequest().body(
             ClientErrorResponse("Failure: tag not exists")
+        )
+    }
+
+    @ExceptionHandler
+    fun handlerImageNotFoundException(exception: ImageNotFoundException): ResponseEntity<ClientErrorResponse> {
+        return ResponseEntity.badRequest().body(
+            ClientErrorResponse("Failure: image not found")
         )
     }
 }

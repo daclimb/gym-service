@@ -1,8 +1,8 @@
 package app.gym.api.controller
 
 import app.gym.api.request.LoginRequest
+import app.gym.api.response.SimpleSuccessfulResponse
 import app.gym.domain.member.AdminService
-import app.gym.domain.member.EmailOrPasswordNotMatchedException
 import app.gym.util.CookieUtils
 import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
@@ -18,23 +18,17 @@ import javax.servlet.http.HttpServletResponse
 class AdminController(
     private val adminService: AdminService,
 ) {
-    private val logger = KotlinLogging.logger {  }
+    private val logger = KotlinLogging.logger { }
 
     @PostMapping("/login")
-    fun login(@RequestBody request: LoginRequest, response: HttpServletResponse): ResponseEntity<Any>{
+    fun login(@RequestBody request: LoginRequest, response: HttpServletResponse): ResponseEntity<SimpleSuccessfulResponse> {
         logger.info { "Admin login request" }
         val command = request.toCommand()
-        return try {
-            val token = adminService.login(command)
+        val token = adminService.login(command)
 
-            val cookie = CookieUtils.create(token)
-            response.addCookie(cookie)
+        val cookie = CookieUtils.create(token)
+        response.addCookie(cookie)
 
-            ResponseEntity.ok().build()
-        } catch (e: EmailOrPasswordNotMatchedException) {
-            logger.info { "Login failed" }
-            logger.debug { "$e" }
-            ResponseEntity.badRequest().build()
-        }
+        return ResponseEntity.ok().body(SimpleSuccessfulResponse("Success: login"))
     }
 }

@@ -54,7 +54,7 @@ class GymRepositoryTest {
     @Test
     fun `Image should have createdAt with not null when getting image`() {
 
-        val uuid = UUID.randomUUID()
+        val uuid = UUID.randomUUID().toString()
         val image = Image.create(uuid, "")
 
         imageRepository.saveAndFlush(image)

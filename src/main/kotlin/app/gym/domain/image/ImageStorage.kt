@@ -11,7 +11,7 @@ import java.util.*
 
 interface ImageStorage {
     fun save(data: InputStream): UUID
-    fun deleteWithUuids(uuids: List<UUID>)
+    fun deleteWithUuids(uuids: List<String>)
 }
 
 @Component
@@ -28,12 +28,12 @@ class S3ImageStorage(
         return uuid
     }
 
-    override fun deleteWithUuids(uuids:List<UUID>) {
+    override fun deleteWithUuids(uuids:List<String>) {
         if(uuids.isEmpty())
             return
 
         val keys = uuids.map {
-            KeyVersion(it.toString())
+            KeyVersion(it)
         }
         val request = DeleteObjectsRequest(bucket)
         request.keys = keys

@@ -39,9 +39,9 @@ class ImageStorageTest {
         val imageResource = ClassPathResource("images/pooh.png")
         val file = FileSystemResource(imageResource.uri.toPath())
 
-        val ids = mutableListOf<UUID>()
+        val ids = mutableListOf<String>()
         for (i in 0 until 3) {
-            ids.add(imageStorage.save(file.inputStream))
+            ids.add(imageStorage.save(file.inputStream).toString())
         }
 
         assertDoesNotThrow {

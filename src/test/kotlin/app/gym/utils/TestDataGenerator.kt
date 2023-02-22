@@ -14,10 +14,10 @@ class TestDataGenerator {
         fun gym(
             id: Long? = null,
             name: String = "name",
-            franchise: Franchise? = null,
+            franchise: Franchise? = Franchise(1L).apply { updateDetails("franchise", "description") },
             address: String = "address",
             description: String = "description",
-            images: MutableList<Image> = mutableListOf(Image.create(UUID.randomUUID(), "image")),
+            images: MutableList<Image> = mutableListOf(Image.create(UUID.randomUUID().toString(), "image")),
             latitude: Double = 0.0,
             longitude: Double = 0.0,
             gymTags: List<GymTag> = listOf(GymTag(Tag(null, "tag")))
@@ -42,7 +42,7 @@ class TestDataGenerator {
             franchiseId: Long? = null,
             address: String = "address",
             description: String = "description",
-            imageIds: List<UUID> = emptyList(),
+            imageIds: List<String> = emptyList(),
             latitude: Double = 0.0,
             longitude: Double = 0.0,
             gymTags: List<Long> = emptyList()

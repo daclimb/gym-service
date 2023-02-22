@@ -52,7 +52,7 @@ internal class ImageDeletionSchedulerTest {
     fun `Should not delete image created within a day`() {
         val imageResource = ClassPathResource("images/pooh.png")
         val file = FileSystemResource(imageResource.uri.toPath())
-        val id = imageStorage.save(file.inputStream)
+        val id = imageStorage.save(file.inputStream).toString()
 
         val image = Image.create(id, "")
         imageRepository.save(image)
@@ -68,7 +68,7 @@ internal class ImageDeletionSchedulerTest {
     fun `Should delete image created in a day`() {
         val imageResource = ClassPathResource("images/pooh.png")
         val file = FileSystemResource(imageResource.uri.toPath())
-        val id = imageStorage.save(file.inputStream)
+        val id = imageStorage.save(file.inputStream).toString()
 
         val image = Image.create(id, "")
         imageRepository.save(image)

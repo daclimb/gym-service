@@ -5,12 +5,10 @@ import app.gym.config.SecurityConfig
 import app.gym.domain.member.*
 import app.gym.security.JwtTokenHandler
 import app.gym.security.UserPrincipal
-import restdocs.andDocument
 import com.epages.restdocs.apispec.Schema
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
-import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.params.ParameterizedTest
@@ -19,8 +17,6 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -29,10 +25,10 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.pos
 import org.springframework.restdocs.operation.preprocess.Preprocessors.*
 import org.springframework.restdocs.payload.JsonFieldType
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import org.springframework.test.web.servlet.result.isEqualTo
+import restdocs.andDocument
 import java.util.stream.Stream
 import javax.servlet.http.Cookie
 
@@ -77,7 +73,7 @@ class MemberControllerTest {
             .andExpect(
                 status().isEqualTo(expectedStatusCode.value())
             )
-            .andDocument("Signup") {
+            .andDocument("MemberSignup") {
                 tag("Member")
                 requestSchema(Schema("SignupRequest"))
                 requestFields(
@@ -219,9 +215,10 @@ class MemberControllerTest {
         ).andExpect {
             status().isOk
             cookie().value("jwt", token)
+            println()
         }
 
-        result.andDocument("Login") {
+        result.andDocument("MemberLogin") {
             tag("Member")
             requestSchema(Schema("LoginRequest"))
             requestFields(
