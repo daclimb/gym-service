@@ -25,6 +25,8 @@ class GymServiceTest{
     lateinit var tagRepository: TagRepository
     @MockK
     lateinit var imageStorage: ImageStorage
+    @MockK
+    lateinit var gymDetailsValidator: GymDetailsValidator
 
     @InjectMockKs
     lateinit var gymService: GymService

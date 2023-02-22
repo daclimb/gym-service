@@ -46,17 +46,18 @@ class MemberControllerTest {
     private lateinit var jwtTokenHandler: JwtTokenHandler
 
     @ParameterizedTest
-    @MethodSource("emailProvider")
+    @MethodSource("signupFormProvider")
     fun `Should return 400 with invalid email and 200 with valid email when signup`(
         email: String?,
+        password: String?,
+        name: String?,
         expectedStatusCode: HttpStatus,
     ) {
         val request = mapOf(
             "email" to email,
-            "password" to "password",
-            "name" to "name"
+            "password" to password,
+            "name" to name
         )
-
         val mapper = jacksonObjectMapper()
 
         every { memberService.signup(any()) } returns Unit
@@ -88,59 +89,25 @@ class MemberControllerTest {
         }
     }
 
-    private fun emailProvider(): Stream<Arguments> {
+    private fun signupFormProvider(): Stream<Arguments> {
+        val validEmail = "valid@email.com"
+        val validPassword = "valid_password"
+        val validName = "valid_name"
         return Stream.of(
-            Arguments.of("invalid_email", HttpStatus.BAD_REQUEST),
-            Arguments.of("valid@email.com", HttpStatus.OK)
+            Arguments.of(validEmail, null, validName, HttpStatus.BAD_REQUEST),
+            Arguments.of(validEmail, "1", validName, HttpStatus.BAD_REQUEST),
+            Arguments.of(validEmail, "123", validName, HttpStatus.BAD_REQUEST),
+            Arguments.of(validEmail, "123123123123123123123123", validName, HttpStatus.BAD_REQUEST),
+
+            Arguments.of(validEmail, validPassword, null, HttpStatus.BAD_REQUEST),
+            Arguments.of(
+                validEmail,
+                validPassword,
+                "this name is toooooooooooooooooooooooooooooo long to create member...",
+                HttpStatus.BAD_REQUEST
+            ),
+            Arguments.of(validEmail, validPassword, validName, HttpStatus.CREATED),
         )
-    }
-
-    @ParameterizedTest
-    @MethodSource("passwordProvider")
-    fun `Should return 400 with invalid password and 200 with valid password when signup`(
-        password: String?,
-        expectedStatusCode: HttpStatus,
-    ) {
-        val request = mapOf(
-            "email" to "valid@email.com",
-            "password" to password,
-            "name" to "name"
-        )
-
-        every { memberService.signup(any()) } returns Unit
-
-        val mapper = jacksonObjectMapper()
-
-        mvc.perform(
-            post("/api/member/signup")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(request))
-        )
-            .andExpect(status().isEqualTo(expectedStatusCode.value()))
-    }
-
-    @ParameterizedTest
-    @MethodSource("nameProvider")
-    fun `Should return 400 with invalid name and 200 with valid name when sign up`(
-        name: String?,
-        expectedStatusCode: HttpStatus,
-    ) {
-        val request = mapOf(
-            "email" to "valid@email.com",
-            "password" to "password",
-            "name" to name
-        )
-
-        every { memberService.signup(any()) } returns Unit
-
-        val mapper = jacksonObjectMapper()
-
-        mvc.perform(
-            post("/api/member/signup")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(request))
-        )
-            .andExpect(status().isEqualTo(expectedStatusCode.value()))
     }
 
     @Test
@@ -275,26 +242,4 @@ class MemberControllerTest {
         }
     }
 
-    private fun passwordProvider(): Stream<Arguments> {
-        return Stream.of(
-            Arguments.of(null, HttpStatus.BAD_REQUEST),
-            Arguments.of("1", HttpStatus.BAD_REQUEST),
-            Arguments.of("123", HttpStatus.BAD_REQUEST),
-            Arguments.of("123123123123123123123123", HttpStatus.BAD_REQUEST),
-            Arguments.of("valid_password", HttpStatus.OK)
-
-        )
-    }
-
-    private fun nameProvider(): Stream<Arguments> {
-        return Stream.of(
-            Arguments.of(null, HttpStatus.BAD_REQUEST),
-            Arguments.of(
-                "this name is toooooooooooooooooooooooooooooooooo long to create member...",
-                HttpStatus.BAD_REQUEST
-            ),
-            Arguments.of("n", HttpStatus.OK),
-            Arguments.of("name", HttpStatus.OK)
-        )
-    }
 }
