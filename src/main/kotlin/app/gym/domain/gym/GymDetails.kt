@@ -2,12 +2,8 @@ package app.gym.domain.gym
 
 import app.gym.util.JsonUtils
 import com.fasterxml.jackson.annotation.JsonProperty
-import javax.validation.constraints.Pattern
 
 data class GymDetails(
-
-
-    @field:Pattern(regexp = "/\\^\\d{2,3}-\\d{3,4}-\\d{4}\\$/")
     val phoneNumber: String? = null,
     val instagram: String? = null,
     val prices: List<Price>? = null,
@@ -22,8 +18,7 @@ data class GymDetails(
             return if (detailsString == "") {
                 GymDetails()
             } else {
-                val fromJson = JsonUtils.fromJson(detailsString, GymDetails::class.java)
-                fromJson
+                JsonUtils.fromJson(detailsString, GymDetails::class.java)
             }
         }
     }

@@ -2,6 +2,7 @@ package app.gym.api.controller
 
 import app.gym.api.response.ClientErrorResponse
 import app.gym.domain.franchise.FranchiseNotFoundException
+import app.gym.domain.gym.GymDetailsInvalidValueException
 import app.gym.domain.gym.GymNotFoundException
 import app.gym.domain.gym.ImageNotFoundException
 import app.gym.domain.member.DuplicatedEmailException
@@ -96,5 +97,10 @@ class ExceptionHandler {
         )
     }
 
-
+    @ExceptionHandler
+    fun handlerGymDetailsInvalidValueException(exception: GymDetailsInvalidValueException): ResponseEntity<ClientErrorResponse> {
+        return ResponseEntity.badRequest().body(
+            ClientErrorResponse("Failure: some values in gym details are invalid")
+        )
+    }
 }

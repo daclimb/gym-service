@@ -204,8 +204,31 @@ class GymE2ETest {
         val gymId = addGymResponse.body!!.gymId
 
         val name = "phoneNumber"
-        val value = 1234
-        val details = "{\"$name\":$value}"
+        val value = "1234-5678"
+        val details = "{\"$name\":\"$value\"}"
+        val request =
+            UpdateGymRequest("name", null, "address", "description", emptyList(), 0.0, 0.0, emptyList(), details)
+
+        val httpEntity = HttpEntity(request, headers)
+        val response = template.exchange("/api/gym/$gymId", HttpMethod.PUT, httpEntity, Any::class.java)
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
+    }
+
+    @Test
+    fun `Should return status code 400 when update gym details with invalid json structure`() {
+        val headers = authUtils.getHeadersWithCookieForAdmin()
+
+        val addGymRequest = TestDataGenerator.addGymRequest()
+        val addGymResponse =
+            template.postForEntity("/api/gym", HttpEntity(addGymRequest, headers), AddGymResponse::class.java)
+
+        assertNotNull(addGymResponse.body)
+        val gymId = addGymResponse.body!!.gymId
+
+        val name = "phoneNumber"
+        val value = "010-0000-0000"
+        val details = "{\"$name\":\"$value\""
         val request =
             UpdateGymRequest("name", null, "address", "description", emptyList(), 0.0, 0.0, emptyList(), details)
 

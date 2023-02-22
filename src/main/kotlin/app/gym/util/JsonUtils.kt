@@ -3,6 +3,7 @@ package app.gym.util
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
+
 class JsonUtils {
     companion object {
         private val mapper = jacksonObjectMapper()
