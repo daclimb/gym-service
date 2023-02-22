@@ -70,11 +70,11 @@ class MemberControllerTest {
                 .content(mapper.writeValueAsString(request))
         )
 
-        result.andExpect(
-            status().isEqualTo(expectedStatusCode.value())
-        )
-        if (expectedStatusCode == HttpStatus.OK) {
-            result.andDocument("Signup") {
+        result
+            .andExpect(
+                status().isEqualTo(expectedStatusCode.value())
+            )
+            .andDocument("MemberSignup") {
                 tag("Member")
                 requestSchema(Schema("SignupRequest"))
                 requestFields(
@@ -181,9 +181,10 @@ class MemberControllerTest {
         ).andExpect {
             status().isOk
             cookie().value("jwt", token)
+            println()
         }
 
-        result.andDocument("Login") {
+        result.andDocument("MemberLogin") {
             tag("Member")
             requestSchema(Schema("LoginRequest"))
             requestFields(

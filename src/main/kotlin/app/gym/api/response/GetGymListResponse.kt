@@ -1,7 +1,6 @@
 package app.gym.api.response
 
 import app.gym.domain.gym.Gym
-import java.util.*
 
 data class GetGymListResponse(
     val gyms: List<SimpleGym>,
@@ -11,13 +10,13 @@ data class GetGymListResponse(
         val id: Long,
         val name: String,
         val address: String,
-        val thumbnail: UUID?,
+        val thumbnail: String?,
     )
 
     companion object {
         fun from(gyms: List<Gym>): GetGymListResponse {
             return GetGymListResponse(gyms.map {
-                val thumbnail: UUID? =
+                val thumbnail: String? =
                     if (it.images.size == 0) {
                         null
                     } else {

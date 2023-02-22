@@ -9,7 +9,6 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.util.AntPathMatcher
 import org.springframework.web.filter.OncePerRequestFilter
-import java.lang.Exception
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
@@ -30,6 +29,11 @@ class JwtAuthenticationFilter(
         filterChain: FilterChain
     ) {
         val cookies = request.cookies
+        if(cookies == null) {
+            response.status = HttpStatus.UNAUTHORIZED.value()
+            return
+        }
+
         val token = cookies.find { it.name == "jwt" }
         if (token == null) {
             logger.info { "Cookie has no jwt token." }

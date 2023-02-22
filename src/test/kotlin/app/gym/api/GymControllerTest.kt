@@ -68,6 +68,7 @@ class GymControllerTest {
         result.andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(gym.id))
             .andExpect(jsonPath("$.name").value(gym.name))
+            .andExpect(jsonPath("$.franchiseName").value(gym.franchise!!.name))
             .andExpect(jsonPath("$.address").value(gym.address))
             .andExpect(jsonPath("$.description").value(gym.description))
             .andExpect(jsonPath("$.imageIds").value(gym.images.map { it.id!!.toString() }))
@@ -92,6 +93,10 @@ class GymControllerTest {
                 field("name") {
                     type = RestdocsType.STRING
                     description = "name of the gym"
+                }
+                field("franchiseName") {
+                    type = RestdocsType.STRING
+                    description = "franchise name of the gym"
                 }
                 field("address") {
                     type = RestdocsType.STRING
@@ -305,7 +310,7 @@ class GymControllerTest {
         val imageResource = ClassPathResource("images/pooh.png")
         val file = Files.readAllBytes(imageResource.uri.toPath())
 
-        val uuid = UUID.randomUUID()
+        val uuid = UUID.randomUUID().toString()
 
         every { gymService.addImage(any()) } returns uuid
 

@@ -11,10 +11,10 @@ import javax.persistence.*
 @Entity
 @Table(name = "gym_images")
 @EntityListeners(AuditingEntityListener::class)
-class Image: Persistable<UUID> {
+class Image: Persistable<String> {
     @Id
-    @Column(name = "id", columnDefinition = "uuid")
-    var uuid: UUID? = null; private set
+    @Column(name = "id")
+    var uuid: String? = null; private set
 
     @Column(name = "name")
     // TODO: @NotNull
@@ -31,17 +31,17 @@ class Image: Persistable<UUID> {
 
     companion object {
         fun create(
-            id: UUID?,
+            uuid: String?,
             name: String
         ): Image {
             val image = Image()
-            image.uuid = id
+            image.uuid = uuid
             image.name = name
             return image
         }
     }
 
-    override fun getId(): UUID? {
+    override fun getId(): String? {
         return this.uuid
     }
 

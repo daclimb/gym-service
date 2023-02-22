@@ -96,11 +96,22 @@ class TagE2ETest {
             SimpleSuccessfulResponse::class.java
         )
 
-        val response = template.exchange(
+        val getTagListResponse = template.exchange(
             "/api/tag",
-            HttpMethod.POST,
-            HttpEntity(request, headers),
+            HttpMethod.GET,
+            HttpEntity(null, headers),
+            GetTagListResponse::class.java
+        )
+
+        val tagId = getTagListResponse.body!!.tags[0].id
+
+        val response = template.exchange(
+            "/api/tag/$tagId",
+            HttpMethod.DELETE,
+            HttpEntity(null, headers),
             SimpleSuccessfulResponse::class.java
         )
+
+        assertEquals(HttpStatus.OK, response.statusCode)
     }
 }

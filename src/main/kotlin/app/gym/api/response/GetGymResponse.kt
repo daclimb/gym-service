@@ -1,14 +1,14 @@
 package app.gym.api.response
 
 import app.gym.domain.gym.Gym
-import java.util.*
 
 data class GetGymResponse(
     val id: Long,
     val name: String,
+    val franchiseName: String?,
     val address: String,
     val description: String?,
-    val imageIds: List<UUID>,
+    val imageIds: List<String>,
     val latitude: Double,
     val longitude: Double,
 ) {
@@ -17,6 +17,7 @@ data class GetGymResponse(
             return GetGymResponse(
                 gym.id!!,
                 gym.name,
+                gym.franchise?.name,
                 gym.address,
                 gym.description,
                 gym.images.map { it.id!! },

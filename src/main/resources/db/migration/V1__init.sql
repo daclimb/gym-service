@@ -40,7 +40,7 @@ CREATE TABLE franchises
     description TEXT         NOT NULL,
     created_at  TIMESTAMP    NOT NULL,
     modified_at TIMESTAMP    NOT NULL
-)
+);
 
 CREATE TABLE tags
 (
@@ -48,7 +48,7 @@ CREATE TABLE tags
     tag         VARCHAR(8) NOT NULL UNIQUE,
     created_at  TIMESTAMP  NOT NULL,
     modified_at TIMESTAMP  NOT NULL
-)
+);
 
 CREATE TABLE gym_tags
 (
@@ -57,4 +57,4 @@ CREATE TABLE gym_tags
     tag_id      INT,
     created_at  TIMESTAMP NOT NULL,
     modified_at TIMESTAMP NOT NULL
-)
+);
