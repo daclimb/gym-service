@@ -43,8 +43,7 @@ class FranchiseE2ETest {
     }
 
     @Test
-    fun
-            `Should return status code 201 when add franchise`() {
+    fun `Should return status code 201 when add franchise`() {
         val headers = authUtils.getHeadersWithCookieForAdmin()
 
         val request = TestDataGenerator.addFranchiseRequest()
