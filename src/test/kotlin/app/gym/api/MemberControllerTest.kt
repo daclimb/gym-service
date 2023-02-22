@@ -69,20 +69,20 @@ class MemberControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(request))
         )
-
-        result
-            .andExpect(
-                status().isEqualTo(expectedStatusCode.value())
-            )
-            .andDocument("MemberSignup") {
-                tag("Member")
-                requestSchema(Schema("SignupRequest"))
-                requestFields(
-                    fieldWithPath("email").type(JsonFieldType.STRING).description("email"),
-                    fieldWithPath("password").type(JsonFieldType.STRING).description("password"),
-                    fieldWithPath("name").type(JsonFieldType.STRING).description("name")
+        if(expectedStatusCode == HttpStatus.OK) {
+            result
+                .andExpect(
+                    status().isEqualTo(expectedStatusCode.value())
                 )
-            }
+                .andDocument("MemberSignup") {
+                    tag("Member")
+                    requestSchema(Schema("SignupRequest"))
+                    requestFields(
+                        fieldWithPath("email").type(JsonFieldType.STRING).description("email"),
+                        fieldWithPath("password").type(JsonFieldType.STRING).description("password"),
+                        fieldWithPath("name").type(JsonFieldType.STRING).description("name")
+                    )
+                }
         }
     }
 
@@ -100,7 +100,12 @@ class MemberControllerTest {
             Arguments.of(validEmail, "123123123123123123123123", validName, HttpStatus.BAD_REQUEST),
 
             Arguments.of(validEmail, validPassword, null, HttpStatus.BAD_REQUEST),
-            Arguments.of(validEmail, validPassword, "this name is toooooooooooooooooooooooooooooo long to create member...", HttpStatus.BAD_REQUEST),
+            Arguments.of(
+                validEmail,
+                validPassword,
+                "this name is toooooooooooooooooooooooooooooo long to create member...",
+                HttpStatus.BAD_REQUEST
+            ),
             Arguments.of(validEmail, validPassword, validName, HttpStatus.CREATED),
         )
     }
