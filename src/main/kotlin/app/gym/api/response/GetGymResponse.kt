@@ -12,6 +12,7 @@ data class GetGymResponse(
     val imageIds: List<String>,
     val latitude: Double,
     val longitude: Double,
+    val tagIds: List<Long>,
     val details: GymDetails
 ) {
     companion object {
@@ -25,6 +26,7 @@ data class GetGymResponse(
                 gym.images.map { it.id!! },
                 gym.latitude,
                 gym.longitude,
+                gym.gymTags.map { it.tag.id!! },
                 gym.details
             )
         }

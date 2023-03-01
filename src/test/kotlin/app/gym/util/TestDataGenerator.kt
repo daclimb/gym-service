@@ -42,7 +42,7 @@ class TestDataGenerator {
             images: MutableList<Image> = mutableListOf(Image.create(UUID.randomUUID().toString(), "image")),
             latitude: Double = 0.0,
             longitude: Double = 0.0,
-            gymTags: List<GymTag> = listOf(GymTag(Tag(null, "tag"))),
+            gymTags: List<GymTag> = listOf(GymTag(Tag(1L, "tag"))),
             details: GymDetails = gymDetails
         ): Gym {
             val gym = Gym(id)

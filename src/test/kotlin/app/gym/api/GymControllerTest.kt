@@ -68,6 +68,7 @@ class GymControllerTest {
             .andExpect(jsonPath("$.imageIds").value(gym.images.map { it.id!!.toString() }))
             .andExpect(jsonPath("$.latitude").value(gym.latitude))
             .andExpect(jsonPath("$.longitude").value(gym.longitude))
+            .andExpect(jsonPath("$.tagIds").value(gym.gymTags.map { it.tag.id!!.toInt() }))
             .andExpect(jsonPath("$.details").isNotEmpty)
 
         result.andDocument("GetGym") {
@@ -111,6 +112,10 @@ class GymControllerTest {
                 field("longitude") {
                     type = RestdocsType.NUMBER
                     description = "longitude of the gym"
+                }
+                field("tagIds") {
+                    type = RestdocsType.NUMBER_ARRAY
+                    description = "tag ids of the gym"
                 }
                 prefixed("details") {
                     field("phoneNumber") {
@@ -175,6 +180,7 @@ class GymControllerTest {
             .andExpect(jsonPath("$.gyms[*].name").value(gyms.map { it.name }))
             .andExpect(jsonPath("$.gyms[*].address").value(gyms.map { it.address }))
             .andExpect(jsonPath("$.gyms[*].thumbnail").value(gyms.map { it.images[0].id }))
+            .andExpect(jsonPath("$.gyms[*].tagIds").value(gyms.map { gym -> gym.gymTags.map { it.tag.id!!.toInt() } }))
 
         if (length == 3L) {
             result.andDocument("GetGymList") {
@@ -197,6 +203,10 @@ class GymControllerTest {
                         field("thumbnail") {
                             type = RestdocsType.STRING
                             description = "thumbnail uuid of the gym"
+                        }
+                        field("tagIds") {
+                            type = RestdocsType.NUMBER_ARRAY
+                            description = "tag ids of the gym"
                         }
                     }
                 }
