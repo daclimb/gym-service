@@ -20,7 +20,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
-import org.testcontainers.containers.DockerComposeContainer
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.util.*
@@ -38,9 +37,6 @@ class MemberE2ETest {
 
     @Autowired
     private lateinit var authUtils: E2EAuthenticationConfig
-
-    @Autowired
-    private lateinit var container: DockerComposeContainer<*>
 
     private val random: Random = Random()
 

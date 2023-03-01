@@ -1,5 +1,6 @@
 package app.gym.api.request
 
+import app.gym.domain.gym.GymDetails
 import app.gym.domain.gym.UpdateGymCommand
 
 data class UpdateGymRequest(
@@ -11,7 +12,7 @@ data class UpdateGymRequest(
     val latitude: Double,
     val longitude: Double,
     val tagIds: List<Long>,
-    val details: String
+    val details: GymDetails
 ) {
 
     fun toCommand(id: Long): UpdateGymCommand {

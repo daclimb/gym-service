@@ -70,20 +70,22 @@ class MemberControllerTest {
 
         result.andExpect(status().isEqualTo(expectedStatusCode.value()))
 
-        result.andDocument("MemberSignup") {
-            tags = setOf("Member")
-            request("SignupRequest") {
-                field("email") {
-                    type = RestdocsType.STRING
-                    description = "email address of the signup form"
-                }
-                field("password") {
-                    type = RestdocsType.STRING
-                    description = "password of the signup form"
-                }
-                field("name") {
-                    type = RestdocsType.STRING
-                    description = "name of the signup form"
+        if(expectedStatusCode == HttpStatus.OK) {
+            result.andDocument("MemberSignup") {
+                tags = setOf("Member")
+                request("SignupRequest") {
+                    field("email") {
+                        type = RestdocsType.STRING
+                        description = "email address of the signup form"
+                    }
+                    field("password") {
+                        type = RestdocsType.STRING
+                        description = "password of the signup form"
+                    }
+                    field("name") {
+                        type = RestdocsType.STRING
+                        description = "name of the signup form"
+                    }
                 }
             }
         }

@@ -10,6 +10,6 @@ data class UpdateGymCommand(
     val latitude: Double,
     val longitude: Double,
     val tagIds: List<Long>,
-    val details: String
+    val details: GymDetails
 ) {
 }

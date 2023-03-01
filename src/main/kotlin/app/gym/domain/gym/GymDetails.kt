@@ -10,7 +10,7 @@ data class GymDetails(
     val grades: List<String>? = null,
     val services: List<String>? = null,
     val trainings: List<String>? = null,
-    val openingHours: OpeningHour? = null,
+    val openingHours: OpeningHours? = null,
     val floorArea: Int? = null,
 ) {
     companion object {
@@ -28,7 +28,7 @@ data class GymDetails(
         val price: Int,
     )
 
-    class OpeningHour(
+    class OpeningHours(
         @JsonProperty("월") val mon: List<String>,
         @JsonProperty("화") val tue: List<String>,
         @JsonProperty("수") val wed: List<String>,

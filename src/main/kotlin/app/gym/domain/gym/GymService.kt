@@ -60,7 +60,7 @@ class GymService(
         }
         val gymTags = tags.map { GymTag(it) }
 
-        val details = GymDetails.from(command.details)
+        val details = command.details
         val e = GymDetailsInvalidValueException(details, "gymDetails")
         gymDetailsValidator.validate(details, e)
         if (e.hasErrors()) {
@@ -123,7 +123,7 @@ class GymService(
         }
         val gymTags: List<GymTag> = tags.map { GymTag(it) }
 
-        val details = GymDetails.from(command.details)
+        val details = command.details
         val e = GymDetailsInvalidValueException(details, "gymDetails")
         gymDetailsValidator.validate(details, e)
         if (e.hasErrors()) {

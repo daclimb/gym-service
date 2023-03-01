@@ -1,8 +1,6 @@
 package app.gym.api
 
 import app.gym.api.controller.GymController
-import app.gym.api.request.AddGymRequest
-import app.gym.api.request.UpdateGymRequest
 import app.gym.config.SecurityConfig
 import app.gym.domain.gym.GymNotFoundException
 import app.gym.domain.gym.GymService
@@ -70,8 +68,8 @@ class GymControllerTest {
             .andExpect(jsonPath("$.imageIds").value(gym.images.map { it.id!!.toString() }))
             .andExpect(jsonPath("$.latitude").value(gym.latitude))
             .andExpect(jsonPath("$.longitude").value(gym.longitude))
+            .andExpect(jsonPath("$.details").isNotEmpty)
 
-        // document
         result.andDocument("GetGym") {
             tags = setOf("Gym")
 
@@ -114,6 +112,50 @@ class GymControllerTest {
                     type = RestdocsType.NUMBER
                     description = "longitude of the gym"
                 }
+                prefixed("details") {
+                    field("phoneNumber") {
+                        type = RestdocsType.STRING
+                        description = "phone number of the gym"
+                    }
+                    field("instagram") {
+                        type = RestdocsType.STRING
+                        description = "instagram username of the gym"
+                    }
+                    array("prices") {
+                        field("type") {
+                            type = RestdocsType.STRING
+                        }
+                        field("price") {
+                            type = RestdocsType.NUMBER
+                        }
+                    }
+                    field("grades") {
+                        type = RestdocsType.STRING_ARRAY
+                        description = "grades of the gym"
+                    }
+                    field("services") {
+                        type = RestdocsType.STRING_ARRAY
+                        description = "services of the gym"
+                    }
+                    field("trainings") {
+                        type = RestdocsType.STRING_ARRAY
+                        description = "training tools of the gym"
+                    }
+                    prefixed("openingHours") {
+                        field("월") { type = RestdocsType.STRING_ARRAY }
+                        field("화") { type = RestdocsType.STRING_ARRAY }
+                        field("수") { type = RestdocsType.STRING_ARRAY }
+                        field("목") { type = RestdocsType.STRING_ARRAY }
+                        field("금") { type = RestdocsType.STRING_ARRAY }
+                        field("토") { type = RestdocsType.STRING_ARRAY }
+                        field("일") { type = RestdocsType.STRING_ARRAY }
+                        field("공휴일") { type = RestdocsType.STRING_ARRAY }
+                    }
+                    field("floorArea") {
+                        type = RestdocsType.NUMBER
+                        description = "floor area of the gym"
+                    }
+                }
             }
         }
     }
@@ -126,9 +168,13 @@ class GymControllerTest {
         every { gymService.getGyms() } returns gyms
 
         val result = mvc.perform(get("/api/gym"))
-
+        val map = gyms.map { it.id!!.toInt() }
         result.andExpect(status().isOk)
             .andExpect(jsonPath("$.gyms.length()").value(length))
+            .andExpect(jsonPath("$.gyms[*].id").value(map))
+            .andExpect(jsonPath("$.gyms[*].name").value(gyms.map { it.name }))
+            .andExpect(jsonPath("$.gyms[*].address").value(gyms.map { it.address }))
+            .andExpect(jsonPath("$.gyms[*].thumbnail").value(gyms.map { it.images[0].id }))
 
         if (length == 3L) {
             result.andDocument("GetGymList") {
@@ -161,7 +207,7 @@ class GymControllerTest {
     @Test
     @WithCustomMockUser(userRole = UserRole.Admin)
     fun `Should return status code 201 when add gym`() {
-        val request = AddGymRequest("name", 1L, "address", "description", emptyList(), 0.0, 0.0, emptyList(), "")
+        val request = TestDataGenerator.addGymRequest()
         val content = JsonUtils.toJson(request)
         every { gymService.addGym(any()) } returns 1L
 
@@ -184,6 +230,7 @@ class GymControllerTest {
                 field("franchiseId") {
                     type = RestdocsType.NUMBER
                     description = "franchise id of the gym"
+                    optional = true
                 }
                 field("address") {
                     type = RestdocsType.STRING
@@ -209,11 +256,55 @@ class GymControllerTest {
                     type = RestdocsType.NUMBER_ARRAY
                     description = "tag ids of the gym"
                 }
-            }
-            response("AddGymResponse") {
-                field("gymId") {
-                    type = RestdocsType.NUMBER
-                    description = "id of the created gym"
+                prefixed("details") {
+                    field("phoneNumber") {
+                        type = RestdocsType.STRING
+                        description = "phone number of the gym"
+                    }
+                    field("instagram") {
+                        type = RestdocsType.STRING
+                        description = "instagram username of the gym"
+                    }
+                    array("prices") {
+                        field("type") {
+                            type = RestdocsType.STRING
+                        }
+                        field("price") {
+                            type = RestdocsType.NUMBER
+                        }
+                    }
+                    field("grades") {
+                        type = RestdocsType.STRING_ARRAY
+                        description = "grades of the gym"
+                    }
+                    field("services") {
+                        type = RestdocsType.STRING_ARRAY
+                        description = "services of the gym"
+                    }
+                    field("trainings") {
+                        type = RestdocsType.STRING_ARRAY
+                        description = "training tools of the gym"
+                    }
+                    prefixed("openingHours") {
+                        field("월") { type = RestdocsType.STRING_ARRAY }
+                        field("화") { type = RestdocsType.STRING_ARRAY }
+                        field("수") { type = RestdocsType.STRING_ARRAY }
+                        field("목") { type = RestdocsType.STRING_ARRAY }
+                        field("금") { type = RestdocsType.STRING_ARRAY }
+                        field("토") { type = RestdocsType.STRING_ARRAY }
+                        field("일") { type = RestdocsType.STRING_ARRAY }
+                        field("공휴일") { type = RestdocsType.STRING_ARRAY }
+                    }
+                    field("floorArea") {
+                        type = RestdocsType.NUMBER
+                        description = "floor area of the gym"
+                    }
+                }
+                response("AddGymResponse") {
+                    field("gymId") {
+                        type = RestdocsType.NUMBER
+                        description = "id of the created gym"
+                    }
                 }
             }
         }
@@ -230,7 +321,7 @@ class GymControllerTest {
 
     @Test
     fun `Should return status code 200 when update gym`() {
-        val request = UpdateGymRequest("name", 1L, "address", "description", emptyList(), 0.0, 0.0, emptyList(), "")
+        val request = TestDataGenerator.updateGymRequest()
         val content = JsonUtils.toJson(request)
         every { gymService.updateGym(any()) } returns Unit
 
@@ -244,7 +335,6 @@ class GymControllerTest {
 
         result.andDocument("UpdateGym") {
             tags = setOf("Gym")
-
             request("UpdateGymRequest") {
                 pathParam("gymId") {
                     type = RestdocsType.NUMBER
@@ -257,6 +347,7 @@ class GymControllerTest {
                 field("franchiseId") {
                     type = RestdocsType.NUMBER
                     description = "franchise id of the gym"
+                    optional = true
                 }
                 field("address") {
                     type = RestdocsType.STRING
@@ -282,13 +373,57 @@ class GymControllerTest {
                     type = RestdocsType.NUMBER_ARRAY
                     description = "tag ids of the gym"
                 }
+                prefixed("details") {
+                    field("phoneNumber") {
+                        type = RestdocsType.STRING
+                        description = "phone number of the gym"
+                    }
+                    field("instagram") {
+                        type = RestdocsType.STRING
+                        description = "instagram username of the gym"
+                    }
+                    array("prices") {
+                        field("type") {
+                            type = RestdocsType.STRING
+                        }
+                        field("price") {
+                            type = RestdocsType.NUMBER
+                        }
+                    }
+                    field("grades") {
+                        type = RestdocsType.STRING_ARRAY
+                        description = "grades of the gym"
+                    }
+                    field("services") {
+                        type = RestdocsType.STRING_ARRAY
+                        description = "services of the gym"
+                    }
+                    field("trainings") {
+                        type = RestdocsType.STRING_ARRAY
+                        description = "training tools of the gym"
+                    }
+                    prefixed("openingHours") {
+                        field("월") { type = RestdocsType.STRING_ARRAY }
+                        field("화") { type = RestdocsType.STRING_ARRAY }
+                        field("수") { type = RestdocsType.STRING_ARRAY }
+                        field("목") { type = RestdocsType.STRING_ARRAY }
+                        field("금") { type = RestdocsType.STRING_ARRAY }
+                        field("토") { type = RestdocsType.STRING_ARRAY }
+                        field("일") { type = RestdocsType.STRING_ARRAY }
+                        field("공휴일") { type = RestdocsType.STRING_ARRAY }
+                    }
+                    field("floorArea") {
+                        type = RestdocsType.NUMBER
+                        description = "floor area of the gym"
+                    }
+                }
             }
         }
     }
 
     @Test
     fun `Should return status code 400 when update gym with id of not existing gym`() {
-        val request = UpdateGymRequest("name", null, "address", "description", emptyList(), 0.0, 0.0, emptyList(), "")
+        val request = TestDataGenerator.updateGymRequest()
         val content = JsonUtils.toJson(request)
         every { gymService.updateGym(any()) } throws GymNotFoundException()
 
