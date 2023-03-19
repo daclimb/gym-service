@@ -6,6 +6,8 @@ RUN ./gradlew build -x test
 
 COPY ./build/libs/*-SNAPSHOT.jar /app.jar
 
+RUN ls ./build/libs/
+
 EXPOSE 80
 
 ENTRYPOINT ["java", "-jar", "/app.jar"]
