@@ -1,4 +1,4 @@
-# fly.toml file generated for daclimb on 2023-03-19T14:12:39+09:00
+# fly.toml file generated for daclimb on 2023-03-19T15:36:19+09:00
 
 app = "daclimb"
 kill_signal = "SIGINT"
