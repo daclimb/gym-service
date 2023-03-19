@@ -6,7 +6,7 @@ RUN ./gradlew build -x test
 
 RUN ls ./build/libs/
 
-COPY ./build/libs/*-SNAPSHOT.jar /app.jar
+COPY /build/libs/*-SNAPSHOT.jar /app.jar
 
 EXPOSE 80
 
