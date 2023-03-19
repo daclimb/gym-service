@@ -1,6 +1,5 @@
 package app.gym.domain.gym
 
-import org.springframework.stereotype.Component
 import org.springframework.validation.BindException
 import org.springframework.validation.Errors
 import org.springframework.validation.Validator
@@ -8,7 +7,6 @@ import java.util.regex.Pattern
 
 class GymDetailsInvalidValueException(target: Any, objectName: String) : BindException(target, objectName)
 
-@Component
 class GymDetailsValidator: Validator {
     override fun supports(clazz: Class<*>): Boolean {
         return GymDetails::class.java.isAssignableFrom(clazz)
