@@ -1,6 +1,6 @@
-# fly.toml file generated for daclimb1 on 2023-03-19T13:53:52+09:00
+# fly.toml file generated for daclimb on 2023-03-19T14:12:39+09:00
 
-app = "daclimb1"
+app = "daclimb"
 kill_signal = "SIGINT"
 kill_timeout = 5
 primary_region = "nrt"
