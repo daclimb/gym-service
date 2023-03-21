@@ -3,7 +3,6 @@ package app.gym.config
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -49,11 +48,11 @@ class SecurityConfig(val authenticationConfiguration: AuthenticationConfiguratio
     ): KeyPair {
         val keyFactory = KeyFactory.getInstance("RSA")
 
-        val publicBytes = Base64.getDecoder().decode(publicKeyString)
+        val publicBytes = Base64.getMimeDecoder().decode(publicKeyString)
         val publicKeySpec = X509EncodedKeySpec(publicBytes)
         val publicKey = keyFactory.generatePublic(publicKeySpec)
 
-        val privateBytes = Base64.getDecoder().decode(privateKeyString)
+        val privateBytes = Base64.getMimeDecoder().decode(privateKeyString)
         val privateKeySpec = PKCS8EncodedKeySpec(privateBytes)
         val privateKey = keyFactory.generatePrivate(privateKeySpec)
 
