@@ -48,11 +48,11 @@ class SecurityConfig(val authenticationConfiguration: AuthenticationConfiguratio
     ): KeyPair {
         val keyFactory = KeyFactory.getInstance("RSA")
 
-        val publicBytes = Base64.getMimeDecoder().decode(publicKeyString)
+        val publicBytes = Base64.getDecoder().decode(publicKeyString)
         val publicKeySpec = X509EncodedKeySpec(publicBytes)
         val publicKey = keyFactory.generatePublic(publicKeySpec)
 
-        val privateBytes = Base64.getMimeDecoder().decode(privateKeyString)
+        val privateBytes = Base64.getDecoder().decode(privateKeyString)
         val privateKeySpec = PKCS8EncodedKeySpec(privateBytes)
         val privateKey = keyFactory.generatePrivate(privateKeySpec)
 

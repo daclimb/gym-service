@@ -1,14 +1,21 @@
 gym:
   db:
-    url: <helm-secret>
-    username: <helm-secret>
-    password: <helm-secret>
+    url: jdbc:postgresql://daclimb:OHgzCWxZZBeEY2Q@daclimb-db.flycast:5432/daclimb?sslmode=disable
+    username: postgres
+    password: password
+
+#spring:
+#  datasource:
+#    url: jdbc:postgresql://localhost:5432/daclimb
+#    username: postgres
+#    password: 1234
 
 spring:
   datasource:
-    url: jdbc:postgresql://${gym.db.url}
+    url: ${gym.db.url}
     username: ${gym.db.username}
     password: ${gym.db.password}
+    driver-class-name: org.postgresql.Driver
 
   jpa:
     properties:
@@ -16,14 +23,19 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
   flyway:
-    enabled: true
+    enabled: false
     baseline-on-migrate: true
     url: ${spring.datasource.url}
     user: ${spring.datasource.username}
     password: ${spring.datasource.password}
 
+  profiles:
+    active: prod
+
+
 cloud:
   aws:
+    region: ap-northeast-2
     bucket: daclimb-gym-images
 
 server:
@@ -43,10 +55,15 @@ logging:
   level:
     app.gym: DEBUG
 
+#jwt:
+#  key:
+#    private: <helm-secret>
+#    public: <helm-secret>
+
 jwt:
   key:
-    private: <helm-secret>
-    public: <helm-secret>
+    private: MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC4Rsw7rsRWKfZD4TbCXoGFZPRCGrmRI9NPMwu76lkh4dyCNRdIoGSN5yLgBz2/n6i4RJtka6TEHULXDo00Dz8wRnNnFPfx670gUJb0ABxmB6M4XPZrPd8enGhGGomFNa56ad4/SUGTc0B985qNQktRgPLBqw8UinjdILICa1A1tC3yuLyRMegI3k8GfCCvCQrafDu1D0kMDSnNsWcwuGl8VqoIsurvYNc0/hpPsNE6mxURyTxAVYvtW+P8m1n2EWzLm93KH7eBVo92a8vrBfQ5m0ToDnBh3wCaq6s6T4GOdT8/h75Yhshijxso3ewc6JDL60k8mrLfGKU24usvhWN1AgMBAAECggEAVT97T8jjzzCOWoyfdn+dz4YKcWJHols+cA8fSIl7Pm9sQVgqM1Dv862Ptq/i4vkLZmNmt6gMiyU2PKLgs8qx4rVUwcUzhtkVnxNpIevDN3glC/gFj0sKIvEcVAIGyHczBjJfvEs5aOsSVLITN3IJweSzaOCnk0sT6sgrUW8vpgexMnNkW6BBdMxSZPnTzOtXxa890fQMk+IZ4YvaXkPT967ciQF3nEwweYsZpMsGUoPgMiyK89mjciDtgvFXwjrI9+PQpxXr6y7q0o3weptf4AQflmmtBT138tInE6Tbw69Itixxwj/ei1erWdbvX50QddCjx13Hbx3J+ouuzxEJwQKBgQDnm8pblwR+AjtvFKmrngIWgCXF7h/MG2gIVL3ezKofeYQX7v5KVAnXNBW2regqVr7ieXFM1/IOhiPaVmWLWbk02p8Ku3XMhMzW5gYJoouzpOKyhYbgNvdmMRVzOWX8guOtxaVMYWJlezyLxFQy+0/9dPs0N8xncVd0eL7sEJUEHQKBgQDLru2CvnUcKjhr+6YajysWl6X0Vwn69M+A/fXyzInAt++H/F8nWvuQT5L2Hc0VfcF1XlQB+xqGNCFtm7/f6ERU5eLDH+a0ew2hYbr/xDbzbSc5HLjhQR/uLDurAp5OnJdKMqjXie7Li9LIQfMb2hK02qtNVsyVDSWcr5HFlAoNOQKBgQDnG1Jx0CCAaFPMBK9FezaUIy0N8w2xiktlvMF1d33uSD/h7e26V182aVedYK0AymxQ6mN/DSARFBLkhD9xLIedUOVQPTxPZthLO14c8SA7krVO8+RhCRgW1bWUs1qr/COaO1U1ARvBLZZ91Ns7v//SZo9fTKpfMf7VTsMcJXO8lQKBgQCyhyHxHkUBqdQIeesujlyDEerJDt1VlOyoMHE6HqODQvV1qPQyR6IF7GlwxdAzTSWbXVGe5txp0xmVvBVjCW+TRmgLBVQuz0i0Mjg45GAR35OokI9QCMgW97hY/ROK7eABjgPF4EVpLaZUFtIikHMjCCNrx2/MGVjlTFIl7sscqQKBgDMcWQk67VhOEG2z80vn3WVX3TLW+S8OXHoqpH9hOSfcp72F2KKC5IAwok4+uX5b7yG0uiahOpuSnnItB2LVkvblnKCoIaxiUBKwOumvqlRros9zFgmSMFffs0/YCGXq2z7uqq9QaDOPixWo3UKdVBzEtkf2E/+rvxcai8FdC6s0
+    public: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuEbMO67EVin2Q+E2wl6BhWT0Qhq5kSPTTzMLu+pZIeHcgjUXSKBkjeci4Ac9v5+ouESbZGukxB1C1w6NNA8/MEZzZxT38eu9IFCW9AAcZgejOFz2az3fHpxoRhqJhTWuemneP0lBk3NAffOajUJLUYDywasPFIp43SCyAmtQNbQt8ri8kTHoCN5PBnwgrwkK2nw7tQ9JDA0pzbFnMLhpfFaqCLLq72DXNP4aT7DROpsVEck8QFWL7Vvj/JtZ9hFsy5vdyh+3gVaPdmvL6wX0OZtE6A5wYd8AmqurOk+BjnU/P4e+WIbIYo8bKN3sHOiQy+tJPJqy3xilNuLrL4VjdQIDAQAB
 
 admin:
   email: <helm-secret>
