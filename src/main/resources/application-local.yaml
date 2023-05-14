@@ -2,11 +2,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/daclimb
     username: postgres
-    password:
-
-  profiles:
-    active: local
-
+    password: 1234
 
 jwt:
   key:

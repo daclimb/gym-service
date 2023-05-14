@@ -19,7 +19,6 @@ class AWSConfig {
         @Value("\${cloud.aws.endpoint}")
         endpoint: String,
         @Value("\${cloud.aws.region}")
-
         region: String
     ): AmazonS3 {
         val creds = BasicAWSCredentials("", "")
@@ -37,8 +36,12 @@ class AWSConfig {
     }
 
     @Bean
-    fun amazonS3(): AmazonS3 {
+    fun amazonS3(
+        @Value("\${cloud.aws.region.static}")
+        region: String
+    ): AmazonS3 {
         return AmazonS3ClientBuilder.standard()
+            .withRegion(region)
             .build()
     }
 }

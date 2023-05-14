@@ -18,5 +18,4 @@ data class UpdateGymRequest(
     fun toCommand(id: Long): UpdateGymCommand {
         return UpdateGymCommand(id, name, franchiseId, address, description, imageIds, latitude, longitude, tagIds, details)
     }
-
 }
