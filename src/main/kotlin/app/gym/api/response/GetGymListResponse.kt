@@ -11,23 +11,25 @@ data class GetGymListResponse(
         val name: String,
         val address: String,
         val thumbnail: String?,
+        val tagIds: List<Long>
     )
 
     companion object {
         fun from(gyms: List<Gym>): GetGymListResponse {
-            return GetGymListResponse(gyms.map {
+            return GetGymListResponse(gyms.map { gym ->
                 val thumbnail: String? =
-                    if (it.images.size == 0) {
+                    if (gym.images.size == 0) {
                         null
                     } else {
-                        it.images[0].uuid
+                        gym.images[0].uuid
                     }
 
                 SimpleGym(
-                    it.id!!,
-                    it.name,
-                    it.address,
-                    thumbnail
+                    gym.id!!,
+                    gym.name,
+                    gym.address,
+                    thumbnail,
+                    gym.gymTags.map { it.tag.id!! }
                 )
             })
         }

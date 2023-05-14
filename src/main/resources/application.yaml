@@ -1,14 +1,21 @@
 gym:
   db:
-    url: <helm-secret>
-    username: <helm-secret>
-    password: <helm-secret>
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+#spring:
+#  datasource:
+#    url: jdbc:postgresql://localhost:5432/daclimb
+#    username: postgres
+#    password: 1234
 
 spring:
   datasource:
-    url: jdbc:postgresql://${gym.db.url}
+    url: jdbc:${gym.db.url}
     username: ${gym.db.username}
     password: ${gym.db.password}
+    driver-class-name: org.postgresql.Driver
 
   jpa:
     properties:
@@ -16,14 +23,17 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
   flyway:
-    enabled: true
+    enabled: false
     baseline-on-migrate: true
-    url: ${spring.datasource.url}
-    user: ${spring.datasource.username}
-    password: ${spring.datasource.password}
+
+  profiles:
+    active: prod
 
 cloud:
   aws:
+    region:
+      static: ap-northeast-2
+      auto: false
     bucket: daclimb-gym-images
 
 server:
@@ -43,11 +53,16 @@ logging:
   level:
     app.gym: DEBUG
 
+#jwt:
+#  key:
+#    private: <helm-secret>
+#    public: <helm-secret>
+
 jwt:
   key:
-    private: <helm-secret>
-    public: <helm-secret>
+    private: ${JWT_PRIVATE}
+    public: ${JWT_PUBLIC}
 
 admin:
-  email: <helm-secret>
-  password: <helm-secret>
+  email: ${ADMIN_EMAIL}
+  password: ${ADMIN_PASSWORD}

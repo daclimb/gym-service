@@ -28,7 +28,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import restdocs.RestdocsType
-import restdocs.andDocument2
+import restdocs.andDocument
 
 @WebMvcTest(
     controllers = [TagController::class],
@@ -65,7 +65,7 @@ internal class TagControllerTest {
 
         result.andExpect(status().isCreated) // andExpect{ }를 사용하면 제대로 동작하지 않음
 
-        result.andDocument2("AddTag") {
+        result.andDocument("AddTag") {
             tags = setOf("Tag")
 
             request("AddTagRequest") {
@@ -78,6 +78,7 @@ internal class TagControllerTest {
     }
 
     @Test
+    @WithCustomMockUser(userRole = UserRole.Admin)
     fun `Should return status code 400 when add duplicated tag`() {
         val request = AddTagRequest("new tag")
         val content = JsonUtils.toJson(request)
@@ -90,9 +91,7 @@ internal class TagControllerTest {
                 .content(content)
         )
 
-        result.andExpect {
-            status().isBadRequest
-        }
+        result.andExpect(status().isBadRequest)
     }
 
     @ParameterizedTest
@@ -111,7 +110,7 @@ internal class TagControllerTest {
             .andExpect(jsonPath("$.tags.length()").value(length))
 
         if (length == 3L) {
-            result.andDocument2("GetTagList") {
+            result.andDocument("GetTagList") {
                 this.tags = setOf("Tag")
 
                 response("GetTagListResponse") {
@@ -131,6 +130,7 @@ internal class TagControllerTest {
     }
 
     @Test
+    @WithCustomMockUser(userRole = UserRole.Admin)
     fun `Should return status code 200 when delete tag`() {
         every { tagService.deleteTag(any()) } returns Unit
 
@@ -138,11 +138,9 @@ internal class TagControllerTest {
             delete("/api/tag/{tagId}", 1L)
         )
 
-        result.andExpect {
-            status().isOk
-        }
+        result.andExpect(status().isOk)
 
-        result.andDocument2("DeleteTag") {
+        result.andDocument("DeleteTag") {
             tags = setOf("Tag")
 
             request {
@@ -155,6 +153,7 @@ internal class TagControllerTest {
     }
 
     @Test
+    @WithCustomMockUser(userRole = UserRole.Admin)
     fun `Should return status code 400 when delete not existing tag`() {
         every { tagService.deleteTag(any()) } throws TagNotExistsException()
 
@@ -162,8 +161,6 @@ internal class TagControllerTest {
             delete("/api/tag/{tagId}", 1L)
         )
 
-        result.andExpect {
-            status().isBadRequest
-        }
+        result.andExpect(status().isBadRequest)
     }
 }

@@ -4,6 +4,9 @@ package app.gym.domain.gym
 import app.gym.domain.franchise.Franchise
 import app.gym.domain.gymTag.GymTag
 import app.gym.domain.image.Image
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType
+import org.hibernate.annotations.Type
+import org.hibernate.annotations.TypeDef
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
@@ -21,6 +24,7 @@ import javax.persistence.*
 @Entity
 @Table(name = "gyms")
 @EntityListeners(AuditingEntityListener::class)
+@TypeDef(name="jsonb", typeClass = JsonBinaryType::class)
 class Gym(id: Long? = null) {
 
     @Id
@@ -58,6 +62,10 @@ class Gym(id: Long? = null) {
     @OneToMany(mappedBy = "gym", orphanRemoval = true)
     var gymTags: MutableList<GymTag> = mutableListOf(); private set
 
+    @Column(name = "details")
+    @Type(type = "jsonb")
+    var details: GymDetails = GymDetails(); private set
+
     @Column(name = "created_at")
     @CreatedDate
     var createdAt: LocalDateTime = LocalDateTime.MIN; private set
@@ -74,7 +82,8 @@ class Gym(id: Long? = null) {
         images: List<Image>,
         latitude: Double,
         longitude: Double,
-        gymTags: List<GymTag>
+        gymTags: List<GymTag>,
+        details: GymDetails
     ) {
         this.name = name
         this.franchise = franchise
@@ -85,5 +94,6 @@ class Gym(id: Long? = null) {
         this.longitude = longitude
         this.gymTags.clear()
         this.gymTags.addAll(gymTags)
+        this.details = details
     }
 }

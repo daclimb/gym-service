@@ -2,7 +2,6 @@ package app.gym.domain.gym
 
 import app.gym.domain.franchise.FranchiseRepository
 import app.gym.domain.gymTag.GymTag
-import app.gym.domain.gymTag.GymTagRepository
 import app.gym.domain.image.Image
 import app.gym.domain.image.ImageRepository
 import app.gym.domain.image.ImageStorage
@@ -19,9 +18,9 @@ class GymService(
     private val gymRepository: GymRepository,
     private val franchiseRepository: FranchiseRepository,
     private val imageRepository: ImageRepository,
-    private val gymTagRepository: GymTagRepository,
     private val tagRepository: TagRepository,
     private val imageStorage: ImageStorage,
+    private val gymDetailsValidator: GymDetailsValidator,
 ) {
     fun getGym(id: Long): Gym {
         return if (gymRepository.existsById(id)) {
@@ -36,26 +35,37 @@ class GymService(
     }
 
     fun addGym(command: AddGymCommand): Long {
+        val gym = Gym()
+        // TODO: updateGym과의 중복 코드
+
+        val franchise = when (command.franchiseId) {
+            null -> null
+            else -> franchiseRepository.findById(command.franchiseId).get()
+        }
 
         val imageIds = command.imageIds
         val images = if (imageIds.isEmpty()) {
             emptyList()
         } else {
-            if(imageRepository.countAllByUuidIn(imageIds) != imageIds.size){
+            if (imageRepository.countAllByUuidIn(imageIds) != imageIds.size) {
                 throw ImageNotFoundException()
             }
             imageRepository.findByUuidIn(imageIds)
         }
-        val gym = Gym()
 
-        val franchise = if (command.franchiseId != null) {
-            franchiseRepository.findById(command.franchiseId).get()
+        val tags = if (command.tagIds.isEmpty()) {
+            emptyList()
         } else {
-            null
+            tagRepository.findAllById(command.tagIds)
         }
-
-        val tags = tagRepository.findAllById(command.gymTags)
         val gymTags = tags.map { GymTag(it) }
+
+        val details = command.details
+        val e = GymDetailsInvalidValueException(details, "gymDetails")
+        gymDetailsValidator.validate(details, e)
+        if (e.hasErrors()) {
+            throw e
+        }
 
         gym.update(
             command.name,
@@ -65,7 +75,8 @@ class GymService(
             images,
             command.latitude,
             command.longitude,
-            gymTags
+            gymTags,
+            details
         )
         return gymRepository.save(gym).id!!
     }
@@ -100,15 +111,24 @@ class GymService(
         val images = if (imageIds.isEmpty()) {
             emptyList()
         } else {
+            if (imageRepository.countAllByUuidIn(imageIds) != imageIds.size) {
+                throw ImageNotFoundException()
+            }
             imageRepository.findByUuidIn(imageIds)
         }
-
         val tags = if (command.tagIds.isEmpty()) {
             emptyList()
         } else {
             tagRepository.findAllById(command.tagIds)
         }
         val gymTags: List<GymTag> = tags.map { GymTag(it) }
+
+        val details = command.details
+        val e = GymDetailsInvalidValueException(details, "gymDetails")
+        gymDetailsValidator.validate(details, e)
+        if (e.hasErrors()) {
+            throw e
+        }
 
         gym.update(
             command.name,
@@ -118,14 +138,11 @@ class GymService(
             images,
             command.latitude,
             command.longitude,
-            gymTags
+            gymTags,
+            details
         )
 
         gymRepository.save(gym)
     }
-
-//    fun getGymsWithTags(tags: List<Long>): List<Gym> {
-//        return gymRepository.findGymsByGymTagsTagId()
-//    } // TODO
 }
 

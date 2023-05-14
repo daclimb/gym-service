@@ -18,9 +18,10 @@ import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import restdocs.RestdocsType
-import restdocs.andDocument2
+import restdocs.andDocument
 
 @WebMvcTest(
     controllers = [AdminController::class],
@@ -55,8 +56,9 @@ class AdminControllerTest {
         )
 
         result.andExpect(status().isOk)
+            .andExpect(cookie().exists("jwt"))
 
-        result.andDocument2("AdminLogin") {
+        result.andDocument("AdminLogin") {
             tags = setOf("admin")
 
             request("LoginRequest") {

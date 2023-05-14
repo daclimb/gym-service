@@ -1,6 +1,7 @@
 package app.gym.api.request
 
 import app.gym.domain.gym.AddGymCommand
+import app.gym.domain.gym.GymDetails
 
 data class AddGymRequest(
     val name: String,
@@ -10,9 +11,10 @@ data class AddGymRequest(
     val imageIds: List<String>,
     val latitude: Double,
     val longitude: Double,
-    val tagIds: List<Long>
+    val tagIds: List<Long>,
+    val details: GymDetails
 ) {
     fun toCommand(): AddGymCommand {
-        return AddGymCommand(name, franchiseId, address, description, imageIds, latitude, longitude, tagIds)
+        return AddGymCommand(name, franchiseId, address, description, imageIds, latitude, longitude, tagIds, details)
     }
 }

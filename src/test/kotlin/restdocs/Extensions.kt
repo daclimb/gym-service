@@ -8,7 +8,7 @@ import org.springframework.restdocs.payload.JsonFieldType
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.test.web.servlet.ResultActions
 
-fun ResultActions.andDocument2(
+fun ResultActions.andDocument(
     identifier: String,
     builder: RestdocsBuilder.() -> Unit
 ) {
@@ -19,22 +19,6 @@ fun ResultActions.andDocument2(
             Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
             ResourceDocumentation.resource(
                 RestdocsBuilder().apply(builder).build()
-            )
-        )
-    )
-}
-
-fun ResultActions.andDocument(
-    identifier: String,
-    builder: ResourceSnippetParametersBuilder.() -> Unit
-) {
-    this.andDo(
-        MockMvcRestDocumentationWrapper.document(
-            identifier,
-            Preprocessors.preprocessRequest(Preprocessors.prettyPrint()),
-            Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
-            ResourceDocumentation.resource(
-                ResourceSnippetParametersBuilder().apply(builder).build()
             )
         )
     )
@@ -118,8 +102,13 @@ class RestdocsBuilder {
     private fun toRestdocsFields(fields: List<Field>): List<FieldDescriptor> {
         return fields.map {
             val type = it.type
-            val field = fieldWithPath(it.name)
-                .description(it.description)
+            val field = when (it.optional) {
+                true -> fieldWithPath(it.name)
+                    .description(it.description).optional()
+                false -> fieldWithPath(it.name)
+                    .description(it.description)
+            }
+
 
             if (type is RestdocsType.Array) {
                 field.attributes["itemsType"] = type.itemsType
@@ -168,7 +157,7 @@ class RestdocsBuilder {
 
         fun prefixed(prefix: String, builder: Request.() -> Unit) {
             val old = this.prefix
-            this.prefix = "$prefix.$old"
+            this.prefix = "$old.$prefix"
             this.apply(builder)
             this.prefix = old
         }
@@ -203,7 +192,7 @@ class RestdocsBuilder {
 
         fun prefixed(prefix: String, builder: Response.() -> Unit) {
             val old = this.prefix
-            this.prefix = "$prefix.$old"
+            this.prefix = "$old.$prefix"
             this.apply(builder)
             this.prefix = old
         }
@@ -214,5 +203,6 @@ class RestdocsBuilder {
     ) {
         var type: RestdocsType = RestdocsType.STRING
         var description: String? = null
+        var optional: Boolean = false
     }
 }

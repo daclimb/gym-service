@@ -1,6 +1,5 @@
 package app.gym.e2e
 
-import app.gym.api.request.UpdateGymRequest
 import app.gym.api.response.AddGymResponse
 import app.gym.api.response.AddImageResponse
 import app.gym.api.response.GetGymListResponse
@@ -8,7 +7,8 @@ import app.gym.api.response.GetGymResponse
 import app.gym.config.AWSTestConfig
 import app.gym.config.JPATestConfig
 import app.gym.config.TestContainersConfig
-import app.gym.utils.TestDataGenerator
+import app.gym.domain.gym.GymDetails
+import app.gym.util.TestDataGenerator
 import com.amazonaws.services.s3.AmazonS3
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -25,7 +25,6 @@ import org.springframework.http.*
 import org.springframework.test.annotation.DirtiesContext.*
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
-import org.testcontainers.containers.DockerComposeContainer
 import java.util.*
 import kotlin.io.path.toPath
 
@@ -48,9 +47,6 @@ class GymE2ETest {
     @Autowired
     private lateinit var authUtils: E2EAuthenticationConfig
 
-    @Autowired
-    private lateinit var container: DockerComposeContainer<*>
-
     @BeforeAll
     fun beforeAll() {
         this.s3client.createBucket(bucket)
@@ -59,7 +55,6 @@ class GymE2ETest {
     @Test
     fun `Should return status code 201 when add gym`() {
         val headers = authUtils.getHeadersWithCookieForAdmin()
-
         val request = TestDataGenerator.addGymRequest()
         val response =
             template.exchange("/api/gym", HttpMethod.POST, HttpEntity(request, headers), AddGymResponse::class.java)
@@ -110,7 +105,7 @@ class GymE2ETest {
     }
 
     @Test
-    fun `Should return status code 200 and gym details when get gym`() {
+    fun `Should return status code 200 and gym when get gym`() {
         val headers = authUtils.getHeadersWithCookieForAdmin()
 
         val addGymRequest = TestDataGenerator.addGymRequest()
@@ -141,12 +136,59 @@ class GymE2ETest {
         assertNotNull(addGymResponse.body)
         val gymId = addGymResponse.body!!.gymId
 
-        val request = UpdateGymRequest("name", null, "address", "description", emptyList(), 0.0, 0.0, emptyList())
+        val request = TestDataGenerator.updateGymRequest()
 
         val httpEntity = HttpEntity(request, headers)
         val response = template.exchange("/api/gym/$gymId", HttpMethod.PUT, httpEntity, Any::class.java)
 
         assertEquals(HttpStatus.OK, response.statusCode)
+    }
+
+    @Test
+    fun `Should return status code 200 when update gym details`() {
+        val headers = authUtils.getHeadersWithCookieForAdmin()
+
+        val addGymRequest = TestDataGenerator.addGymRequest()
+        val addGymResponse =
+            template.postForEntity("/api/gym", HttpEntity(addGymRequest, headers), AddGymResponse::class.java)
+
+        assertNotNull(addGymResponse.body)
+        val gymId = addGymResponse.body!!.gymId
+
+        val phoneNumber = "010-1111-1111"
+        val details = "{\"phoneNumber\":\"$phoneNumber\"}"
+
+        val request = TestDataGenerator.updateGymRequest(details = GymDetails.from(details))
+
+        val httpEntity = HttpEntity(request, headers)
+        val response = template.exchange("/api/gym/$gymId", HttpMethod.PUT, httpEntity, Any::class.java)
+
+        assertEquals(HttpStatus.OK, response.statusCode)
+
+        val getGymResponse = template.getForEntity("/api/gym/$gymId", GetGymResponse::class.java)
+        assertEquals(phoneNumber, getGymResponse.body!!.details.phoneNumber)
+    }
+
+    @Test
+    fun `Should return status code 400 when update gym details with invalid value`() {
+        val headers = authUtils.getHeadersWithCookieForAdmin()
+
+        val addGymRequest = TestDataGenerator.addGymRequest()
+        val addGymResponse =
+            template.postForEntity("/api/gym", HttpEntity(addGymRequest, headers), AddGymResponse::class.java)
+
+        assertNotNull(addGymResponse.body)
+        val gymId = addGymResponse.body!!.gymId
+
+        val name = "phoneNumber"
+        val value = "1234-5678"
+        val details = "{\"$name\":\"$value\"}"
+        val request = TestDataGenerator.updateGymRequest(details = GymDetails.from(details))
+
+        val httpEntity = HttpEntity(request, headers)
+        val response = template.exchange("/api/gym/$gymId", HttpMethod.PUT, httpEntity, Any::class.java)
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
     }
 
     @Test

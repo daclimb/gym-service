@@ -1,6 +1,7 @@
 package app.gym.api.response
 
 import app.gym.domain.gym.Gym
+import app.gym.domain.gym.GymDetails
 
 data class GetGymResponse(
     val id: Long,
@@ -11,6 +12,8 @@ data class GetGymResponse(
     val imageIds: List<String>,
     val latitude: Double,
     val longitude: Double,
+    val tagIds: List<Long>,
+    val details: GymDetails
 ) {
     companion object {
         fun from(gym: Gym): GetGymResponse {
@@ -22,7 +25,9 @@ data class GetGymResponse(
                 gym.description,
                 gym.images.map { it.id!! },
                 gym.latitude,
-                gym.longitude
+                gym.longitude,
+                gym.gymTags.map { it.tag.id!! },
+                gym.details
             )
         }
     }

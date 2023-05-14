@@ -1,16 +1,18 @@
 package app.gym.util
 
-import javax.servlet.http.Cookie
-
+import org.springframework.http.ResponseCookie
 
 class CookieUtils {
     companion object {
-        fun create(token: String): Cookie {
-            val cookie = Cookie("jwt", token)
-            cookie.maxAge = 1 * 24 * 60 * 60
-            cookie.isHttpOnly = true
-            return cookie
+        fun createCookie(
+            token: String,
+            maxAge: Long = 1 * 24 * 60 * 60,
+            isHttpOnly: Boolean = true,
+        ): ResponseCookie {
+            val cookieBuilder = ResponseCookie.from("jwt", token)
+            cookieBuilder.maxAge(maxAge)
+            cookieBuilder.httpOnly(isHttpOnly)
+            return cookieBuilder.build()
         }
     }
-
 }

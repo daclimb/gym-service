@@ -32,6 +32,8 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt:0.9.1")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.2")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.0")
+    implementation("com.vladmihalcea:hibernate-types-52:2.21.1")
+    implementation("org.json:json:20220924")
 
     runtimeOnly("org.postgresql:postgresql")
 
@@ -41,9 +43,8 @@ dependencies {
     testImplementation("com.ninja-squad:springmockk:3.0.1")
     testImplementation("com.h2database:h2")
     testImplementation("org.testcontainers:localstack:1.17.3")
-    testImplementation("org.testcontainers:junit-jupiter:1.17.3")
     testImplementation("com.epages:restdocs-api-spec-mockmvc:0.16.0") //2.2
-    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.testcontainers:junit-jupiter:1.17.6")
     testImplementation("org.testcontainers:postgresql:1.17.6")
 
 }

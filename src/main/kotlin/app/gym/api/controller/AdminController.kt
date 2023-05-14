@@ -5,12 +5,12 @@ import app.gym.api.response.SimpleSuccessfulResponse
 import app.gym.domain.member.AdminService
 import app.gym.util.CookieUtils
 import mu.KotlinLogging
+import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import javax.servlet.http.HttpServletResponse
 
 
 @RestController
@@ -21,14 +21,15 @@ class AdminController(
     private val logger = KotlinLogging.logger { }
 
     @PostMapping("/login")
-    fun login(@RequestBody request: LoginRequest, response: HttpServletResponse): ResponseEntity<SimpleSuccessfulResponse> {
+    fun login(@RequestBody request: LoginRequest): ResponseEntity<SimpleSuccessfulResponse> {
         logger.info { "Admin login request" }
         val command = request.toCommand()
         val token = adminService.login(command)
 
-        val cookie = CookieUtils.create(token)
-        response.addCookie(cookie)
+        val cookie = CookieUtils.createCookie(token)
 
-        return ResponseEntity.ok().body(SimpleSuccessfulResponse("Success: login"))
+        return ResponseEntity.ok()
+            .header(HttpHeaders.SET_COOKIE, cookie.toString())
+            .body(SimpleSuccessfulResponse("Success: login"))
     }
 }

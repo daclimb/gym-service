@@ -5,7 +5,7 @@ CREATE TABLE gyms
     franchise_id INT,
     address      VARCHAR(255)  NOT NULL,
     description  TEXT          NOT NULL,
-    details      JSONB         NOT NULL,
+    details      TEXT          NOT NULL,
     latitude     NUMERIC(8, 6) NOT NULL,
     longitude    NUMERIC(9, 6) NOT NULL,
     created_at   TIMESTAMP     NOT NULL,
